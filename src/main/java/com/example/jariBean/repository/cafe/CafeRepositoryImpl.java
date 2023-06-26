@@ -1,6 +1,6 @@
 package com.example.jariBean.repository.cafe;
 
-import com.example.jariBean.entity.cafe.Cafe;
+import com.example.jariBean.entity.Cafe;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;

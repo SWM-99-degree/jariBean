@@ -4,7 +4,7 @@ import com.example.jariBean.dto.cafe.CafeReqDto;
 import com.example.jariBean.dto.cafe.CafeResDto;
 import com.example.jariBean.entity.Cafe;
 import com.example.jariBean.handler.ex.CustomApiException;
-import com.example.jariBean.repository.CafeRepository;
+import com.example.jariBean.repository.cafe.CafeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;

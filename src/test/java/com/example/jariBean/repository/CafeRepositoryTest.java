@@ -1,6 +1,7 @@
 package com.example.jariBean.repository;
 
-import com.example.jariBean.entity.cafe.Cafe;
+
+import com.example.jariBean.entity.Cafe;
 import com.example.jariBean.repository.cafe.CafeRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ class CafeRepositoryTest {
     public void findByCoordinateNearTest() throws Exception {
         GeoJsonPoint coordinate = new GeoJsonPoint(126.9841888305794, 37.53697168039137);
         Double distance = 50D;
+
         List<Cafe> cafeList = cafeRepository.findByCoordinateNear(coordinate, distance);
         System.out.println("byCoordinateDistance.getContent().size() = " + cafeList.size());
         cafeList.forEach(cafe -> {
@@ -46,15 +48,4 @@ class CafeRepositoryTest {
         System.out.println("cafeList.size() = " + cafeList.size());
     }
 
-    @Test
-    public void findByCafeNameTest() throws Exception {
-
-        String cafeName = "커피";
-        List<Cafe> cafeList = cafeRepository.findByCafeNameContaining(cafeName);
-
-        cafeList.forEach(cafe -> {
-            System.out.println("cafe.getCafeName() = " + cafe.getCafeName());
-        });
-
-    }
 }
