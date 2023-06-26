@@ -1,5 +1,6 @@
 package com.example.jariBean.entity;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -7,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.geo.Point;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.*;
@@ -34,8 +36,9 @@ public class Cafe {
     @Column(nullable = false, length = 60)
     private String cafeAddress;
 
+    // 수정한 부분 충돌!!
     @Column(nullable = false)
-    private Point cafePoint;
+    private GeoJsonPoint coordinate;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -61,14 +64,14 @@ public class Cafe {
     }
 
     @Builder
-    public Cafe(String id, String cafeName, String cafePhoneNumber, String cafePassword, String cafeAddress, User.UserRole userRole, double latitude, double longitude) {
+    public Cafe(String id, String cafeName, String cafePhoneNumber, String cafePassword, String cafeAddress, User.UserRole userRole, GeoJsonPoint coordinate) {
         this.id = id;
         this.cafeName = cafeName;
         this.cafePhoneNumber = cafePhoneNumber;
         this.cafePassword = cafePassword;
         this.cafeAddress = cafeAddress;
         this.userRole = userRole;
-        this.cafePoint = new Point(latitude, longitude);
+        this.coordinate = coordinate;
     }
 
 }
