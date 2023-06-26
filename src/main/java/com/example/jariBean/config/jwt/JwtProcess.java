@@ -85,8 +85,6 @@ public class JwtProcess {
     // verify JWT (return 되는 LoginUser 객체를 강제로 시큐리티 세션에 직접 주입할 예정)
     public static JwtDto verify(String jwt) {
 
-        List<String> verifiedDto = new ArrayList<>();
-
         DecodedJWT decodedJwt = JWT.require(Algorithm.HMAC512(JwtVO.SECRET)).build().verify(jwt);
 
         // 토큰 만료기간 검증

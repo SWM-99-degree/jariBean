@@ -1,7 +1,7 @@
 package com.example.jariBean.config.auth;
 
 import com.example.jariBean.entity.Cafe;
-import com.example.jariBean.repository.CafeRepository;
+import com.example.jariBean.repository.cafe.CafeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.userdetails.UserDetails;

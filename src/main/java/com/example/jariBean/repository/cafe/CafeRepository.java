@@ -1,10 +1,11 @@
 package com.example.jariBean.repository.cafe;
 
-import com.example.jariBean.entity.cafe.Cafe;
+import com.example.jariBean.entity.Cafe;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-import java.util.List;
+import java.util.Optional;
 
 public interface CafeRepository extends MongoRepository<Cafe, String>, CafeRepositoryTemplate {
-    List<Cafe> findByCafeNameContaining(String cafeName);
+    Optional<Cafe> findByCafePhoneNumber(String cafePhoneNumber);
+    boolean existsByCafePhoneNumber(String cafePhoneNumber);
 }

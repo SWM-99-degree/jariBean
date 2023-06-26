@@ -72,7 +72,7 @@ public class CafeReqDto {
                     .cafePassword(passwordEncoder.encode(cafePassword))
                     .cafeAddress(cafeAddress)
                     .userRole(MANAGER)
-                    .latitude(location.latitude).longitude(location.longitude)
+//                    .latitude(location.latitude).longitude(location.longitude)
                     .build();
         }
     }
