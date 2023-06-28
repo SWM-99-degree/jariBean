@@ -4,7 +4,7 @@ import com.example.jariBean.dto.user.UserReqDto.UserJoinReqDto;
 import com.example.jariBean.dto.user.UserResDto.UserJoinRespDto;
 import com.example.jariBean.entity.User;
 import com.example.jariBean.handler.ex.CustomApiException;
-import com.example.jariBean.repository.UserRepository;
+import com.example.jariBean.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
