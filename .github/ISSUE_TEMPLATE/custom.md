@@ -7,11 +7,11 @@ assignees: ''
 
 ---
 
-# Description
+# ✏️ Description
 Description content
 
 #
-# Develope Feature
+# 🛠 Features
 - 개발 기능 1
 - 개발 기능 2
 
@@ -21,6 +21,6 @@ Description content
 - [ ] check Test Code 
 
 #
-# Additions
+# 📌 Additions
 - 추가 사항 1
 - 추가 사항 2
