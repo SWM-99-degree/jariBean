@@ -1,7 +1,7 @@
 spring:
   data:
     mongodb:
-      uri: mongodb+srv://chlrltjd5263:choi0924@cluster0.kbzsagk.mongodb.net/cafe?retryWrites=true&w=majority
+      uri: ${MONGODB_URI}
 
   mvc:
     pathmatch:
