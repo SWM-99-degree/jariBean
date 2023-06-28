@@ -7,14 +7,20 @@ assignees: ''
 
 ---
 
-# 설명
-> 설명 내용...
-***
-# 개발할 기능
-- [ ] 개발할 기능 1
-- [ ] 개발할 기능 2
+# Description
+Description content
 
-***
-# 추가 사항
+#
+# Develope Feature
+- 개발 기능 1
+- 개발 기능 2
+
+#
+# ❗️Check
+- [ ] merge point `dev`
+- [ ] check Test Code 
+
+#
+# Additions
 - 추가 사항 1
 - 추가 사항 2
