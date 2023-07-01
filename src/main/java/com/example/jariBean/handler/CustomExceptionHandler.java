@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 @Slf4j
 public class CustomExceptionHandler {
-    @ExceptionHandler(CustomDBInsertException.class)
-    public ResponseEntity<?> apiException(CustomDBInsertException e) {
+    @ExceptionHandler(CustomDBException.class)
+    public ResponseEntity<?> apiException(CustomDBException e) {
         log.error(e.getMessage());
         return new ResponseEntity<>(new ResponseDto<>(-1, e.getMessage(), null), HttpStatus.BAD_REQUEST);
     }

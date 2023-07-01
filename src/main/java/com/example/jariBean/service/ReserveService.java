@@ -1,21 +1,16 @@
 package com.example.jariBean.service;
 
+import com.example.jariBean.dto.dbconnect.CafeJoinOperatingTimeDto;
+import com.example.jariBean.dto.dbconnect.ReservedJoinTableDto;
 import com.example.jariBean.dto.reserved.ReservedReqDto;
 import com.example.jariBean.dto.reserved.ReservedResDto;
-import com.example.jariBean.entity.Cafe;
-import com.example.jariBean.entity.CafeOperatingTime;
 import com.example.jariBean.entity.Reserved;
-import com.example.jariBean.handler.ex.CustomDBInsertException;
+import com.example.jariBean.handler.ex.CustomDBException;
 import com.example.jariBean.repository.cafe.CafeRepository;
-import com.example.jariBean.repository.cafeOperatingTime.CafeOperatingTimeRepository;
 import com.example.jariBean.repository.reserved.ReservedRepository;
-import com.example.jariBean.repository.table.TableRepository;
-import com.example.jariBean.repository.tableClass.TableClassRepository;
-import com.example.jariBean.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,10 +21,6 @@ public class ReserveService {
 
     private ReservedRepository reservedRepository;
     private CafeRepository cafeRepository;
-    private TableRepository tableRepository;
-    private UserRepository userRepository;
-    private TableClassRepository tableClassRepository;
-    private CafeOperatingTimeRepository cafeOperatingTimeRepository;
 
     // 손님 앱
 
@@ -39,23 +30,11 @@ public class ReserveService {
         String userId = nearestReservedReqDto.getUserId();
         LocalDateTime userNow = nearestReservedReqDto.getUserNow();
         // 예약정보
-        Reserved reserved = reservedRepository.findReservedByIdAfterTime(userId, userNow);
+        ReservedJoinTableDto reservedJoinTableDto = reservedRepository.findNearestReserved(userId, userNow);
         // 정보가 없다면 null 값으로 반환
-        if (reserved == null) {return null;}
+        if (reservedJoinTableDto == null) {return null;}
         // 예약 정보 넣기
-        ReservedResDto.NearestReservedResDto reservedResDto = new ReservedResDto.NearestReservedResDto();
-        reservedResDto.setReservedStartTime(reserved.getReservedStartTime());
-        Duration duration = Duration.between(userNow, reserved.getReservedStartTime());
-        reservedResDto.setLeftTime(duration.toMinutes());
-        // 카페 이름 넣기
-        Cafe cafe = cafeRepository.findById(reserved.getCafeId()).get();
-        reservedResDto.setCafeName(cafe.getCafeName());
-
-        reservedResDto.setTableOptions(tableClassRepository.findById(tableRepository.findById(reserved.getTableId())
-                        .get().getTableClassId())
-                .get()
-                .getTableOptions());
-
+        ReservedResDto.NearestReservedResDto reservedResDto = new ReservedResDto.NearestReservedResDto(userNow, reservedJoinTableDto);
         return reservedResDto;
     }
 
@@ -70,24 +49,23 @@ public class ReserveService {
      * }
      */
     public ReservedResDto.ReservedTableListResDto findReservedListByCafeId(String cafeId, LocalDateTime time) {
+        // 예약 내역 가져오기 및 카페 내용 가져오기
+        List<ReservedJoinTableDto> reservedJoinTableDtoes = reservedRepository.findReservedByIdBetweenTime(cafeId, time);
+        CafeJoinOperatingTimeDto cafeJoinOperatingTimeDto = cafeRepository.findByIdwithOperatingTime(cafeId);
+        LocalDateTime openTime = cafeJoinOperatingTimeDto.getOpenTime();
+        LocalDateTime endTime = null;
+        String tableId = "";
+
         // 초기화
         List<ReservedResDto.ReservedTableListResDto.TimeTable.ReservingTime> reservingTimes = new ArrayList<>();
         ReservedResDto.ReservedTableListResDto.TimeTable timeTable = new ReservedResDto.ReservedTableListResDto.TimeTable();
         ReservedResDto.ReservedTableListResDto reservedTableListResDto = new ReservedResDto.ReservedTableListResDto();
-        // 예약 내역 가져오기 및 카페 내용 가져오기
-        List<Reserved> cafeReserved = reservedRepository.findReservedByIdBetweenTime(cafeId, time);
-        Cafe cafe = cafeRepository.findById(cafeId).get();
-        CafeOperatingTime cafeOperatingTime = cafeOperatingTimeRepository.findById(cafeId).get();
-        LocalDateTime openTime = cafeOperatingTime.getOpenTime();
-        LocalDateTime endTime = null;
-        String tableId = "";
 
+        // 카페 정보
+        reservedTableListResDto.setCafeImg(cafeJoinOperatingTimeDto.getCafeImg());
+        reservedTableListResDto.setCafeName(cafeJoinOperatingTimeDto.getCafeName());
 
-        //        reservedTableListResDto.setCafeImg(cafe.getCafeAddress());
-        reservedTableListResDto.setCafeName(cafe.getCafeName());
-
-        for (Reserved reserved : cafeReserved) {
-
+        for (ReservedJoinTableDto reserved : reservedJoinTableDtoes) {
             if (!tableId.equals(reserved.getTableId())){
                 timeTable.setReservingTimes(reservingTimes);
                 reservedTableListResDto.setTimeTable(timeTable);
@@ -98,10 +76,7 @@ public class ReserveService {
                 endTime = reserved.getReservedEndTime();
                 ReservedResDto.ReservedTableListResDto.TimeTable.ReservingTime reservingTime = new ReservedResDto.ReservedTableListResDto.TimeTable.ReservingTime(openTime, reserved.getReservedStartTime());
 
-                timeTable.setTableOptions(tableClassRepository.findById(tableRepository.findById(reserved.getTableId())
-                                .get().getTableClassId())
-                        .get()
-                        .getTableOptions());
+                timeTable.setTableOptions(reserved.getTableOptions());
                 timeTable.setTableId(tableId);
                 reservingTimes.add(reservingTime);
             } else {
@@ -111,7 +86,6 @@ public class ReserveService {
                     reservingTimes.add(new ReservedResDto.ReservedTableListResDto.TimeTable.ReservingTime(endTime, reserved.getReservedStartTime()));
                     endTime = reserved.getReservedEndTime();
                 }
-
             }
         }
         timeTable.setReservingTimes(reservingTimes);
@@ -127,16 +101,16 @@ public class ReserveService {
      */
     // 예약 신청
     public void saveReserved(ReservedReqDto.SaveReservedReqDto saveReservedReqDto) {
-        // 검증해야 할 테이블의 예약 상태
+        // 검증해야 할 테이블의 예약되어 있는 것들 중, 당일에 있는 것을 가져옴
         List<Reserved> reserveds = reservedRepository.findReservedByIdAndTableIdBetweenTime(
                 saveReservedReqDto.getCafeId(), saveReservedReqDto.getTableId(), saveReservedReqDto.getReservedStartTime()
         );
 
-        // 검증의 과정
+        // 검증의 과정 Mongo라서 DB 단에서 하기는 어렵다.
         for (Reserved reserve : reserveds) {
             if (saveReservedReqDto.getReservedEndTime().isBefore(reserve.getReservedStartTime()) ||
             saveReservedReqDto.getReservedStartTime().isAfter(reserve.getReservedEndTime())){
-            } else { throw new CustomDBInsertException("데이터가 중복됩니다."); }
+            } else { throw new CustomDBException("데이터가 중복됩니다."); }
         }
 
         Reserved reserved = saveReservedReqDto.toEntity();

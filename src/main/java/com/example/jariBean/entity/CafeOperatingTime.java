@@ -24,6 +24,7 @@ public class CafeOperatingTime {
     @Column(unique = true, nullable = false)
     private String cafeId;
 
+
     // 매장 오픈 시간
     private LocalDateTime openTime;
 

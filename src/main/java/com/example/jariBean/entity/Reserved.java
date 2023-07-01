@@ -48,7 +48,7 @@ public class Reserved {
     @Version //
     private Integer version;
 
-    enum ReservedStatus {
+    public enum ReservedStatus {
         VALID, CANCEL
     }
 

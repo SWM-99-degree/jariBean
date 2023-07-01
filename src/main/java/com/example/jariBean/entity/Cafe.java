@@ -36,6 +36,9 @@ public class Cafe {
     @Column(nullable = false, length = 60)
     private String cafeAddress;
 
+    @Column
+    private String cafeImg;
+
     // 수정한 부분 충돌!!
     @Column(nullable = false)
     private GeoJsonPoint coordinate;
