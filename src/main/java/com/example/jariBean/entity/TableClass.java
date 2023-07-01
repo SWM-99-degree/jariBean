@@ -39,7 +39,7 @@ public class TableClass {
     @Version //
     private Integer version;
 
-    enum TableOption {
+    public enum TableOption {
         PLUG, HEIGHT, RECTANGLE, BACKREST
     }
 }

@@ -7,6 +7,7 @@ import com.example.jariBean.repository.TokenRepository;
 import com.example.jariBean.util.CustomResponseUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
@@ -37,13 +38,15 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     }
 
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) {
 
         try {
             ObjectMapper mapper = new ObjectMapper();
             UserLoginReqDto loginReqDto = mapper.readValue(request.getInputStream(), UserLoginReqDto.class);
             // 강제 로그인
+            System.out.println(loginReqDto);
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginReqDto.getUserPhoneNumber(), loginReqDto.getPassword());
+            System.out.println(authenticationToken);
             // UserDetailsService.LoadByUsername 호출
             // JWT를 쓴다고 하더라도, 컨트롤러에 진입을 하면 시큐리티 권한 체크, 인증 체크의 도움을 받을 수 있게 세션을 만든다.
             // 이 세션의 유효기간은 request ~ response 까지이다.

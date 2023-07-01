@@ -1,5 +1,6 @@
 package com.example.jariBean.entity;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
@@ -49,5 +50,15 @@ public class Reserved {
 
     enum ReservedStatus {
         VALID, CANCEL
+    }
+
+    @Builder
+    public Reserved(String userId, String cafeId, String tableId, LocalDateTime reservedStartTime, LocalDateTime reservedEndTime) {
+        this.userId = userId;
+        this.cafeId = cafeId;
+        this.tableId = tableId;
+        this.reservedEndTime = reservedEndTime;
+        this.reservedStartTime = reservedStartTime;
+        this.reservedStatus = ReservedStatus.VALID;
     }
 }
