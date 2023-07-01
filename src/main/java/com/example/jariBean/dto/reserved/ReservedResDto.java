@@ -8,8 +8,10 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import reactor.util.function.Tuple2;
 
+import java.sql.Time;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -40,7 +42,16 @@ public class ReservedResDto {
         private String cafeName;
         private String cafeImg;
         private LocalDateTime reservedStartTime;
-        private TimeTable timeTable;
+        private List<TimeTable> timeTable;
+
+        @Builder
+        public ReservedTableListResDto() {
+            this.timeTable = new ArrayList<>();
+        }
+
+        public void appendTimetable(TimeTable timeTable){
+            this.timeTable.add(timeTable);
+        }
 
 
 
@@ -50,6 +61,16 @@ public class ReservedResDto {
             private String tableId;
             private List<TableClass.TableOption> tableOptions;
             private List<ReservingTime> reservingTimes;
+
+            @Builder
+            public void TimeTable(){
+                this.reservingTimes = new ArrayList<>();
+            }
+
+            public void appendReservingTime(ReservingTime reservingTime){
+                this.reservingTimes.add(reservingTime);
+            }
+
 
             @Getter
             @Setter

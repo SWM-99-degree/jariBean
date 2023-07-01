@@ -19,8 +19,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ReserveService {
 
-    private ReservedRepository reservedRepository;
-    private CafeRepository cafeRepository;
+
+    private final ReservedRepository reservedRepository;
+    private final CafeRepository cafeRepository;
 
     // 손님 앱
 
@@ -66,9 +67,10 @@ public class ReserveService {
         reservedTableListResDto.setCafeName(cafeJoinOperatingTimeDto.getCafeName());
 
         for (ReservedJoinTableDto reserved : reservedJoinTableDtoes) {
+            // 만약 테이블id가 달라지게 된다면 형성된 테이블의 정보를 넣고, 새로운 테이블의 정보를 구성한다.
             if (!tableId.equals(reserved.getTableId())){
                 timeTable.setReservingTimes(reservingTimes);
-                reservedTableListResDto.setTimeTable(timeTable);
+                reservedTableListResDto.appendTimetable(timeTable);
                 // 초기화
                 reservingTimes = new ArrayList<>();
                 timeTable = new ReservedResDto.ReservedTableListResDto.TimeTable();
@@ -81,7 +83,6 @@ public class ReserveService {
                 reservingTimes.add(reservingTime);
             } else {
                 if (reserved.getReservedStartTime().equals(endTime)) {
-                    continue;
                 } else {
                     reservingTimes.add(new ReservedResDto.ReservedTableListResDto.TimeTable.ReservingTime(endTime, reserved.getReservedStartTime()));
                     endTime = reserved.getReservedEndTime();
@@ -89,7 +90,7 @@ public class ReserveService {
             }
         }
         timeTable.setReservingTimes(reservingTimes);
-        reservedTableListResDto.setTimeTable(timeTable);
+        reservedTableListResDto.appendTimetable(timeTable);
 
         return reservedTableListResDto;
 
@@ -109,7 +110,10 @@ public class ReserveService {
         // 검증의 과정 Mongo라서 DB 단에서 하기는 어렵다.
         for (Reserved reserve : reserveds) {
             if (saveReservedReqDto.getReservedEndTime().isBefore(reserve.getReservedStartTime()) ||
-            saveReservedReqDto.getReservedStartTime().isAfter(reserve.getReservedEndTime())){
+                    saveReservedReqDto.getReservedStartTime().isAfter(reserve.getReservedEndTime()) ||
+                    saveReservedReqDto.getReservedStartTime().isEqual(reserve.getReservedEndTime()) ||
+                    saveReservedReqDto.getReservedEndTime().isEqual(reserve.getReservedStartTime())
+            ){
             } else { throw new CustomDBException("데이터가 중복됩니다."); }
         }
 
