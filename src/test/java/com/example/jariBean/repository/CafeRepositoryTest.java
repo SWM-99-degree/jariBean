@@ -2,6 +2,7 @@ package com.example.jariBean.repository;
 
 
 import com.example.jariBean.dto.reserved.ReservedReqDto;
+import com.example.jariBean.dto.reserved.ReservedResDto;
 import com.example.jariBean.entity.*;
 import com.example.jariBean.repository.cafe.CafeRepository;
 import com.example.jariBean.repository.cafeOperatingTime.CafeOperatingTimeRepository;
@@ -75,6 +76,7 @@ class CafeRepositoryTest {
         tableClass.setTableClassName("카공용1");
         List<TableClass.TableOption> tableOptions = new ArrayList<>();
         tableOptions.add(TableClass.TableOption.PLUG);
+        tableOptions.add(TableClass.TableOption.RECTANGLE);
         tableClass.setTableOptions(tableOptions);
         tableClassRepository.save(tableClass);
 
@@ -116,7 +118,7 @@ class CafeRepositoryTest {
     }
 
     @Test
-    public void test4(){
+    public void test4() {
         User user = userRepository.findByUserPhoneNumber("01031315656").orElseThrow();
         Cafe cafe = cafeRepository.findByCafePhoneNumber("01012341234").orElseThrow();
         CafeOperatingTime cafeOperatingTime = new CafeOperatingTime();
@@ -127,6 +129,53 @@ class CafeRepositoryTest {
         cafeOperatingTime.setOpenTime(dateTime1);
         cafeOperatingTime.setCloseTime(dateTime2);
         cafeOperatingTimeRepository.save(cafeOperatingTime);
+    }
+    @Test
+    public void method2() {
+        User user = userRepository.findByUserPhoneNumber("01031315656").orElseThrow();
+        Cafe cafe = cafeRepository.findByCafePhoneNumber("01012341234").orElseThrow();
+        ReserveService reserveService = new ReserveService(reservedRepository, cafeRepository);
+        ReservedReqDto.SaveReservedReqDto saveReservedReqDto = new ReservedReqDto.SaveReservedReqDto();
+        LocalDateTime dateTime1 = LocalDateTime.of(2023, 7, 1, 8, 0);
+        LocalDateTime dateTime2 = LocalDateTime.of(2023, 7, 1, 9, 0);
+        System.out.println(reserveService.findReservedListByCafeId(cafe.getId(), dateTime1));
+    }
+
+    @Test
+    public void method3() {
+        User user = userRepository.findByUserPhoneNumber("01031315656").orElseThrow();
+        Cafe cafe = cafeRepository.findByCafePhoneNumber("01012341234").orElseThrow();
+        ReserveService reserveService = new ReserveService(reservedRepository, cafeRepository);
+
+        ReservedReqDto.NearestReservedReqDto nearestReservedReqDto = new ReservedReqDto.NearestReservedReqDto();
+        nearestReservedReqDto.setUserId(user.getId());
+        LocalDateTime dateTime1 = LocalDateTime.of(2023, 7, 1, 7, 0);
+        nearestReservedReqDto.setUserNow(dateTime1);
+        ReservedResDto.NearestReservedResDto nearestReservedResDto = reserveService.getNearestReserved(nearestReservedReqDto);
+        System.out.println(nearestReservedResDto.getReservedStartTime());
+        System.out.println(nearestReservedResDto.getCafeName());
+        System.out.println(nearestReservedResDto.getLeftTime());
+        System.out.println(nearestReservedResDto.getTableOptions());
+        System.out.println(nearestReservedResDto.getCafeImg());
+    }
+
+    @Test
+    public void method4() {
+        User user = userRepository.findByUserPhoneNumber("01031315656").orElseThrow();
+        Cafe cafe = cafeRepository.findByCafePhoneNumber("01012341234").orElseThrow();
+        ReserveService reserveService = new ReserveService(reservedRepository, cafeRepository);
+        LocalDateTime dateTime1 = LocalDateTime.of(2023, 7, 1, 7, 0);
+        ReservedResDto.ReservedTableListResDto reservedTableListResDto = new ReservedResDto.ReservedTableListResDto();
+        reservedTableListResDto = reserveService.findReservedListByCafeId(cafe.getId(), dateTime1);
+
+        for (ReservedResDto.ReservedTableListResDto.TimeTable timeTable : reservedTableListResDto.getTimeTables()){
+            for (ReservedResDto.ReservedTableListResDto.TimeTable.ReservingTime reservingTime : timeTable.getReservingTimes()){
+                System.out.println("-----");
+                System.out.println(reservingTime.getStartTime());
+                System.out.println(reservingTime.getEndTime());
+            }
+        }
+        System.out.println(reservedTableListResDto.getTimeTables());
 
     }
 

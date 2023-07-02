@@ -6,9 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import reactor.util.function.Tuple2;
 
-import java.sql.Time;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -24,6 +22,7 @@ public class ReservedResDto {
         private String cafeImg;
         private Long leftTime;
         private LocalDateTime reservedStartTime;
+        // test
         private List<TableClass.TableOption> tableOptions;
 
         @Builder
@@ -42,15 +41,15 @@ public class ReservedResDto {
         private String cafeName;
         private String cafeImg;
         private LocalDateTime reservedStartTime;
-        private List<TimeTable> timeTable;
+        private List<TimeTable> timeTables;
 
         @Builder
         public ReservedTableListResDto() {
-            this.timeTable = new ArrayList<>();
+            this.timeTables = new ArrayList<>();
         }
 
         public void appendTimetable(TimeTable timeTable){
-            this.timeTable.add(timeTable);
+            this.timeTables.add(timeTable);
         }
 
 

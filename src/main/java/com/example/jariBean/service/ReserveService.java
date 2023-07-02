@@ -11,6 +11,7 @@ import com.example.jariBean.repository.reserved.ReservedRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +33,8 @@ public class ReserveService {
         LocalDateTime userNow = nearestReservedReqDto.getUserNow();
         // 예약정보
         ReservedJoinTableDto reservedJoinTableDto = reservedRepository.findNearestReserved(userId, userNow);
+        System.out.println(reservedJoinTableDto);
+        System.out.println(reservedJoinTableDto.getCafeId());
         // 정보가 없다면 null 값으로 반환
         if (reservedJoinTableDto == null) {return null;}
         // 예약 정보 넣기
@@ -53,7 +56,10 @@ public class ReserveService {
         // 예약 내역 가져오기 및 카페 내용 가져오기
         List<ReservedJoinTableDto> reservedJoinTableDtoes = reservedRepository.findReservedByIdBetweenTime(cafeId, time);
         CafeJoinOperatingTimeDto cafeJoinOperatingTimeDto = cafeRepository.findByIdwithOperatingTime(cafeId);
-        LocalDateTime openTime = cafeJoinOperatingTimeDto.getOpenTime();
+        LocalDateTime openTime = cafeJoinOperatingTimeDto.getOpenTime()
+                .withYear(time.getYear()).withMonth(time.getMonthValue()).withDayOfMonth(time.getDayOfMonth());
+        LocalDateTime closeTime = cafeJoinOperatingTimeDto.getCloseTime()
+                .withYear(time.getYear()).withMonth(time.getMonthValue()).withDayOfMonth(time.getDayOfMonth());
         LocalDateTime endTime = null;
         String tableId = "";
 
@@ -65,30 +71,37 @@ public class ReserveService {
         // 카페 정보
         reservedTableListResDto.setCafeImg(cafeJoinOperatingTimeDto.getCafeImg());
         reservedTableListResDto.setCafeName(cafeJoinOperatingTimeDto.getCafeName());
-
+        boolean flag = false;
         for (ReservedJoinTableDto reserved : reservedJoinTableDtoes) {
             // 만약 테이블id가 달라지게 된다면 형성된 테이블의 정보를 넣고, 새로운 테이블의 정보를 구성한다.
             if (!tableId.equals(reserved.getTableId())){
-                timeTable.setReservingTimes(reservingTimes);
-                reservedTableListResDto.appendTimetable(timeTable);
+                if (flag == Boolean.TRUE) {
+                    reservingTimes.add(new ReservedResDto.ReservedTableListResDto.TimeTable.ReservingTime(endTime, closeTime));
+                    timeTable.setReservingTimes(reservingTimes);
+                    reservedTableListResDto.appendTimetable(timeTable);
+                }
+                flag = true;
+
                 // 초기화
                 reservingTimes = new ArrayList<>();
                 timeTable = new ReservedResDto.ReservedTableListResDto.TimeTable();
                 tableId = reserved.getTableId();
                 endTime = reserved.getReservedEndTime();
                 ReservedResDto.ReservedTableListResDto.TimeTable.ReservingTime reservingTime = new ReservedResDto.ReservedTableListResDto.TimeTable.ReservingTime(openTime, reserved.getReservedStartTime());
-
+                // 테이블의 대한 정보 입력
                 timeTable.setTableOptions(reserved.getTableOptions());
                 timeTable.setTableId(tableId);
                 reservingTimes.add(reservingTime);
             } else {
                 if (reserved.getReservedStartTime().equals(endTime)) {
+                    endTime = reserved.getReservedEndTime();
                 } else {
                     reservingTimes.add(new ReservedResDto.ReservedTableListResDto.TimeTable.ReservingTime(endTime, reserved.getReservedStartTime()));
                     endTime = reserved.getReservedEndTime();
                 }
             }
         }
+        reservingTimes.add(new ReservedResDto.ReservedTableListResDto.TimeTable.ReservingTime(endTime, closeTime));
         timeTable.setReservingTimes(reservingTimes);
         reservedTableListResDto.appendTimetable(timeTable);
 
@@ -101,6 +114,7 @@ public class ReserveService {
      * @param saveReservedReqDto
      */
     // 예약 신청
+    @Transactional
     public void saveReserved(ReservedReqDto.SaveReservedReqDto saveReservedReqDto) {
         // 검증해야 할 테이블의 예약되어 있는 것들 중, 당일에 있는 것을 가져옴
         List<Reserved> reserveds = reservedRepository.findReservedByIdAndTableIdBetweenTime(
