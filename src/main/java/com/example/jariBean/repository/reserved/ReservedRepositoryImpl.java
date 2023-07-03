@@ -1,12 +1,12 @@
 package com.example.jariBean.repository.reserved;
 
+import com.example.jariBean.dto.dbconnect.ReservedJoinTableDto;
 import com.example.jariBean.entity.Reserved;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
-import org.springframework.data.mongodb.core.aggregation.SortOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
@@ -14,35 +14,32 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
-import static org.springframework.data.mongodb.core.aggregation.Aggregation.newAggregation;
-import static org.springframework.data.mongodb.core.aggregation.Aggregation.sort;
-
 public class ReservedRepositoryImpl implements ReservedRepositoryTemplate{
     @Autowired private MongoTemplate mongoTemplate;
 
     @Override
-    public Reserved getNearestReserved(String userId, LocalDateTime time) {
-        Criteria criteria = Criteria.where("userId").is(userId).and("reservedStartTime").gte(time);
+    public Reserved findNearestReserved(String userId, LocalDateTime time) {
+        Criteria criteria = Criteria.where("userId").is(userId).and("reservedStatus").is("VALID").and("reservedEndTime").gte(time);
 
-        Query query = new Query(criteria)
-                .with(Sort.by(Sort.Direction.ASC, "reservedStartTime"))
-                .limit(1);
-
-        SortOperation sort = sort(Sort.Direction.ASC, "reservedStartTime");
+        AggregationOperation match = Aggregation.match(criteria);
+        AggregationOperation lookupTableClass = Aggregation.lookup("tableClass", "id", "tableClassId", "tableClass");
+        AggregationOperation lookupCafe = Aggregation.lookup("cafe", "id", "cafeId", "cafe");
+        AggregationOperation project = Aggregation.project("id", "userId", "cafeId", "tableId", "reservedStartTime", "reservedEndTime", "reservedStatus")
+                .andExpression("cafe").arrayElementAt(0).as("cafe");
+        AggregationOperation sort = Aggregation.sort(Sort.Direction.ASC, "reservedStartTime");
         AggregationOperation limit = Aggregation.limit(1);
-        Aggregation aggregation = newAggregation(
-                Aggregation.match(criteria),
-                Aggregation.lookup("tableClass", "tableId", "tableId", "tableClass"),
-                Aggregation.lookup("cafe", "cafeId", "cafeId", "cafe"),
-                Aggregation.unwind("tableClass", true),
-                Aggregation.unwind("cafe", true),
-                Aggregation.project()
-                        .andExpression("tableClass.tableClassOptions").as("tableClassOptions")
-                        .andExpression("cafe.cafeName").as("cafeName"));
 
-//        Reserved reserved = mongoTemplate.aggregate(aggregation, sort, limit, Reserved.class);
+        Aggregation aggregation = Aggregation.newAggregation(
+                match,
+                lookupTableClass,
+                lookupCafe,
+                project,
+                sort,
+                limit
+        );
 
-        return null;
+        Reserved reserved = mongoTemplate.aggregate(aggregation, Reserved.class,Reserved.class).getUniqueMappedResult();
+        return reserved;
     }
 
     @Override
@@ -64,22 +61,21 @@ public class ReservedRepositoryImpl implements ReservedRepositoryTemplate{
         LocalDateTime startDateTime = LocalDateTime.of(time.toLocalDate(), LocalTime.MIN);
         LocalDateTime endDateTime = LocalDateTime.of(time.toLocalDate(), LocalTime.MAX);
 
-        Criteria criteria = Criteria.where("reservedStartTime").gte(startDateTime).lte(endDateTime);
-        Query query = new Query(criteria)
-                .with(Sort.by(Sort.Direction.ASC, "tableId"))
-                .with(Sort.by(Sort.Direction.ASC, "reservedStartTime"));
+        Criteria criteria = Criteria.where("reservedStartTime").gte(startDateTime).lte(endDateTime).and("reservedStatus").is("VALID");
+        AggregationOperation sort1 = Aggregation.sort(Sort.Direction.ASC, "tableId");
+        AggregationOperation sort2 = Aggregation.sort(Sort.Direction.ASC, "reservedStartTime");
+        Aggregation aggregation = Aggregation.newAggregation(
+                Aggregation.match(criteria),
+                Aggregation.lookup("tableClass", "id", "tableClassId", "tableClass"),
+                Aggregation.lookup("cafe", "id", "cafeId", "cafe"),
+                Aggregation.project("id", "userId", "cafeId", "tableId", "reservedStartTime", "reservedEndTime")
+                        .andExpression("tableClass").arrayElementAt(0).as("tableClass"),
+                sort1,
+                sort2
+        );
 
-
-        return mongoTemplate.find(query, Reserved.class);
+        return mongoTemplate.aggregate(aggregation, Reserved.class, Reserved.class).getMappedResults();
     }
 
-    @Override
-    public Reserved findReservedByIdAfterTime(String userId, LocalDateTime time) {
-        Criteria criteria = Criteria.where("userId").is(userId)
-                .and("reservedStartTime").gte(time);
 
-        Query query = Query.query(criteria).limit(1).with(Sort.by(Sort.Direction.ASC, "reservedStartTime"));
-
-        return mongoTemplate.findOne(query, Reserved.class);
-    }
 }

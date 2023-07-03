@@ -2,6 +2,8 @@ package com.example.jariBean.entity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.Column;
@@ -14,6 +16,7 @@ import java.util.List;
 
 @Document
 @Getter
+@Setter
 @NoArgsConstructor
 public class CafeOperatingTime {
 
@@ -24,6 +27,7 @@ public class CafeOperatingTime {
     @Column(unique = true, nullable = false)
     private String cafeId;
 
+
     // 매장 오픈 시간
     private LocalDateTime openTime;
 
@@ -32,6 +36,10 @@ public class CafeOperatingTime {
 
     // 쉬는날
     private List<DAY> restDays = new ArrayList<>();
+
+    //for aggregate
+    @DBRef
+    private Cafe cafe;
 
     enum DAY {
         MON, TUE, WED, THU, FRI, SAT, SUN
