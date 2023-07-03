@@ -4,8 +4,10 @@ import com.example.jariBean.dto.dbconnect.CafeJoinOperatingTimeDto;
 import com.example.jariBean.dto.dbconnect.ReservedJoinTableDto;
 import com.example.jariBean.dto.reserved.ReservedReqDto;
 import com.example.jariBean.dto.reserved.ReservedResDto;
+import com.example.jariBean.entity.Cafe;
 import com.example.jariBean.entity.Reserved;
 import com.example.jariBean.handler.ex.CustomDBException;
+import com.example.jariBean.handler.ex.CustomNoContentException;
 import com.example.jariBean.repository.cafe.CafeRepository;
 import com.example.jariBean.repository.reserved.ReservedRepository;
 import lombok.RequiredArgsConstructor;
@@ -32,13 +34,11 @@ public class ReserveService {
         String userId = nearestReservedReqDto.getUserId();
         LocalDateTime userNow = nearestReservedReqDto.getUserNow();
         // 예약정보
-        ReservedJoinTableDto reservedJoinTableDto = reservedRepository.findNearestReserved(userId, userNow);
-        System.out.println(reservedJoinTableDto);
-        System.out.println(reservedJoinTableDto.getCafeId());
-        // 정보가 없다면 null 값으로 반환
-        if (reservedJoinTableDto == null) {return null;}
+        Reserved reserved = reservedRepository.findNearestReserved(userId, userNow);
+        // 정보가 없다면 null 값으로 반환하며, 예외처리로 204를 보냄
+        if (reserved == null) { throw new CustomNoContentException("예약이 존재하지 않습니다.");}
         // 예약 정보 넣기
-        ReservedResDto.NearestReservedResDto reservedResDto = new ReservedResDto.NearestReservedResDto(userNow, reservedJoinTableDto);
+        ReservedResDto.NearestReservedResDto reservedResDto = new ReservedResDto.NearestReservedResDto(userNow, reserved);
         return reservedResDto;
     }
 
@@ -54,11 +54,11 @@ public class ReserveService {
      */
     public ReservedResDto.ReservedTableListResDto findReservedListByCafeId(String cafeId, LocalDateTime time) {
         // 예약 내역 가져오기 및 카페 내용 가져오기
-        List<ReservedJoinTableDto> reservedJoinTableDtoes = reservedRepository.findReservedByIdBetweenTime(cafeId, time);
-        CafeJoinOperatingTimeDto cafeJoinOperatingTimeDto = cafeRepository.findByIdwithOperatingTime(cafeId);
-        LocalDateTime openTime = cafeJoinOperatingTimeDto.getOpenTime()
+        List<Reserved> reservedList = reservedRepository.findReservedByIdBetweenTime(cafeId, time);
+        Cafe cafe = cafeRepository.findByIdwithOperatingTime(cafeId);
+        LocalDateTime openTime = cafe.getCafeOperatingTimeList().get(0).getOpenTime()
                 .withYear(time.getYear()).withMonth(time.getMonthValue()).withDayOfMonth(time.getDayOfMonth());
-        LocalDateTime closeTime = cafeJoinOperatingTimeDto.getCloseTime()
+        LocalDateTime closeTime = cafe.getCafeOperatingTimeList().get(0).getCloseTime()
                 .withYear(time.getYear()).withMonth(time.getMonthValue()).withDayOfMonth(time.getDayOfMonth());
         LocalDateTime endTime = null;
         String tableId = "";
@@ -69,10 +69,10 @@ public class ReserveService {
         ReservedResDto.ReservedTableListResDto reservedTableListResDto = new ReservedResDto.ReservedTableListResDto();
 
         // 카페 정보
-        reservedTableListResDto.setCafeImg(cafeJoinOperatingTimeDto.getCafeImg());
-        reservedTableListResDto.setCafeName(cafeJoinOperatingTimeDto.getCafeName());
+        reservedTableListResDto.setCafeImg(cafe.getCafeImg());
+        reservedTableListResDto.setCafeName(cafe.getCafeName());
         boolean flag = false;
-        for (ReservedJoinTableDto reserved : reservedJoinTableDtoes) {
+        for (Reserved reserved : reservedList) {
             // 만약 테이블id가 달라지게 된다면 형성된 테이블의 정보를 넣고, 새로운 테이블의 정보를 구성한다.
             if (!tableId.equals(reserved.getTableId())){
                 if (flag == Boolean.TRUE) {
@@ -89,7 +89,7 @@ public class ReserveService {
                 endTime = reserved.getReservedEndTime();
                 ReservedResDto.ReservedTableListResDto.TimeTable.ReservingTime reservingTime = new ReservedResDto.ReservedTableListResDto.TimeTable.ReservingTime(openTime, reserved.getReservedStartTime());
                 // 테이블의 대한 정보 입력
-                timeTable.setTableOptions(reserved.getTableOptions());
+                timeTable.setTableOptions(reserved.getTableClass().getTableOptions());
                 timeTable.setTableId(tableId);
                 reservingTimes.add(reservingTime);
             } else {

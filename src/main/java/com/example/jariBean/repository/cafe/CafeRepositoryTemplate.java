@@ -7,8 +7,10 @@ import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import java.util.List;
 
 public interface CafeRepositoryTemplate {
+
+
     List<Cafe> findByCoordinateNear(GeoJsonPoint point, Double distance);
 
 
-    CafeJoinOperatingTimeDto findByIdwithOperatingTime(String cafeId);
+    Cafe findByIdwithOperatingTime(String cafeId);
 }

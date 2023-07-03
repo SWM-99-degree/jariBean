@@ -7,11 +7,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface ReservedRepositoryTemplate {
-    ReservedJoinTableDto findNearestReserved(String userId, LocalDateTime time);
+    Reserved findNearestReserved(String userId, LocalDateTime time);
 
-    List<ReservedJoinTableDto> findReservedByIdBetweenTime(String cafeId, LocalDateTime time);
+    List<Reserved> findReservedByIdBetweenTime(String cafeId, LocalDateTime time);
 
     List<Reserved> findReservedByIdAndTableIdBetweenTime(String cafeId, String tableId,LocalDateTime time);
-
 
 }

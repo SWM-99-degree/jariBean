@@ -18,33 +18,28 @@ public class ReservedRepositoryImpl implements ReservedRepositoryTemplate{
     @Autowired private MongoTemplate mongoTemplate;
 
     @Override
-    public ReservedJoinTableDto findNearestReserved(String userId, LocalDateTime time) {
-        Criteria criteria = Criteria.where("userId").is(userId).and("reservedStatus").is("VALID").and("reservedStartTime").gte(time);
+    public Reserved findNearestReserved(String userId, LocalDateTime time) {
+        Criteria criteria = Criteria.where("userId").is(userId).and("reservedStatus").is("VALID").and("reservedEndTime").gte(time);
 
         AggregationOperation match = Aggregation.match(criteria);
-        AggregationOperation lookupTable = Aggregation.lookup("table", "tableId", "tableId", "table");
-        AggregationOperation lookupCafe = Aggregation.lookup("cafe", "cafeId", "cafeId", "cafe");
-        AggregationOperation lookupTableClass = Aggregation.lookup("tableClass", "tableClassId", "table.tableClassId", "tableClass");
+        AggregationOperation lookupTableClass = Aggregation.lookup("tableClass", "id", "tableClassId", "tableClass");
+        AggregationOperation lookupCafe = Aggregation.lookup("cafe", "id", "cafeId", "cafe");
         AggregationOperation project = Aggregation.project("id", "userId", "cafeId", "tableId", "reservedStartTime", "reservedEndTime", "reservedStatus")
-                .andExpression("cafe.cafeName").as("cafeName")
-                .andExpression("cafe.cafeImg").as("cafeImg")
-                .andExpression("tableClass.tableOptions").arrayElementAt(0).as("tableOptions");
+                .andExpression("cafe").arrayElementAt(0).as("cafe");
         AggregationOperation sort = Aggregation.sort(Sort.Direction.ASC, "reservedStartTime");
         AggregationOperation limit = Aggregation.limit(1);
 
         Aggregation aggregation = Aggregation.newAggregation(
                 match,
-                lookupTable,
-                lookupCafe,
                 lookupTableClass,
+                lookupCafe,
                 project,
                 sort,
                 limit
         );
 
-
-        ReservedJoinTableDto reservedJoinTableDto = mongoTemplate.aggregate(aggregation, Reserved.class,ReservedJoinTableDto.class).getUniqueMappedResult();
-        return reservedJoinTableDto;
+        Reserved reserved = mongoTemplate.aggregate(aggregation, Reserved.class,Reserved.class).getUniqueMappedResult();
+        return reserved;
     }
 
     @Override
@@ -61,25 +56,25 @@ public class ReservedRepositoryImpl implements ReservedRepositoryTemplate{
     }
 
     @Override
-    public List<ReservedJoinTableDto> findReservedByIdBetweenTime(String cafeId, LocalDateTime time) {
+    public List<Reserved> findReservedByIdBetweenTime(String cafeId, LocalDateTime time) {
 
         LocalDateTime startDateTime = LocalDateTime.of(time.toLocalDate(), LocalTime.MIN);
         LocalDateTime endDateTime = LocalDateTime.of(time.toLocalDate(), LocalTime.MAX);
 
         Criteria criteria = Criteria.where("reservedStartTime").gte(startDateTime).lte(endDateTime).and("reservedStatus").is("VALID");
-        AggregationOperation sort = Aggregation.sort(Sort.Direction.ASC, "reservedStartTime");
+        AggregationOperation sort1 = Aggregation.sort(Sort.Direction.ASC, "tableId");
+        AggregationOperation sort2 = Aggregation.sort(Sort.Direction.ASC, "reservedStartTime");
         Aggregation aggregation = Aggregation.newAggregation(
                 Aggregation.match(criteria),
-                Aggregation.lookup("tableClass", "_id", "tableId", "tableClass"),
-                Aggregation.lookup("cafe", "_id", "cafeId", "cafe"),
-                Aggregation.unwind("tableClass", true),
-                Aggregation.unwind("cafe", true),
+                Aggregation.lookup("tableClass", "id", "tableClassId", "tableClass"),
+                Aggregation.lookup("cafe", "id", "cafeId", "cafe"),
                 Aggregation.project("id", "userId", "cafeId", "tableId", "reservedStartTime", "reservedEndTime")
-                        .andExpression("tableClass.tableClassOptions").arrayElementAt(0).as("tableClassOptions"),
-                sort
+                        .andExpression("tableClass").arrayElementAt(0).as("tableClass"),
+                sort1,
+                sort2
         );
 
-        return mongoTemplate.aggregate(aggregation, Reserved.class, ReservedJoinTableDto.class).getMappedResults();
+        return mongoTemplate.aggregate(aggregation, Reserved.class, Reserved.class).getMappedResults();
     }
 
 

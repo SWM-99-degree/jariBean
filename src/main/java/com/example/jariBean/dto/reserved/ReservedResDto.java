@@ -1,6 +1,7 @@
 package com.example.jariBean.dto.reserved;
 
 import com.example.jariBean.dto.dbconnect.ReservedJoinTableDto;
+import com.example.jariBean.entity.Reserved;
 import com.example.jariBean.entity.TableClass;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,20 +19,23 @@ public class ReservedResDto {
     @Getter
     @Setter
     public static class NearestReservedResDto {
+        private String cafeId;
         private String cafeName;
         private String cafeImg;
-        private Long leftTime;
+        private String cafeAddress;
         private LocalDateTime reservedStartTime;
+        private LocalDateTime reservedEndTime;
         // test
         private List<TableClass.TableOption> tableOptions;
 
         @Builder
-        public NearestReservedResDto(LocalDateTime time, ReservedJoinTableDto reservedJoinTableDto){
-            this.cafeImg = reservedJoinTableDto.getCafeImg();
-            this.reservedStartTime = reservedJoinTableDto.getReservedStartTime();
-            this.leftTime = Duration.between(time, reservedJoinTableDto.getReservedStartTime()).toMinutes();
-            this.cafeName = reservedJoinTableDto.getCafeName();
-            this.tableOptions = reservedJoinTableDto.getTableOptions();
+        public NearestReservedResDto(LocalDateTime time, Reserved reserved){
+            this.cafeId = reserved.getCafeId();
+            this.cafeImg = reserved.getCafe().getCafeImg();
+            this.cafeAddress = reserved.getCafe().getCafeAddress();
+            this.reservedStartTime = reserved.getReservedStartTime();
+            this.reservedEndTime = reserved.getReservedEndTime();
+            this.cafeName = reserved.getCafe().getCafeName();
         }
     }
 

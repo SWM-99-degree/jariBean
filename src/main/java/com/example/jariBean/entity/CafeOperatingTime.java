@@ -3,6 +3,7 @@ package com.example.jariBean.entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.Column;
@@ -35,6 +36,10 @@ public class CafeOperatingTime {
 
     // 쉬는날
     private List<DAY> restDays = new ArrayList<>();
+
+    //for aggregate
+    @DBRef
+    private Cafe cafe;
 
     enum DAY {
         MON, TUE, WED, THU, FRI, SAT, SUN

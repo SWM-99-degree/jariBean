@@ -1,27 +1,25 @@
 package com.example.jariBean.entity;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.geo.Point;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Document
 @Getter
+@Setter
 @NoArgsConstructor
 public class Cafe {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "cafeId")
     private String id;
 
     @Column(unique = true, nullable = false, length = 20)
@@ -42,6 +40,22 @@ public class Cafe {
     // 수정한 부분 충돌!!
     @Column(nullable = false)
     private GeoJsonPoint coordinate;
+
+    //for aggregate
+    @DBRef
+    private List<CafeOperatingTime> cafeOperatingTimeList;
+
+    @DBRef
+    private List<Reserved> reservedList;
+
+    @DBRef
+    private List<Matching> matchingList;
+
+    @DBRef
+    private List<Table> tableList;
+
+    @DBRef
+    private List<TableClass> tableClassList;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

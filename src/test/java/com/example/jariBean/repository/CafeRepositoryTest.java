@@ -66,36 +66,19 @@ class CafeRepositoryTest {
         // delete
     }
 
-    @Test
-    public void testing() {
-        User user = userRepository.findByUserPhoneNumber("01031315656").orElseThrow();
-        Cafe cafe = cafeRepository.findByCafePhoneNumber("01012341234").orElseThrow();
 
-        TableClass tableClass = new TableClass();
-        tableClass.setCafeId(cafe.getId());
-        tableClass.setTableClassName("카공용1");
-        List<TableClass.TableOption> tableOptions = new ArrayList<>();
-        tableOptions.add(TableClass.TableOption.PLUG);
-        tableOptions.add(TableClass.TableOption.RECTANGLE);
-        tableClass.setTableOptions(tableOptions);
-        tableClassRepository.save(tableClass);
-
-    }
 
     @Test
     public void test2() {
         User user = userRepository.findByUserPhoneNumber("01031315656").orElseThrow();
         Cafe cafe = cafeRepository.findByCafePhoneNumber("01012341234").orElseThrow();
-        TableClass tableClass = tableClassRepository.findById("64a02023b03c041660dd6229").orElseThrow();
+        LocalDateTime dateTime3 = LocalDateTime.of(2023, 7, 1, 18-9, 0);
+        LocalDateTime dateTime4 = LocalDateTime.of(2023, 7, 1, 19-9, 0);
+        Table table = tableRepository.findById("64a27eaf7244d72ba3c28d1b").orElseThrow();
+        Reserved reserved = new Reserved(user.getId(), cafe.getId(), table.getId(),dateTime3, dateTime4);
 
-        Table table = new Table();
-        table.setCafeId(cafe.getId());
-        table.setTableDescription("this table is good");
-        table.setTableNumber("1");
-        table.setTableClassId(tableClass.getId());
-        table.setTableSeating(3);
+        reservedRepository.save(reserved);
 
-        tableRepository.save(table);
 
     }
 
@@ -114,6 +97,15 @@ class CafeRepositoryTest {
         Reserved reserved2 = new Reserved(user.getId(),cafe.getId(),table.getId(), dateTime3, dateTime4);
         reservedRepository.save(reserved1);
         reservedRepository.save(reserved2);
+
+
+        List<Reserved> reserveds =new ArrayList<>();
+        reserveds.add(reserved1);
+        reserveds.add(reserved2);
+
+        cafe.setReservedList(reserveds);
+        cafeRepository.save(cafe);
+
 
     }
 
@@ -138,25 +130,22 @@ class CafeRepositoryTest {
         ReservedReqDto.SaveReservedReqDto saveReservedReqDto = new ReservedReqDto.SaveReservedReqDto();
         LocalDateTime dateTime1 = LocalDateTime.of(2023, 7, 1, 8, 0);
         LocalDateTime dateTime2 = LocalDateTime.of(2023, 7, 1, 9, 0);
-        System.out.println(reserveService.findReservedListByCafeId(cafe.getId(), dateTime1));
+       // System.out.println(reserveService.findReservedListByCafeId(cafe.getId(), dateTime1));
     }
 
     @Test
     public void method3() {
         User user = userRepository.findByUserPhoneNumber("01031315656").orElseThrow();
-        Cafe cafe = cafeRepository.findByCafePhoneNumber("01012341234").orElseThrow();
+        Cafe cafe = cafeRepository.findByIdwithOperatingTime("64884c1d65989d25539387b5");
+        System.out.println(cafe.getCafeOperatingTimeList().get(0).getOpenTime());
         ReserveService reserveService = new ReserveService(reservedRepository, cafeRepository);
 
         ReservedReqDto.NearestReservedReqDto nearestReservedReqDto = new ReservedReqDto.NearestReservedReqDto();
-        nearestReservedReqDto.setUserId(user.getId());
+        nearestReservedReqDto.setUserId("64884c1d65989d25539387b5");
         LocalDateTime dateTime1 = LocalDateTime.of(2023, 7, 1, 7, 0);
         nearestReservedReqDto.setUserNow(dateTime1);
         ReservedResDto.NearestReservedResDto nearestReservedResDto = reserveService.getNearestReserved(nearestReservedReqDto);
-        System.out.println(nearestReservedResDto.getReservedStartTime());
-        System.out.println(nearestReservedResDto.getCafeName());
-        System.out.println(nearestReservedResDto.getLeftTime());
-        System.out.println(nearestReservedResDto.getTableOptions());
-        System.out.println(nearestReservedResDto.getCafeImg());
+        System.out.println(nearestReservedResDto);
     }
 
     @Test
@@ -169,6 +158,7 @@ class CafeRepositoryTest {
         reservedTableListResDto = reserveService.findReservedListByCafeId(cafe.getId(), dateTime1);
 
         for (ReservedResDto.ReservedTableListResDto.TimeTable timeTable : reservedTableListResDto.getTimeTables()){
+            System.out.println("newTable");
             for (ReservedResDto.ReservedTableListResDto.TimeTable.ReservingTime reservingTime : timeTable.getReservingTimes()){
                 System.out.println("-----");
                 System.out.println(reservingTime.getStartTime());

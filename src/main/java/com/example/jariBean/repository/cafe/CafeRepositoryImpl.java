@@ -20,18 +20,17 @@ public class CafeRepositoryImpl implements CafeRepositoryTemplate{
     @Autowired private MongoTemplate mongoTemplate;
 
     @Override
-    public CafeJoinOperatingTimeDto findByIdwithOperatingTime(String cafeId) {
-        Criteria criteria = Criteria.where("cafeId").is(cafeId);
+    public Cafe findByIdwithOperatingTime(String cafeId) {
+        Criteria criteria = Criteria.where("id").is(cafeId);
         Aggregation aggregation = Aggregation.newAggregation(
                 Aggregation.match(criteria),
-                Aggregation.lookup("cafeOperatingTime", "cafeId", "cafeId", "cafeOperatingTime"),
+                Aggregation.lookup("cafeOperatingTime", "cafeId", "id", "cafeOperatingTime"),
                 Aggregation.project("cafeId", "cafeName", "cafeImg")
-                        .and("cafeOperatingTime.openTime").arrayElementAt(0).as("openTime")
-                        .and("cafeOperatingTime.closeTime").arrayElementAt(0).as("closeTime")
+                        .andExpression("cafeOperatingTime").as("cafeOperatingTimeList")
         );
 
-        CafeJoinOperatingTimeDto cafeJoinOperatingTimeDto = mongoTemplate.aggregate(aggregation, Cafe.class, CafeJoinOperatingTimeDto.class).getUniqueMappedResult();
-        return cafeJoinOperatingTimeDto;
+        Cafe cafe = mongoTemplate.aggregate(aggregation, Cafe.class, Cafe.class).getUniqueMappedResult();
+        return cafe;
     }
 
     @Override
