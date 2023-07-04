@@ -35,6 +35,7 @@ public class ReserveService {
         LocalDateTime userNow = nearestReservedReqDto.getUserNow();
         // 예약정보
         Reserved reserved = reservedRepository.findNearestReserved(userId, userNow);
+        System.out.println(reserved.getCafe());
         // 정보가 없다면 null 값으로 반환하며, 예외처리로 204를 보냄
         if (reserved == null) { throw new CustomNoContentException("예약이 존재하지 않습니다.");}
         // 예약 정보 넣기

@@ -142,7 +142,7 @@ class CafeRepositoryTest {
         ReserveService reserveService = new ReserveService(reservedRepository, cafeRepository);
 
         ReservedReqDto.NearestReservedReqDto nearestReservedReqDto = new ReservedReqDto.NearestReservedReqDto();
-        nearestReservedReqDto.setUserId("64884c1d65989d25539387b5");
+        nearestReservedReqDto.setUserId("64884d6065989d25539387b6");
         LocalDateTime dateTime1 = LocalDateTime.of(2023, 7, 1, 7, 0);
         nearestReservedReqDto.setUserNow(dateTime1);
         ReservedResDto.NearestReservedResDto nearestReservedResDto = reserveService.getNearestReserved(nearestReservedReqDto);
