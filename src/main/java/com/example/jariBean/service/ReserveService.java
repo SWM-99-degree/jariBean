@@ -46,21 +46,21 @@ public class ReserveService {
     /**
      * 최기성
      * [검색결과-테이블] 에서 예약 가능한 테이블의 예약내역을 가져오는 로직
-     * @param cafeId
+     * @param reservedTableListReqDto
      * @return {
      *  "cafeName" : "카페 이름",
      *  "cafeImg" : "이미지 url",
      *  "table" : [(table 번호, table class, table img,[사용시간])]
      * }
      */
-    public ReservedResDto.ReservedTableListResDto findReservedListByCafeId(String cafeId, LocalDateTime time) {
+    public ReservedResDto.ReservedTableListResDto findReservedListByCafeId(ReservedReqDto.ReservedTableListReqDto reservedTableListReqDto) {
         // 예약 내역 가져오기 및 카페 내용 가져오기
-        List<Reserved> reservedList = reservedRepository.findReservedByIdBetweenTime(cafeId, time);
-        Cafe cafe = cafeRepository.findByIdwithOperatingTime(cafeId);
+        List<Reserved> reservedList = reservedRepository.findReservedByIdBetweenTime(reservedTableListReqDto.getUserId(), reservedTableListReqDto.getUserNow());
+        Cafe cafe = cafeRepository.findByIdwithOperatingTime(reservedTableListReqDto.getUserId());
         LocalDateTime openTime = cafe.getCafeOperatingTimeList().get(0).getOpenTime()
-                .withYear(time.getYear()).withMonth(time.getMonthValue()).withDayOfMonth(time.getDayOfMonth());
+                .withYear(reservedTableListReqDto.getUserNow().getYear()).withMonth(reservedTableListReqDto.getUserNow().getMonthValue()).withDayOfMonth(reservedTableListReqDto.getUserNow().getDayOfMonth());
         LocalDateTime closeTime = cafe.getCafeOperatingTimeList().get(0).getCloseTime()
-                .withYear(time.getYear()).withMonth(time.getMonthValue()).withDayOfMonth(time.getDayOfMonth());
+                .withYear(reservedTableListReqDto.getUserNow().getYear()).withMonth(reservedTableListReqDto.getUserNow().getMonthValue()).withDayOfMonth(reservedTableListReqDto.getUserNow().getDayOfMonth());
         LocalDateTime endTime = null;
         String tableId = "";
 

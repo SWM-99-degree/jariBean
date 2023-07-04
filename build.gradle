@@ -46,6 +46,9 @@ dependencies {
 
 	// dotenv
 	implementation 'me.paulschwarz:spring-dotenv:3.0.0'
+
+	// firebase
+	implementation 'com.google.firebase:firebase-admin:9.2.0'
 }
 
 tasks.named('test') {
