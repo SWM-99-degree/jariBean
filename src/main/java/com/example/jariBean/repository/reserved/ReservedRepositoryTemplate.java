@@ -9,7 +9,7 @@ import java.util.List;
 public interface ReservedRepositoryTemplate {
     Reserved findNearestReserved(String userId, LocalDateTime time);
 
-    List<Reserved> findReservedByIdBetweenTime(String cafeId, LocalDateTime time);
+    List<Reserved> findReservedByIdBetweenTime(String cafeId, LocalDateTime startTime, LocalDateTime endTime);
 
     List<Reserved> findReservedByIdAndTableIdBetweenTime(String cafeId, String tableId,LocalDateTime time);
 

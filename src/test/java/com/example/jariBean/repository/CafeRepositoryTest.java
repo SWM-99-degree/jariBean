@@ -155,8 +155,14 @@ class CafeRepositoryTest {
         Cafe cafe = cafeRepository.findByCafePhoneNumber("01012341234").orElseThrow();
         ReserveService reserveService = new ReserveService(reservedRepository, cafeRepository);
         LocalDateTime dateTime1 = LocalDateTime.of(2023, 7, 1, 7, 0);
+        LocalDateTime dateTime2 = LocalDateTime.of(2023, 7, 1, 9, 0);
         ReservedResDto.ReservedTableListResDto reservedTableListResDto = new ReservedResDto.ReservedTableListResDto();
-        reservedTableListResDto = reserveService.findReservedListByCafeId(cafe.getId(), dateTime1);
+        ReservedReqDto.ReservedTableListReqDto reservedTableListReqDto =new ReservedReqDto.ReservedTableListReqDto();
+        reservedTableListReqDto.setCafeId(cafe.getId());
+        reservedTableListReqDto.setStartTime(dateTime1);
+        reservedTableListReqDto.setEndTime(dateTime2);
+
+        reservedTableListResDto = reserveService.findReservedListByCafeId(reservedTableListReqDto);
 
         for (ReservedResDto.ReservedTableListResDto.TimeTable timeTable : reservedTableListResDto.getTimeTables()){
             System.out.println("newTable");

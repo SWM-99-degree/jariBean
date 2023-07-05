@@ -38,7 +38,12 @@ public class ReservedReqDto {
         private String userId;
 
         @NotEmpty(message = "유저의 시간은 필수입니다.")
-        private String userNow;
+        private LocalDateTime startTime;
+
+        @NotEmpty(message = "유저의 시간은 필수입니다.")
+        private LocalDateTime endTime;
+
+
 
     }
 
