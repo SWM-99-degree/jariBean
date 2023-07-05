@@ -73,13 +73,15 @@ class CafeRepositoryTest {
     public void test2() {
         User user = userRepository.findByUserPhoneNumber("01031315656").orElseThrow();
         Cafe cafe = cafeRepository.findByCafePhoneNumber("01012341234").orElseThrow();
-        LocalDateTime dateTime3 = LocalDateTime.of(2023, 7, 1, 18-9, 0);
-        LocalDateTime dateTime4 = LocalDateTime.of(2023, 7, 1, 19-9, 0);
+        LocalDateTime dateTime3 = LocalDateTime.of(2023, 7, 1, 9, 0);
+        LocalDateTime dateTime4 = LocalDateTime.of(2023, 7, 1, 10, 0);
         Table table = tableRepository.findById("64a27eaf7244d72ba3c28d1b").orElseThrow();
         Reserved reserved = new Reserved(user.getId(), cafe.getId(), table.getId(),dateTime3, dateTime4);
 
         reservedRepository.save(reserved);
 
+        Reserved reserved1 =reservedRepository.findById("64a50ae66b8cc92ea9494094").orElseThrow();
+        System.out.println(reserved1.getReservedStartTime());
 
     }
 
