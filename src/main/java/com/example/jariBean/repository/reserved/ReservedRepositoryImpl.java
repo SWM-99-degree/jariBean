@@ -56,6 +56,17 @@ public class ReservedRepositoryImpl implements ReservedRepositoryTemplate{
     }
 
     @Override
+    public boolean isReservedByTableIdBetweenTime(String tableId, LocalDateTime startTime, LocalDateTime endTime) {
+
+        Criteria criteria1 = Criteria.where("reservedStartTime").gte(startTime).lt(endTime);
+        Criteria criteria2 = Criteria.where("reservedEndTime").gt(startTime).lte(endTime);
+        Criteria criteria3 = Criteria.where("reservedStartTime").lt(startTime).and("reservedEndTime").gt(endTime);
+
+        return mongoTemplate.exists(new Query(Criteria.where("tableId").is(tableId)
+                .orOperator(criteria1, criteria2, criteria3)), Reserved.class);
+    }
+
+    @Override
     public List<Reserved> findReservedByIdBetweenTime(String cafeId, LocalDateTime time) {
 
         LocalDateTime startDateTime = LocalDateTime.of(time.toLocalDate(), LocalTime.MIN);
@@ -76,6 +87,7 @@ public class ReservedRepositoryImpl implements ReservedRepositoryTemplate{
 
         return mongoTemplate.aggregate(aggregation, Reserved.class, Reserved.class).getMappedResults();
     }
+
 
 
 }

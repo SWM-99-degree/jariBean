@@ -1,24 +1,24 @@
 package com.example.jariBean.service;
 
-import com.example.jariBean.dto.dbconnect.CafeJoinOperatingTimeDto;
-import com.example.jariBean.dto.dbconnect.ReservedJoinTableDto;
 import com.example.jariBean.dto.reserved.ReservedReqDto;
+import com.example.jariBean.dto.reserved.ReservedReqDto.SaveReservedReqDto;
 import com.example.jariBean.dto.reserved.ReservedResDto;
 import com.example.jariBean.entity.Cafe;
 import com.example.jariBean.entity.Reserved;
-import com.example.jariBean.handler.ex.CustomDBException;
+import com.example.jariBean.handler.ex.CustomApiException;
 import com.example.jariBean.handler.ex.CustomNoContentException;
 import com.example.jariBean.repository.cafe.CafeRepository;
 import com.example.jariBean.repository.reserved.ReservedRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ReserveService {
 
@@ -115,24 +115,18 @@ public class ReserveService {
      */
     // 예약 신청
     @Transactional
-    public void saveReserved(ReservedReqDto.SaveReservedReqDto saveReservedReqDto) {
+    public void saveReserved(SaveReservedReqDto saveReservedReqDto) {
         // 검증해야 할 테이블의 예약되어 있는 것들 중, 당일에 있는 것을 가져옴
-        List<Reserved> reserveds = reservedRepository.findReservedByIdAndTableIdBetweenTime(
-                saveReservedReqDto.getCafeId(), saveReservedReqDto.getTableId(), saveReservedReqDto.getReservedStartTime()
-        );
+        boolean available = reservedRepository
+                .isReservedByTableIdBetweenTime(saveReservedReqDto.getTableId(),
+                saveReservedReqDto.getReservedStartTime(),
+                saveReservedReqDto.getReservedEndTime());
 
-        // 검증의 과정 Mongo라서 DB 단에서 하기는 어렵다.
-        for (Reserved reserve : reserveds) {
-            if (saveReservedReqDto.getReservedEndTime().isBefore(reserve.getReservedStartTime()) ||
-                    saveReservedReqDto.getReservedStartTime().isAfter(reserve.getReservedEndTime()) ||
-                    saveReservedReqDto.getReservedStartTime().isEqual(reserve.getReservedEndTime()) ||
-                    saveReservedReqDto.getReservedEndTime().isEqual(reserve.getReservedStartTime())
-            ){
-            } else { throw new CustomDBException("데이터가 중복됩니다."); }
+        if(available) {
+            reservedRepository.save(saveReservedReqDto.toEntity());
+        } else {
+            throw new CustomApiException("해당 시간에 예약이 존재합니다.");
         }
-
-        Reserved reserved = saveReservedReqDto.toEntity();
-        reservedRepository.save(reserved);
     }
 
     // 점주 앱
