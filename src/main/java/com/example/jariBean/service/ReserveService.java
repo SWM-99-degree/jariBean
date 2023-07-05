@@ -56,7 +56,7 @@ public class ReserveService {
     public ReservedTableListResDto findReservedListByCafeId(ReservedTableListReqDto reservedTableListReqDto) {
         // 카페의 운영 시간 확인
         LocalDateTime standardTime = reservedTableListReqDto.getStartTime();
-        Cafe cafe = cafeRepository.findByIdwithOperatingTime(reservedTableListReqDto.getUserId());
+        Cafe cafe = cafeRepository.findByIdwithOperatingTime(reservedTableListReqDto.getCafeId());
         LocalDateTime openTime = cafe.getCafeOperatingTimeList().get(0).getOpenTime().withYear(standardTime.getYear()).withMonth(standardTime.getMonthValue()).withDayOfMonth(standardTime.getDayOfMonth());
         LocalDateTime closeTime = cafe.getCafeOperatingTimeList().get(0).getCloseTime().withYear(standardTime.getYear()).withMonth(standardTime.getMonthValue()).withDayOfMonth(standardTime.getDayOfMonth());
 
@@ -69,7 +69,7 @@ public class ReserveService {
 
 
         // 예약 내역 가져오기 및 카페 내용 가져오기
-        List<Reserved> reservedList = reservedRepository.findReservedByIdBetweenTime(reservedTableListReqDto.getUserId(), reservedTableListReqDto.getStartTime(), reservedTableListReqDto.getEndTime());
+        List<Reserved> reservedList = reservedRepository.findReservedByIdBetweenTime(reservedTableListReqDto.getCafeId(), reservedTableListReqDto.getStartTime(), reservedTableListReqDto.getEndTime());
 
         LocalDateTime endTime = null;
         String tableId = "";
