@@ -1,6 +1,5 @@
 package com.example.jariBean.repository.reserved;
 
-import com.example.jariBean.dto.dbconnect.ReservedJoinTableDto;
 import com.example.jariBean.entity.Reserved;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -67,16 +66,25 @@ public class ReservedRepositoryImpl implements ReservedRepositoryTemplate{
     }
 
     @Override
-    public List<Reserved> findReservedByIdBetweenTime(String cafeId, LocalDateTime time) {
+    public List<Reserved> findReservedByIdBetweenTime(String cafeId, LocalDateTime startTime, LocalDateTime endTime) {
+        // 절대 예약되어 있으면 안되는 부분
+        LocalDateTime tableStartTime = startTime.minusHours(1);
+        LocalDateTime tableEndTime = endTime.plusHours(1);
 
-        LocalDateTime startDateTime = LocalDateTime.of(time.toLocalDate(), LocalTime.MIN);
-        LocalDateTime endDateTime = LocalDateTime.of(time.toLocalDate(), LocalTime.MAX);
+        startTime = startTime.plusMinutes(30);
+        endTime = endTime.minusMinutes(30);
+        Criteria tableLimitCriteria = Criteria.where("reservedStartTime").lte(tableEndTime).and("reservedEndTime").gte(tableStartTime);
+        Criteria criteria1 = Criteria.where("reservedStartTime").gte(startTime).lt(endTime);
+        Criteria criteria2 = Criteria.where("reservedEndTime").gt(startTime).lte(endTime);
+        Criteria criteria3 = Criteria.where("reservedStartTime").lt(startTime).and("reservedEndTime").gt(endTime);
 
-        Criteria criteria = Criteria.where("reservedStartTime").gte(startDateTime).lte(endDateTime).and("reservedStatus").is("VALID");
         AggregationOperation sort1 = Aggregation.sort(Sort.Direction.ASC, "tableId");
         AggregationOperation sort2 = Aggregation.sort(Sort.Direction.ASC, "reservedStartTime");
         Aggregation aggregation = Aggregation.newAggregation(
-                Aggregation.match(criteria),
+                Aggregation.match(tableLimitCriteria),
+                Aggregation.match(criteria1),
+                Aggregation.match(criteria2),
+                Aggregation.match(criteria3),
                 Aggregation.lookup("tableClass", "id", "tableClassId", "tableClass"),
                 Aggregation.lookup("cafe", "id", "cafeId", "cafe"),
                 Aggregation.project("id", "userId", "cafeId", "tableId", "reservedStartTime", "reservedEndTime")
@@ -87,7 +95,6 @@ public class ReservedRepositoryImpl implements ReservedRepositoryTemplate{
 
         return mongoTemplate.aggregate(aggregation, Reserved.class, Reserved.class).getMappedResults();
     }
-
 
 
 }

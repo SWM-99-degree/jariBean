@@ -35,10 +35,15 @@ public class ReservedReqDto {
     public static class ReservedTableListReqDto {
 
         @NotEmpty(message = "userId는 필수입니다")
-        private String userId;
+        private String cafeId;
 
         @NotEmpty(message = "유저의 시간은 필수입니다.")
-        private String userNow;
+        private LocalDateTime startTime;
+
+        @NotEmpty(message = "유저의 시간은 필수입니다.")
+        private LocalDateTime endTime;
+
+
 
     }
 
