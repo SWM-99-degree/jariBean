@@ -44,7 +44,6 @@ public class ReservedResDto {
     public static class ReservedTableListResDto {
         private String cafeName;
         private String cafeImg;
-        private LocalDateTime reservedStartTime;
         private List<TimeTable> timeTables;
 
         @Builder
