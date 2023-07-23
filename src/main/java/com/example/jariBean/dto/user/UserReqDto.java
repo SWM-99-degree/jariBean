@@ -36,11 +36,7 @@ public class UserReqDto {
         private String userNickname;
 
         public User toEntity(PasswordEncoder passwordEncoder) {
-
             return User.builder()
-                    .userName(username)
-                    .userPhoneNumber(userPhoneNumber)
-                    .userPassword(passwordEncoder.encode(userPassword))
                     .userNickname(userNickname)
                     .userRole(CUSTOMER)
                     .build();

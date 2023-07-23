@@ -16,7 +16,6 @@ public class UserResDto {
 
         public UserLoginResDto(User user) {
             this.id = user.getId();
-            this.userPhoneNumber = user.getUserPhoneNumber();
             this.createdAt = CustomDateUtil.toStringFormat(user.getCreatedAt());
         }
     }
@@ -31,7 +30,6 @@ public class UserResDto {
 
         public UserJoinRespDto(User user) {
             this.id = user.getId();
-            this.username = user.getUserName();
             this.userNickname = user.getUserNickname();
         }
     }

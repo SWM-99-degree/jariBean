@@ -31,14 +31,13 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     public JwtAuthenticationFilter(AuthenticationManager authenticationManager, TokenRepository tokenRepository) {
         super(authenticationManager);
-        setFilterProcessesUrl("/api/users/login"); // 고객 로그인 URL 지정
+        setFilterProcessesUrl("/login"); // 고객 로그인 URL 지정
         this.authenticationManager = authenticationManager;
         this.tokenRepository = tokenRepository;
     }
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-
         try {
             ObjectMapper mapper = new ObjectMapper();
             UserLoginReqDto loginReqDto = mapper.readValue(request.getInputStream(), UserLoginReqDto.class);
@@ -68,8 +67,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         LoginUser loginUser = (LoginUser) authResult.getPrincipal();
 
         // refresh, access token 생성
-        String accessToken = JwtProcess.create(loginUser);
-        String refreshToken = JwtProcess.createRefreshToken(loginUser);
+//        String accessToken = JwtProcess.create(loginUser);
+//        String refreshToken = JwtProcess.createRefreshToken(loginUser);
 
 //        // `Token` 생성
 //        Token token = Token.builder()
@@ -81,8 +80,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 //        tokenRepository.save(token);
 
         // refresh, access token 헤더에 추가
-        response.addHeader(JwtVO.ACCESS_HEADER, accessToken);
-        response.addHeader(JwtVO.REFRESH_HEADER, refreshToken);
+//        response.addHeader(JwtVO.ACCESS_HEADER, accessToken);
+//        response.addHeader(JwtVO.REFRESH_HEADER, refreshToken);
 
         UserLoginResDto loginResDto = new UserLoginResDto(loginUser.getUser());
         CustomResponseUtil.success(response, loginResDto);

@@ -1,9 +1,7 @@
 package com.example.jariBean.config.jwt;
 
-import com.example.jariBean.config.auth.LoginCafe;
 import com.example.jariBean.config.auth.LoginUser;
 import com.example.jariBean.config.jwt.jwtdto.JwtDto;
-import com.example.jariBean.entity.Cafe;
 import com.example.jariBean.entity.User;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -31,18 +29,11 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             String jwt = header.replace(JwtVO.TOKEN_PREFIX, ""); // "BEARER " 제거
             JwtDto jwtDto = JwtProcess.verify(jwt);
 
-            if (jwtDto.getId().equals("MANAGER")) {
-                Cafe cafe = Cafe.builder().id(jwtDto.getId()).userRole(User.UserRole.valueOf(jwtDto.getUserRole())).build();
-                LoginCafe loginCafe = new LoginCafe(cafe);
-                Authentication authentication = new UsernamePasswordAuthenticationToken(loginCafe, null, loginCafe.getAuthorities());
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-            } else {
-                User user = User.builder().id(jwtDto.getId()).userRole(User.UserRole.valueOf(jwtDto.getUserRole())).build();
-                LoginUser loginUser = new LoginUser(user);
-                // 임시 세션 강제 주입 (생명주기 request ~ response)
-                Authentication authentication = new UsernamePasswordAuthenticationToken(loginUser, null, loginUser.getAuthorities());
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-            }
+            User user = User.builder().id(jwtDto.getId()).userRole(User.UserRole.valueOf(jwtDto.getUserRole())).build();
+            LoginUser loginUser = new LoginUser(user);
+            // 임시 세션 강제 주입 (생명주기 request ~ response)
+            Authentication authentication = new UsernamePasswordAuthenticationToken(loginUser, null, loginUser.getAuthorities());
+            SecurityContextHolder.getContext().setAuthentication(authentication);
 
         }
         chain.doFilter(request, response);

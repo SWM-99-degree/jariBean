@@ -76,6 +76,7 @@ public class SecurityConfig {
                 .antMatchers("/api/users/join", "/api/users/login").permitAll()
                 // swagger 모두 허용
                 .antMatchers("/swagger-ui/**", "/swagger-resources/**", "/v3/api-docs/**").permitAll()
+                .antMatchers("/login/oauth2/code/**", "/", "/oauth2").permitAll()
                 .antMatchers("/api/admin/**").hasRole(ADMIN.toString())
                 .anyRequest().authenticated();
 

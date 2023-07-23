@@ -27,17 +27,13 @@ public class User {
     @Column(name = "user_id")
     private String id;
 
-    @Column(unique = true, nullable = false, length = 20)
-    private String userName;
-
-    @Column(nullable = false, length = 11)
-    private String userPhoneNumber;
-
-    @Column(nullable = false, length = 60) // (Bcrypt)
-    private String userPassword;
-
     @Column(nullable = false, length = 20)
     private String userNickname;
+
+    @Column(nullable = false)
+    private String userSocialId;
+
+    private String userImageUrl;
 
     @Enumerated(STRING)
     @Column(nullable = false)
@@ -70,14 +66,14 @@ public class User {
     }
 
     @Builder
-    public User(String id, String userName, String userPhoneNumber, String userPassword, String userNickname, UserRole userRole) {
+    public User(String id, String userNickname, String userSocialId, String userImageUrl, UserRole userRole) {
         this.id = id;
-        this.userName = userName;
-        this.userPhoneNumber = userPhoneNumber;
-        this.userPassword = userPassword;
         this.userNickname = userNickname;
+        this.userSocialId = userSocialId;
+        this.userImageUrl = userImageUrl;
         this.userRole = userRole;
     }
 
-
+    private String userPhoneNumber;
+    private String userPassword;
 }

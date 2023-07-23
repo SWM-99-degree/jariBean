@@ -2,7 +2,9 @@ spring:
   data:
     mongodb:
       uri: ${MONGODB_URI}
-
+  profiles:
+    include:
+      - oauth
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
