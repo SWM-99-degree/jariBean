@@ -1,10 +1,7 @@
 package com.example.jariBean.handler;
 
 import com.example.jariBean.dto.ResponseDto;
-import com.example.jariBean.handler.ex.CustomApiException;
-import com.example.jariBean.handler.ex.CustomExpiredTokenException;
-import com.example.jariBean.handler.ex.CustomForbiddenException;
-import com.example.jariBean.handler.ex.CustomValidationException;
+import com.example.jariBean.handler.ex.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -15,6 +12,19 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 @Slf4j
 public class CustomExceptionHandler {
+
+    @ExceptionHandler(CustomNoContentException.class)
+    public ResponseEntity<?> apiException(CustomNoContentException e) {
+        log.error(e.getMessage());
+        return new ResponseEntity<>(new ResponseDto<>(-1, e.getMessage(), null), HttpStatus.NO_CONTENT);
+    }
+
+    @ExceptionHandler(CustomDBException.class)
+    public ResponseEntity<?> apiException(CustomDBException e) {
+        log.error(e.getMessage());
+        return new ResponseEntity<>(new ResponseDto<>(-1, e.getMessage(), null), HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(CustomApiException.class)
     public ResponseEntity<?> apiException(CustomApiException e) {
         log.error(e.getMessage());

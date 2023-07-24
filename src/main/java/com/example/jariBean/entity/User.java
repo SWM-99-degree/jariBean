@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.annotation.Version;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.Column;
@@ -14,6 +15,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static javax.persistence.EnumType.STRING;
 import static javax.persistence.GenerationType.IDENTITY;
@@ -49,6 +51,19 @@ public class User {
 
     @LastModifiedDate
     private LocalDateTime modifiedAt;
+
+    @DBRef
+    private List<Matching> matchingList;
+
+    @DBRef
+    private List<Reserved> reservedList;
+
+    @DBRef
+    private List<Table> tableList;
+
+    @DBRef
+    private List<TableClass> tableClassList;
+
 
     @Version //
     private Integer version;
