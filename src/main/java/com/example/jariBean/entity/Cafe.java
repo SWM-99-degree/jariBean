@@ -91,4 +91,8 @@ public class Cafe {
         this.coordinate = coordinate;
     }
 
+    public void updateCafeName(String cafeName) {
+        this.cafeName = cafeName;
+    }
+
 }
