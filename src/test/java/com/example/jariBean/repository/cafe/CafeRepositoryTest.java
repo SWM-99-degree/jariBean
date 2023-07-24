@@ -1,17 +1,17 @@
-package com.example.jariBean.repository;
+package com.example.jariBean.repository.cafe;
 
 
 import com.example.jariBean.dto.reserved.ReservedReqDto;
 import com.example.jariBean.dto.reserved.ReservedResDto;
 import com.example.jariBean.entity.*;
 import com.example.jariBean.handler.ex.CustomApiException;
-import com.example.jariBean.repository.cafe.CafeRepository;
 import com.example.jariBean.repository.cafeOperatingTime.CafeOperatingTimeRepository;
 import com.example.jariBean.repository.reserved.ReservedRepository;
 import com.example.jariBean.repository.table.TableRepository;
 import com.example.jariBean.repository.tableClass.TableClassRepository;
 import com.example.jariBean.repository.user.UserRepository;
 import com.example.jariBean.service.ReserveService;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,9 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 class CafeRepositoryTest {
 
-
-    @Autowired
-    CafeRepository cafeRepository;
+    @Autowired CafeRepository cafeRepository;
 
     @Autowired
     UserRepository userRepository;
@@ -41,6 +39,10 @@ class CafeRepositoryTest {
     ReservedRepository reservedRepository;
     @Autowired
     TableClassRepository tableClassRepository;
+
+    private final String id = "64954483a17c2758f6d41b4a";
+    private final String cafeName = "(주)커피지아";
+    private final String cafeAddress = "서울특별시 서초구 강남대로 27, AT센터 제1전시장 (양재동)";
 
     @Test
     public void saveAndDeleteTest() throws Exception {
@@ -264,5 +266,6 @@ class CafeRepositoryTest {
         List<Cafe> cafeList = cafeRepository.findAll();
         System.out.println("cafeList.size() = " + cafeList.size());
     }
+
 
 }
