@@ -14,14 +14,14 @@ import org.springframework.data.redis.core.RedisHash;
 public class Token {
 
     @Id
-    private String userPhoneNumber;
+    private String phoneNumber;
     private String refreshToken;
     private String firebaseToken;
 
 
     @Builder
-    public Token(String userPhoneNumber, String refreshToken, String firebaseToken) {
-        this.userPhoneNumber = userPhoneNumber;
+    public Token(String phoneNumber, String refreshToken, String firebaseToken) {
+        this.phoneNumber = phoneNumber;
         this.refreshToken = refreshToken;
         this.firebaseToken = firebaseToken;
     }

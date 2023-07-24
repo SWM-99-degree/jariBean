@@ -27,10 +27,10 @@ public class TableClass {
     private String cafeId;
 
     @Column(nullable = false, length = 20)
-    private String tableClassName;
+    private String name;
 
     @Column(nullable = false)
-    private List<TableOption> tableOptions;
+    private List<TableOption> tableOptionList;
 
     @DBRef
     private Cafe cafe;

@@ -32,10 +32,10 @@ public class ReservedResDto {
         public NearestReservedResDto(LocalDateTime time, Reserved reserved){
             this.cafeId = reserved.getCafeId();
             this.cafeImg = reserved.getCafe().getCafeImg();
-            this.cafeAddress = reserved.getCafe().getCafeAddress();
+            this.cafeAddress = reserved.getCafe().getAddress();
             this.reservedStartTime = reserved.getReservedStartTime();
             this.reservedEndTime = reserved.getReservedEndTime();
-            this.cafeName = reserved.getCafe().getCafeName();
+            this.cafeName = reserved.getCafe().getName();
         }
     }
 

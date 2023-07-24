@@ -31,16 +31,19 @@ public class Table {
     private String tableClassId;
 
     @Column(nullable = false, length = 100)
-    private String tableDescription;
+    private String description;
 
     @Column(nullable = false)
     private Integer seating; // 인원 수
 
     @Column(nullable = false)
-    private String tableImage;
+    private String imageUrl;
 
     @Column(nullable = false)
-    private String tableNumber;
+    private String number;
+
+    @Column(nullable = false)
+    private List<TableClass.TableOption> tableOptionList;
 
     @DBRef
     private Cafe cafe;

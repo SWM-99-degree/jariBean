@@ -81,7 +81,7 @@ public class ReserveService {
 
         // 카페 정보
         reservedTableListResDto.setCafeImg(cafe.getCafeImg());
-        reservedTableListResDto.setCafeName(cafe.getCafeName());
+        reservedTableListResDto.setCafeName(cafe.getName());
         boolean flag = false;
         for (Reserved reserved : reservedList) {
             // 만약 테이블id가 달라지게 된다면 형성된 테이블의 정보를 넣고, 새로운 테이블의 정보를 구성한다.
