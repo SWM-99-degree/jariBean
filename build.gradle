@@ -49,6 +49,9 @@ dependencies {
 
 	// firebase
 	implementation 'com.google.firebase:firebase-admin:9.1.1'
+
+	// elasticsearch
+	implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
 }
 
 tasks.named('test') {
