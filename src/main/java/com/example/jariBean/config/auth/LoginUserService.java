@@ -15,8 +15,8 @@ public class LoginUserService implements UserDetailsService {
     @Autowired UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String userPhoneNumber) throws UsernameNotFoundException {
-        User user = userRepository.findByUserPhoneNumber(userPhoneNumber).orElseThrow(
+    public UserDetails loadUserByUsername(String phoneNumber) throws UsernameNotFoundException {
+        User user = userRepository.findBySocialId(phoneNumber).orElseThrow(
                 () -> new InternalAuthenticationServiceException("인증 실패")
         );
         return new LoginUser(user);
