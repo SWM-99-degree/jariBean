@@ -23,16 +23,18 @@ public class Cafe {
     private String id;
 
     @Column(unique = true, nullable = false, length = 20)
-    private String cafeName;
+    private String name;
 
     @Column(nullable = false, length = 11)
-    private String cafePhoneNumber;
+    private String phoneNumber;
 
-    @Column(nullable = false, length = 60) // (Bcrypt)
-    private String cafePassword;
+    private String imageUrl;
 
     @Column(nullable = false, length = 60)
-    private String cafeAddress;
+    private String address;
+
+    @Column(length = 200)
+    private String description;
 
     @Column
     private String cafeImg;
@@ -40,26 +42,6 @@ public class Cafe {
     // 수정한 부분 충돌!!
     @Column(nullable = false)
     private GeoJsonPoint coordinate;
-
-    //for aggregate
-    @DBRef
-    private List<CafeOperatingTime> cafeOperatingTimeList;
-
-    @DBRef
-    private List<Reserved> reservedList;
-
-    @DBRef
-    private List<Matching> matchingList;
-
-    @DBRef
-    private List<Table> tableList;
-
-    @DBRef
-    private List<TableClass> tableClassList;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private User.UserRole userRole;
 
     @CreatedDate
     @Column(updatable = false) // 생성일자(createdDate)에 대한 정보는 생성시에만 할당 가능, 갱신 불가
@@ -71,28 +53,22 @@ public class Cafe {
     @Version //
     private Integer version;
 
-    // TODO userRole, UserType
-
-    @Getter
-    @AllArgsConstructor
-    public enum UserRole {
-        ADMIN("관리자"), CUSTOMER("고객"), MANAGER("매니저");
-        private String role;
-    }
+    @DBRef
+    private List<CafeOperatingTime> cafeOperatingTimeList;
 
     @Builder
-    public Cafe(String id, String cafeName, String cafePhoneNumber, String cafePassword, String cafeAddress, User.UserRole userRole, GeoJsonPoint coordinate) {
+    public Cafe(String id, String name, String phoneNumber, String imageUrl, String address, String description, GeoJsonPoint coordinate) {
         this.id = id;
-        this.cafeName = cafeName;
-        this.cafePhoneNumber = cafePhoneNumber;
-        this.cafePassword = cafePassword;
-        this.cafeAddress = cafeAddress;
-        this.userRole = userRole;
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+        this.imageUrl = imageUrl;
+        this.address = address;
+        this.description = description;
         this.coordinate = coordinate;
     }
 
-    public void updateCafeName(String cafeName) {
-        this.cafeName = cafeName;
+    public void updateCafeName(String name) {
+        this.name = name;
     }
 
 }

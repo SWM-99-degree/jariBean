@@ -3,7 +3,6 @@ package com.example.jariBean.config.jwt;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.example.jariBean.config.auth.LoginCafe;
 import com.example.jariBean.config.auth.LoginUser;
 import com.example.jariBean.config.jwt.jwtdto.JwtDto;
 import com.example.jariBean.entity.Cafe;
@@ -31,22 +30,7 @@ public class JwtProcess {
                 .withSubject("jariBean")
                 .withExpiresAt(new Date(System.currentTimeMillis() + JwtVO.ACCESS_EXPIRATION_TIME))
                 .withClaim("userId", user.getId())
-                .withClaim("userRole", user.getUserRole().toString())
-                .sign(Algorithm.HMAC512(JwtVO.SECRET));
-
-        return JwtVO.TOKEN_PREFIX + jwt;
-    }
-
-    // 오버로드
-    public static String create(LoginCafe loginCafe) {
-
-        Cafe user = loginCafe.getUser();
-
-        String jwt = JWT.create()
-                .withSubject("jariBean")
-                .withExpiresAt(new Date(System.currentTimeMillis() + JwtVO.ACCESS_EXPIRATION_TIME))
-                .withClaim("userId", user.getId())
-                .withClaim("userRole", user.getUserRole().toString())
+                .withClaim("userRole", user.getRole().toString())
                 .sign(Algorithm.HMAC512(JwtVO.SECRET));
 
         return JwtVO.TOKEN_PREFIX + jwt;
@@ -61,21 +45,7 @@ public class JwtProcess {
                 .withSubject("jariBean")
                 .withExpiresAt(new Date(System.currentTimeMillis() + JwtVO.REFRESH_EXPIRATION_TIME))
                 .withClaim("userId", user.getId())
-                .withClaim("userRole", user.getUserRole().toString())
-                .sign(Algorithm.HMAC512(JwtVO.SECRET));
-
-        return JwtVO.TOKEN_PREFIX + jwt;
-    }
-
-    public static String createRefreshToken(LoginCafe loginCafe) {
-
-        Cafe user = loginCafe.getUser();
-
-        String jwt = JWT.create()
-                .withSubject("jariBean")
-                .withExpiresAt(new Date(System.currentTimeMillis() + JwtVO.REFRESH_EXPIRATION_TIME))
-                .withClaim("userId", user.getId())
-                .withClaim("userRole", user.getUserRole().toString())
+                .withClaim("userRole", user.getRole().toString())
                 .sign(Algorithm.HMAC512(JwtVO.SECRET));
 
         return JwtVO.TOKEN_PREFIX + jwt;

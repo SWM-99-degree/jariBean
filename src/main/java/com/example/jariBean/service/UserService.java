@@ -24,7 +24,7 @@ public class UserService {
     @Transactional
     public UserJoinRespDto save(UserJoinReqDto joinReqDto) {
         // userPhoneNumber 중복 검사
-        if(userRepository.existsByUserPhoneNumber(joinReqDto.getUserPhoneNumber())) {
+        if(userRepository.existsBySocialId(joinReqDto.getUserPhoneNumber())) {
             throw new CustomApiException("동일한 userPhoneNumber 존재합니다.");
         }
         // 회원가입

@@ -35,14 +35,17 @@ public class UserReqDto {
         @Pattern(regexp = "^[a-zA-Z가-힣]{1,20}$", message = "한글/영문 1~20자 이내로 작성해주세요.")
         private String userNickname;
 
+        @NotEmpty(message = "userNickname 필수입니다")
+        @Pattern(regexp = "^[a-zA-Z가-힣]{1,20}$", message = "한글/영문 1~20자 이내로 작성해주세요.")
+        private String socialId;
+
         public User toEntity(PasswordEncoder passwordEncoder) {
 
             return User.builder()
-                    .userName(username)
-                    .userPhoneNumber(userPhoneNumber)
-                    .userPassword(passwordEncoder.encode(userPassword))
-                    .userNickname(userNickname)
-                    .userRole(CUSTOMER)
+                    .nickname(username)
+                    .nickname(userNickname)
+                    .socialId(socialId)
+                    .role(CUSTOMER)
                     .build();
         }
     }

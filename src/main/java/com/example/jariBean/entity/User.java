@@ -29,21 +29,17 @@ public class User {
     @Column(name = "user_id")
     private String id;
 
-    @Column(unique = true, nullable = false, length = 20)
-    private String userName;
-
-    @Column(nullable = false, length = 11)
-    private String userPhoneNumber;
-
-    @Column(nullable = false, length = 60) // (Bcrypt)
-    private String userPassword;
-
     @Column(nullable = false, length = 20)
-    private String userNickname;
+    private String nickname;
+
+    @Column(nullable = false)
+    private String socialId;
 
     @Enumerated(STRING)
     @Column(nullable = false)
-    private UserRole userRole;
+    private UserRole role;
+
+    private boolean alarm;
 
     @CreatedDate
     @Column(updatable = false) // 생성일자(createdDate)에 대한 정보는 생성시에만 할당 가능, 갱신 불가
@@ -85,14 +81,11 @@ public class User {
     }
 
     @Builder
-    public User(String id, String userName, String userPhoneNumber, String userPassword, String userNickname, UserRole userRole) {
+    public User(String id, String nickname, String socialId, UserRole role) {
         this.id = id;
-        this.userName = userName;
-        this.userPhoneNumber = userPhoneNumber;
-        this.userPassword = userPassword;
-        this.userNickname = userNickname;
-        this.userRole = userRole;
+        this.nickname = nickname;
+        this.socialId = socialId;
+        this.role = role;
+        this.alarm = true;
     }
-
-
 }

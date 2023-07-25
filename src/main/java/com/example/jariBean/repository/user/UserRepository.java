@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface UserRepository extends MongoRepository<User, String>, UserRepositoryTemplate {
 
-    Optional<User> findByUserPhoneNumber(String userPhoneNumber);
-    boolean existsByUserPhoneNumber(String userPhoneNumber);
+    Optional<User> findBySocialId(String userPhoneNumber);
+    boolean existsBySocialId(String phoneNumber);
 
 }

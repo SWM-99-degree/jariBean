@@ -12,8 +12,7 @@ public interface CafeRepository extends MongoRepository<Cafe, String>, CafeRepos
 
     Optional<Cafe> findById(String id);
 
-    Optional<Cafe> findByCafeName(String cafeName);
+    Optional<Cafe> findByName(String cafeName);
 
-    Optional<Cafe> findByCafePhoneNumber(String cafePhoneNumber);
-    boolean existsByCafePhoneNumber(String cafePhoneNumber);
+    Optional<Cafe> findByPhoneNumber(String cafePhoneNumber);
 }

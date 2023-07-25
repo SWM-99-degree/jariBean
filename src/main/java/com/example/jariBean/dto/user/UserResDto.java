@@ -11,12 +11,12 @@ public class UserResDto {
     @Setter
     public static class UserLoginResDto {
         private String id;
-        private String userPhoneNumber;
+        private String nickname;
         private String createdAt;
 
         public UserLoginResDto(User user) {
             this.id = user.getId();
-            this.userPhoneNumber = user.getUserPhoneNumber();
+            this.nickname = user.getNickname();
             this.createdAt = CustomDateUtil.toStringFormat(user.getCreatedAt());
         }
     }
@@ -26,13 +26,11 @@ public class UserResDto {
     @ToString
     public static class UserJoinRespDto {
         private String id;
-        private String username;
-        private String userNickname;
+        private String nickname;
 
         public UserJoinRespDto(User user) {
             this.id = user.getId();
-            this.username = user.getUserName();
-            this.userNickname = user.getUserNickname();
+            this.nickname = user.getNickname();
         }
     }
 }
