@@ -100,7 +100,7 @@ public class ReserveService {
                 endTime = reserved.getReservedEndTime();
                 ReservedTableListResDto.TimeTable.ReservingTime reservingTime = new ReservedTableListResDto.TimeTable.ReservingTime(openTime, reserved.getReservedStartTime());
                 // 테이블의 대한 정보 입력
-                timeTable.setTableOptions(reserved.getTableClass().getTableOptions());
+                timeTable.setTableOptions(reserved.getTableClass().getTableOptionList());
                 timeTable.setTableId(tableId);
                 reservingTimes.add(reservingTime);
             } else {
