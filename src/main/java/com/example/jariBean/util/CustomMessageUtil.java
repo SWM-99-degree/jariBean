@@ -2,6 +2,8 @@ package com.example.jariBean.util;
 
 public class CustomMessageUtil {
 
+
+
     public String cancelMatching(String cafeName) {
         return cafeName + "과의 매칭이 취소되었습니다.";
     }

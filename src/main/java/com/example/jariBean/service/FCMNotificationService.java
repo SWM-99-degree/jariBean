@@ -28,6 +28,7 @@ public class FCMNotificationService {
             for (User user : users.stream().toList()) {
                 String token = tokenRepository.findById(fcmReqDto.getUserId()).get().getFirebaseToken();
                 if (token != null) {
+
                     Notification notification = Notification.builder()
                             .setTitle("jariBean")
                             .setBody("123")
@@ -56,7 +57,8 @@ public class FCMNotificationService {
                     .build();
             Message sendMessage = Message.builder()
                     .setToken(token)
-                    .setNotification(notification)
+                    .putData("title", "hoho")
+                    .putData("description", "description")
                     .build();
 
             firebaseMessaging.send(sendMessage);
