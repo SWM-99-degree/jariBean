@@ -1,6 +1,10 @@
 package com.example.jariBean.repository.reserved;
 
+import com.example.jariBean.entity.Cafe;
 import com.example.jariBean.entity.Reserved;
+import com.example.jariBean.entity.TableClass;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import org.checkerframework.checker.units.qual.C;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -9,12 +13,43 @@ import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
+import javax.validation.constraints.Null;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class ReservedRepositoryImpl implements ReservedRepositoryTemplate{
     @Autowired private MongoTemplate mongoTemplate;
+
+    @Override
+    public List<String> findCafeByReserved(List<String> cafes, LocalDateTime startTime, LocalDateTime endTime, List<TableClass.TableOption> tableOptionList) {
+
+        Set<String> filterCafes = new HashSet<>();
+        Criteria mainCriteria = new Criteria();
+
+        if (cafes != null) {
+            Criteria criteria = Criteria.where("cafeId").in(cafes);
+            mainCriteria.andOperator(criteria);
+        }
+        if (startTime != null){
+            Criteria startTimeCriteria = Criteria.where("reservedEndTime").gte(startTime);
+            Criteria endTimeCriteria = Criteria.where("reservedStartTime").lte(endTime);
+            Criteria timeCriteria = new Criteria().orOperator(startTimeCriteria, endTimeCriteria);
+            mainCriteria.andOperator(timeCriteria);
+        }
+        if (tableOptionList != null) {
+            Criteria criteria = Criteria.where("table.tableOptionList").all(tableOptionList);
+            mainCriteria.andOperator(criteria);
+        }
+
+        Query query = new Query(mainCriteria);
+        mongoTemplate.find(query, Reserved.class).forEach(reserved -> filterCafes.add(reserved.getCafeId()));
+
+        return filterCafes.stream().toList();
+    }
 
     @Override
     public Reserved findNearestReserved(String userId, LocalDateTime time) {

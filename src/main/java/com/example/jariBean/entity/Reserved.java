@@ -29,7 +29,7 @@ public class Reserved {
     private String cafeId;
 
     @Column(nullable = false)
-    private String tableId;
+    private Table table;
 
     @Column(nullable = false)
     private String tableClassId;
@@ -51,9 +51,6 @@ public class Reserved {
     private User user;
 
     @DBRef
-    private Table table;
-
-    @DBRef
     private TableClass tableClass;
 
     @CreatedDate
@@ -72,10 +69,10 @@ public class Reserved {
     }
 
     @Builder
-    public Reserved(String userId, String cafeId, String tableId, LocalDateTime reservedStartTime, LocalDateTime reservedEndTime) {
+    public Reserved(String userId, String cafeId, Table table, LocalDateTime reservedStartTime, LocalDateTime reservedEndTime) {
         this.userId = userId;
         this.cafeId = cafeId;
-        this.tableId = tableId;
+        this.table = table;
         this.reservedEndTime = reservedEndTime;
         this.reservedStartTime = reservedStartTime;
         this.reservedStatus = ReservedStatus.VALID;

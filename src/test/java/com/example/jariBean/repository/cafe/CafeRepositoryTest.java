@@ -40,6 +40,7 @@ class CafeRepositoryTest {
     @Autowired
     TableClassRepository tableClassRepository;
 
+
     private final String id = "64954483a17c2758f6d41b4a";
     private final String cafeName = "(주)커피지아";
     private final String cafeAddress = "서울특별시 서초구 강남대로 27, AT센터 제1전시장 (양재동)";

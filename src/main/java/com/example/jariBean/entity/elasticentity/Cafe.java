@@ -1,39 +1,32 @@
 package com.example.jariBean.entity.elasticentity;
 
 
-import lombok.*;
-import org.springframework.data.elasticsearch.annotations.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
-
-import javax.persistence.Id;
-import java.time.LocalDateTime;
 
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(indexName = "cafe.cafe")
+@Document(indexName = "cafe")
 public class Cafe {
 
     @Id
+    @Field(type = FieldType.Text)
     private String Id;
 
-    private String name;
+    @Field(type = FieldType.Text)
+    private String text;
 
-    private String phoneNumber;
-
-    private String imageUrl;
-
-    private String address;
-
-    private String description;
-
+    @Field(type = FieldType.Auto)
     private GeoPoint coordinate;
-
-    @Field(type = FieldType.Date, format = {DateFormat.date_hour_minute_second_millis, DateFormat.epoch_millis})
-    private LocalDateTime createdAt;
-
-    private LocalDateTime modifiedAt;
 
 
 }
