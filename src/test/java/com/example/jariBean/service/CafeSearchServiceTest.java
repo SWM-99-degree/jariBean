@@ -21,7 +21,7 @@ public class CafeSearchServiceTest {
         System.out.println(LocalDateTime.now());
         List<com.example.jariBean.entity.Cafe> cafes = new ArrayList<>();
         //cafes = searchService.findByText("*test*");
-        System.out.println(cafes);
+        //System.out.println(cafes);
         cafes.forEach(cafe -> System.out.println(cafe.getId()));
 
         System.out.println(LocalDateTime.now());
