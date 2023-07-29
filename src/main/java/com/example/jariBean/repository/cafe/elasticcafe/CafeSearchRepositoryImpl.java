@@ -1,34 +1,35 @@
 package com.example.jariBean.repository.cafe.elasticcafe;
 
 import com.example.jariBean.entity.elasticentity.Cafe;
-import com.example.jariBean.repository.cafe.CafeRepositoryTemplate;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.elasticsearch.core.SearchHits;
+import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 import org.springframework.data.elasticsearch.core.query.Criteria;
 import org.springframework.data.elasticsearch.core.query.CriteriaQuery;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.elasticsearch.core.query.Query;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-@Repository
-@RequiredArgsConstructor
+
 public class CafeSearchRepositoryImpl implements CafeSearchRepositoryTemplate {
 
-    private final ElasticsearchOperations operations;
+    @Autowired
+    private ElasticsearchOperations operations;
 
     // TODO pageable 필요함
     @Override
-    public List<String> findBySearchingWord(String searchCondition) {
-        if (searchCondition == null) {
-            return null;
+    public List<String> findBySearchingWord(List<String> searchWords, double latitude, double longitude) {
+        Criteria wordSearchCriteria = new Criteria("text");
+        if (searchWords != null) {
+            searchWords.forEach(word -> wordSearchCriteria.or("text").contains(word));
         }
 
-        CriteriaQuery query = createConditionCriteriaQuery(searchCondition);
-                //.setPageable(pageable);
+        GeoPoint geoPoint = new GeoPoint(latitude, longitude);
+        Criteria geoLocationCriteria = new Criteria("location").within(geoPoint, "0.7km");
+        Criteria finalCriteria = geoLocationCriteria.and(wordSearchCriteria);
+        Query query = new CriteriaQuery(finalCriteria);
         SearchHits<Cafe> search = operations.search(query, Cafe.class);
 
         return search.stream()
@@ -36,16 +37,4 @@ public class CafeSearchRepositoryImpl implements CafeSearchRepositoryTemplate {
                 .toList();
     }
 
-    private CriteriaQuery createConditionCriteriaQuery(String searchCondition) {
-        CriteriaQuery query = new CriteriaQuery(new Criteria());
-        // 검색어로 filter
-        //
-        // 시간 table을 모두 꺼내서 각각 비교해야 함
-        if (searchCondition == null)
-            return query;
-
-        query.addCriteria(Criteria.where("text").is(searchCondition));
-
-        return query;
-    }
 }
