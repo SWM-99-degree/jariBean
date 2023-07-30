@@ -15,18 +15,18 @@ import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(indexName = "cafe")
+@Document(indexName = "searchcafe")
 public class Cafe {
 
     @Id
-    @Field(type = FieldType.Text)
+    @Field(type = FieldType.Keyword)
     private String Id;
 
     @Field(type = FieldType.Text)
     private String text;
 
     @Field(type = FieldType.Auto)
-    private GeoPoint coordinate;
+    private GeoPoint location;
 
 
 }

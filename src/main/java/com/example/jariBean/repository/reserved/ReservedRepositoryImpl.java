@@ -1,10 +1,7 @@
 package com.example.jariBean.repository.reserved;
 
-import com.example.jariBean.entity.Cafe;
 import com.example.jariBean.entity.Reserved;
 import com.example.jariBean.entity.TableClass;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import org.checkerframework.checker.units.qual.C;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -13,42 +10,71 @@ import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
-import javax.validation.constraints.Null;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class ReservedRepositoryImpl implements ReservedRepositoryTemplate{
     @Autowired private MongoTemplate mongoTemplate;
 
+    public static class Tuple<cafeId, tableId>{
+        private final String cafeId;
+        private final String tableId;
+
+        public Tuple(String cafeId, String tableId) {
+            this.cafeId = cafeId;
+            this.tableId = tableId;
+        }
+    }
+
     @Override
     public List<String> findCafeByReserved(List<String> cafes, LocalDateTime startTime, LocalDateTime endTime, List<TableClass.TableOption> tableOptionList) {
 
-        Set<String> filterCafes = new HashSet<>();
+        Map<String, Set> filterCafes = new HashMap<>();
         Criteria mainCriteria = new Criteria();
 
         if (cafes != null) {
-            Criteria criteria = Criteria.where("cafeId").in(cafes);
-            mainCriteria.andOperator(criteria);
-        }
-        if (startTime != null){
-            Criteria startTimeCriteria = Criteria.where("reservedEndTime").gte(startTime);
-            Criteria endTimeCriteria = Criteria.where("reservedStartTime").lte(endTime);
-            Criteria timeCriteria = new Criteria().orOperator(startTimeCriteria, endTimeCriteria);
-            mainCriteria.andOperator(timeCriteria);
+            mainCriteria.and("cafeId").in(cafes);
         }
         if (tableOptionList != null) {
-            Criteria criteria = Criteria.where("table.tableOptionList").all(tableOptionList);
-            mainCriteria.andOperator(criteria);
+            mainCriteria.and("table.tableOptionList").all(tableOptionList);
         }
 
-        Query query = new Query(mainCriteria);
-        mongoTemplate.find(query, Reserved.class).forEach(reserved -> filterCafes.add(reserved.getCafeId()));
+        Query queryByWordsandOptions = new Query(mainCriteria);
+        mongoTemplate.find(queryByWordsandOptions, Reserved.class).forEach(reserved ->
+                {
+                    if (filterCafes.containsKey(reserved.getCafeId())) {
+                        filterCafes.get(reserved.getCafeId()).add(reserved.getTable().getId());
+                    } else {
+                        Set<String> tableSet = new HashSet<>();
+                        tableSet.add(reserved.getTable().getId());
+                        filterCafes.put(reserved.getCafeId(), tableSet);
+                    }
+                });
 
-        return filterCafes.stream().toList();
+        Criteria reservedCriteria = new Criteria();
+
+        if (startTime != null){
+            // 겹치는 카페 예약
+            Criteria case1Criteria = Criteria.where("reservedStartTime").gte(startTime).lt(endTime);
+            Criteria case2Criteria = Criteria.where("reservedEndTime").gt(startTime).lte(endTime);
+            Criteria case3Criteria = Criteria.where("reservedStartTime").lt(startTime).and("reservedEndTime").gt(endTime);
+
+            reservedCriteria.orOperator(
+                    case1Criteria, case2Criteria, case3Criteria
+            );
+
+            Query queryByTime = new Query(reservedCriteria);
+            mongoTemplate.find(queryByTime, Reserved.class).forEach(reserved -> {
+                if (filterCafes.containsKey(reserved.getCafeId())) {filterCafes.get(reserved.getCafeId()).remove(reserved.getTable().getId());}
+            });
+        }
+
+        List<String> canReserveCafes = new ArrayList<>();
+        for (Map.Entry<String, Set> cafe : filterCafes.entrySet()) {
+            if (!cafe.getValue().isEmpty()) {canReserveCafes.add(cafe.getKey());}}
+
+        return canReserveCafes;
     }
 
     @Override

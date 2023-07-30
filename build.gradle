@@ -16,6 +16,7 @@ configurations {
 
 repositories {
 	mavenCentral()
+	maven { url 'https://jitpack.io' }
 }
 
 dependencies {
@@ -52,6 +53,12 @@ dependencies {
 
 	// elasticsearch
 	implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
+
+	// komoran
+	implementation 'com.github.shin285:KOMORAN:3.3.9'
+
+	implementation 'org.apache.poi:poi:5.0.0'
+	implementation 'org.apache.poi:poi-ooxml:5.0.0'
 }
 
 tasks.named('test') {

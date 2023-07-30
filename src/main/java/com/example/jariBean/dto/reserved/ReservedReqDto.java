@@ -72,7 +72,7 @@ public class ReservedReqDto {
             return Reserved.builder()
                     .userId(userId)
                     .cafeId(cafeId)
-                    .tableId(tableId)
+                    //.tableId(tableId)
                     .reservedStartTime(reservedStartTime)
                     .reservedEndTime(reservedEndTime)
                     .build();

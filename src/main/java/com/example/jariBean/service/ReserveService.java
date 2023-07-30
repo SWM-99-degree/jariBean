@@ -85,7 +85,7 @@ public class ReserveService {
         boolean flag = false;
         for (Reserved reserved : reservedList) {
             // 만약 테이블id가 달라지게 된다면 형성된 테이블의 정보를 넣고, 새로운 테이블의 정보를 구성한다.
-            if (!tableId.equals(reserved.getTableId())){
+            if (!tableId.equals(reserved.getTable().getId())){
                 if (flag == Boolean.TRUE) {
                     reservingTimes.add(new ReservedTableListResDto.TimeTable.ReservingTime(endTime, closeTime));
                     timeTable.setReservingTimes(reservingTimes);
@@ -96,7 +96,7 @@ public class ReserveService {
                 // 초기화
                 reservingTimes = new ArrayList<>();
                 timeTable = new ReservedTableListResDto.TimeTable();
-                tableId = reserved.getTableId();
+                tableId = reserved.getTable().getId();
                 endTime = reserved.getReservedEndTime();
                 ReservedTableListResDto.TimeTable.ReservingTime reservingTime = new ReservedTableListResDto.TimeTable.ReservingTime(openTime, reserved.getReservedStartTime());
                 // 테이블의 대한 정보 입력

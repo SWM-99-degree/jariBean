@@ -8,10 +8,10 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface CafeSearchRepository extends ElasticsearchRepository<Cafe, String> {
+public interface CafeSearchRepository extends ElasticsearchRepository<Cafe, String>, CafeSearchRepositoryTemplate {
 
 
-    List<Cafe> findBySearchingWord(String text);
+
 
     List<String> findByTextLike(String text);
 }
