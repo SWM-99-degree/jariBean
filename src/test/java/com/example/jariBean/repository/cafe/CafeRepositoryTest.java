@@ -1,36 +1,30 @@
 package com.example.jariBean.repository.cafe;
 
 
-import com.example.jariBean.dto.reserved.ReservedReqDto;
-import com.example.jariBean.dto.reserved.ReservedResDto;
-import com.example.jariBean.entity.*;
-import com.example.jariBean.handler.ex.CustomApiException;
+import com.example.jariBean.entity.Cafe;
+import com.example.jariBean.entity.Reserved;
+import com.example.jariBean.entity.Table;
+import com.example.jariBean.entity.TableClass;
 import com.example.jariBean.repository.cafe.elasticcafe.CafeSearchRepository;
 import com.example.jariBean.repository.cafeOperatingTime.CafeOperatingTimeRepository;
 import com.example.jariBean.repository.reserved.ReservedRepository;
 import com.example.jariBean.repository.table.TableRepository;
 import com.example.jariBean.repository.tableClass.TableClassRepository;
 import com.example.jariBean.repository.user.UserRepository;
-import com.example.jariBean.service.ReserveService;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
-import java.util.stream.Collectors;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 class CafeRepositoryTest {
@@ -51,9 +45,6 @@ class CafeRepositoryTest {
     @Autowired
     CafeSearchRepository cafeSearchRepository;
 
-
-
-
     private final String cafeName = "(주)커피지아";
     private final String cafeAddress = "서울특별시 서초구 강남대로 27, AT센터 제1전시장 (양재동)";
 
@@ -66,6 +57,45 @@ class CafeRepositoryTest {
         List<String> lst = cafeSearchRepository.findBySearchingWord(searchingWords, 37.4467039276238, 37.4467039276238);
         System.out.println(lst);
     }
+
+    @Test
+    public void saveCafesTable() {
+        List<String> cafes = new ArrayList<>();
+        cafes.add("64c45ac3935eb61c140793e8");
+        cafes.add("64c45ac3935eb61c140793eb");
+        cafes.add("64c45ac3935eb61c140793e9");
+        cafes.add("64c45ac3935eb61c140793ed");
+        for (String cafe : cafes) {
+            List<TableClass.TableOption> options = new ArrayList<>();
+            options.add(TableClass.TableOption.PLUG);
+            options.add(TableClass.TableOption.RECTANGLE);
+            Table table = new Table();
+            table.setCafeId(cafe);
+            table.setTableOptionList(options);
+            tableRepository.save(table);
+        }
+
+    }
+
+
+    @Test
+    public void saveCafesReserved() {
+        List<String> cafes = new ArrayList<>();
+        cafes.add("64c45ac3935eb61c140793e8");
+//        cafes.add("64c45ac3935eb61c140793eb");
+//        cafes.add("64c45ac3935eb61c140793e9");
+//        cafes.add("64c45ac3935eb61c140793ed");
+        for (String cafe : cafes) {
+            Table table = tableRepository.findByCafeId(cafe);
+            LocalDateTime dateTime1 = LocalDateTime.of(2023, 7, 1, 15, 0);
+            LocalDateTime dateTime2 = LocalDateTime.of(2023, 7, 1, 17, 0);
+            Reserved reserved = new Reserved("123", cafe, table, dateTime1, dateTime2);
+            reservedRepository.save(reserved);
+        }
+
+    }
+
+
 
     @Test
     public void saveCafesTest() throws Exception {

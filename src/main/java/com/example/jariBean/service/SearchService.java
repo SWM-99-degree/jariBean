@@ -52,10 +52,10 @@ public class SearchService {
 
         List<String> searchingWords = dividedWord(text);
         List<String> wordFilterdCafes = cafeSearchRepository.findBySearchingWord(searchingWords, latitude, longitude);
-
+        System.out.println(wordFilterdCafes);
         List<String> optionsFilterdCafes = reservedRepository.findCafeByReserved(wordFilterdCafes, startTime, endTime, tableOptionsList);
-
-        List<Cafe> cafes = cafeRepository.findById(optionsFilterdCafes);
+        System.out.println(optionsFilterdCafes);
+        List<Cafe> cafes = cafeRepository.findByIds(optionsFilterdCafes);
 
         return cafes;
     }
