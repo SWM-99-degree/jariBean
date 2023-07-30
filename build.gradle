@@ -49,6 +49,9 @@ dependencies {
 
 	// firebase
 	implementation 'com.google.firebase:firebase-admin:9.1.1'
+
+	// embedded mongodb
+	testImplementation 'de.flapdoodle.embed:de.flapdoodle.embed.mongo'
 }
 
 tasks.named('test') {
