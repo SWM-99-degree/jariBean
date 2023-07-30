@@ -1,0 +1,85 @@
+package com.example.jariBean.oauth.service;
+
+
+import com.example.jariBean.oauth.dto.KakaoOAuthInfo;
+import com.example.jariBean.oauth.dto.KakaoUserInfo;
+import com.example.jariBean.repository.user.UserRepository;
+import lombok.Getter;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.reactive.function.client.WebClient;
+
+import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
+
+@Service
+public class OAuthKakaoService extends OAuthService{
+
+    @Value("${KAKAO_CLIENT_ID}")
+    private String KAKAO_CLIENT_ID;
+
+    @Value("${KAKAO_REDIRECT_URI}")
+    private String KAKAO_REDIRECT_URI;
+
+    private final String REGISTRATION = "kakao";
+
+    public OAuthKakaoService(UserRepository userRepository) {
+        super(userRepository);
+    }
+
+    @Override
+    public String getAccessToken(String code) {
+
+        MultiValueMap<String, String> bodyValue = new LinkedMultiValueMap<>();
+        bodyValue.add("grant_type", "authorization_code");
+        bodyValue.add("client_id", KAKAO_CLIENT_ID);
+        bodyValue.add("redirect_uri", KAKAO_REDIRECT_URI);
+        bodyValue.add("code", code);
+
+        WebClient client = WebClient.create();
+        KakaoOAuthInfo kakaoOAuthInfo = client.post()
+                .uri("https://kauth.kakao.com/oauth/token")
+                .contentType(APPLICATION_FORM_URLENCODED)
+                .bodyValue(bodyValue)
+                .retrieve()
+                .bodyToMono(KakaoOAuthInfo.class)
+                .block();
+
+        return kakaoOAuthInfo.getAccess_token();
+    }
+
+    @Override
+    public SocialUserInfo getUserInfo(String accessToken) {
+        WebClient client1 = WebClient.create();
+        KakaoUserInfo userInfo = client1.get()
+                .uri("https://kapi.kakao.com/v2/user/me")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                .retrieve()
+                .bodyToMono(KakaoUserInfo.class)
+                .block();
+
+        return SocialUserInfo.create(
+                REGISTRATION,
+                userInfo.getId(),
+                userInfo.getProperties().getNickname(),
+                userInfo.getProperties().getProfile_image()
+        );
+    }
+
+    @Getter
+    public static class SocialUserInfo {
+        private String socialId;
+        private String nickname;
+        private String imageUrl;
+
+        public static SocialUserInfo create(String registration, String id, String nickname, String imageUrl) {
+            SocialUserInfo socialUserInfo = new SocialUserInfo();
+            socialUserInfo.socialId = registration + "_" + id;
+            socialUserInfo.nickname = nickname;
+            socialUserInfo.imageUrl = imageUrl;
+            return socialUserInfo;
+        }
+    }
+}

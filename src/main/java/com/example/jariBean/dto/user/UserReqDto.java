@@ -53,16 +53,11 @@ public class UserReqDto {
     @Getter
     @Setter
     public static class UserLoginReqDto {
-        @NotEmpty(message = "필수: userPhoneNumber")
-        @Size(min = 11, max = 11)
-        private String userPhoneNumber;
+        @NotEmpty(message = "필수: userId")
+        private String userId;
 
-        @NotEmpty(message = "필수: password")
-        @Size(min = 4, max = 20) // 패스워드 인코딩 때문에
-        private String password;
-
-        // TODO
-        private String UserType;
+        @NotEmpty(message = "필수: userName")
+        private String userName;
     }
 
 }

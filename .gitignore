@@ -179,6 +179,6 @@ gradle-app.setting
 .env
 
 ### Firebase ###
-src/main/resources/Firebase/jaribean-3af6f-firebase-adminsdk-voaca-c380f36f12.json
+src/main/resources/Firebase/jaribean-e3748-firebase-adminsdk-8jhan-a2717cb833.json
 
 # End of https://www.toptal.com/developers/gitignore/api/macos,intellij+all,gradle,java

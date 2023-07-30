@@ -1,6 +1,5 @@
 package com.example.jariBean.service;
 
-import com.example.jariBean.dto.reserved.ReservedResDto;
 import com.example.jariBean.dto.reserved.ReservedResDto.NearestReservedResDto;
 import com.example.jariBean.dto.reserved.ReservedResDto.ReservedTableListResDto;
 import com.example.jariBean.entity.Cafe;
@@ -100,7 +99,7 @@ public class ReserveService {
                 endTime = reserved.getReservedEndTime();
                 ReservedTableListResDto.TimeTable.ReservingTime reservingTime = new ReservedTableListResDto.TimeTable.ReservingTime(openTime, reserved.getReservedStartTime());
                 // 테이블의 대한 정보 입력
-                timeTable.setTableOptions(reserved.getTableClass().getTableOptions());
+                timeTable.setTableOptions(reserved.getTableClass().getTableOptionList());
                 timeTable.setTableId(tableId);
                 reservingTimes.add(reservingTime);
             } else {
