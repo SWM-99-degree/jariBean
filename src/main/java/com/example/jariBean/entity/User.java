@@ -35,6 +35,9 @@ public class User {
     @Column(nullable = false)
     private String socialId;
 
+    @Column(nullable = false)
+    private String password;
+
     @Enumerated(STRING)
     @Column(nullable = false)
     private UserRole role;
