@@ -35,7 +35,7 @@ public class CafeRepositoryImpl implements CafeRepositoryTemplate{
     }
 
     @Override
-    public List<Cafe> findById(List<String> cafes) {
+    public List<Cafe> findByIds(List<String> cafes) {
         Criteria criteria = Criteria.where("cafeId").in(cafes);
         Query query = Query.query(criteria);
         return mongoTemplate.find(query, Cafe.class);
