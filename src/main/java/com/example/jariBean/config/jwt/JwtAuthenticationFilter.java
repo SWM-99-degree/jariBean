@@ -81,7 +81,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         // `Token` 생성
         Token token = Token.builder()
-                .id(loginUser.getUser().getId())
+                .userId(loginUser.getUser().getId())
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .firebaseToken(firebaseToken)
