@@ -1,26 +1,19 @@
 package com.example.jariBean.dto.reserved;
 
 import com.example.jariBean.entity.Reserved;
-import com.example.jariBean.entity.User;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
-
 import java.time.LocalDateTime;
 
-import static com.example.jariBean.entity.User.UserRole.CUSTOMER;
-
 @Slf4j
-public class ReservedReqDto {
+public class ReserveReqDto {
 
     @Getter
     @Setter
-    public static class NearestReservedReqDto {
+    public static class ReserveNearestReqDto {
 
         @NotEmpty(message = "userId는 필수입니다")
         private String userId;
@@ -32,7 +25,7 @@ public class ReservedReqDto {
 
     @Getter
     @Setter
-    public static class ReservedTableListReqDto {
+    public static class ReserveTableListReqDto {
 
         @NotEmpty(message = "userId는 필수입니다")
         private String cafeId;
@@ -49,17 +42,13 @@ public class ReservedReqDto {
 
     @Getter
     @Setter
-    public static class SaveReservedReqDto {
+    public static class ReserveSaveReqDto {
 
         @NotEmpty(message = "cafeId는 필수입니다")
         private String cafeId;
 
-        @NotEmpty(message = "userId는 필수입니다")
-        private String userId;
-
         @NotEmpty(message = "tableId는 필수입니다")
         private String tableId;
-
 
         @NotEmpty(message = "예약의 시작 시간은 필수입니다.")
         private LocalDateTime reservedStartTime;
@@ -68,15 +57,12 @@ public class ReservedReqDto {
         private LocalDateTime reservedEndTime;
 
         public Reserved toEntity() {
-
             return Reserved.builder()
-                    .userId(userId)
                     .cafeId(cafeId)
                     //.tableId(tableId)
                     .reservedStartTime(reservedStartTime)
                     .reservedEndTime(reservedEndTime)
                     .build();
         }
-
-        }
+    }
 }

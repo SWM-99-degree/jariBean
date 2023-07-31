@@ -1,16 +1,9 @@
 package com.example.jariBean.service;
 
-import com.example.jariBean.dto.reserved.ReservedReqDto;
-import com.example.jariBean.dto.reserved.ReservedResDto;
-import com.example.jariBean.entity.Cafe;
-import com.example.jariBean.entity.User;
 import com.example.jariBean.repository.cafe.CafeRepository;
 import com.example.jariBean.repository.reserved.ReservedRepository;
 import com.example.jariBean.repository.user.UserRepository;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.time.LocalDateTime;
 
 public class ReservedServiceTest {
 
