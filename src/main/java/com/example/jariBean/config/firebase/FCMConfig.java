@@ -4,6 +4,7 @@ import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.messaging.FirebaseMessaging;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
@@ -14,9 +15,12 @@ import java.util.List;
 
 @Configuration
 public class FCMConfig {
+
+    @Value("${FIREBASE_CLASS_PATH}")
+    private String FIREBASE_CLASS_PATH;
     @Bean
     FirebaseMessaging firebaseMessaging() throws IOException {
-        ClassPathResource resource = new ClassPathResource("firebase/jaribean-3af6f-firebase-adminsdk-voaca-c380f36f12.json");
+        ClassPathResource resource = new ClassPathResource(FIREBASE_CLASS_PATH);
 
         InputStream refreshToken = resource.getInputStream();
 

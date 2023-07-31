@@ -58,6 +58,9 @@ public class UserReqDto {
 
         @NotEmpty(message = "필수: userName")
         private String userName;
+
+        @NotEmpty(message = "필수: firebaseToken")
+        private String firebaseToken;
     }
 
 }
