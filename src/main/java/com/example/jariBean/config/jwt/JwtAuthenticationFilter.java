@@ -25,7 +25,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-    private static final ThreadLocal<String> requestBodyHolder = new ThreadLocal<>();
+    private static final ThreadLocal<UserLoginReqDto> requestBodyHolder = new ThreadLocal<>();
     private static final ObjectMapper mapper = new ObjectMapper();
     private AuthenticationManager authenticationManager;
     private TokenRepository tokenRepository;
@@ -50,7 +50,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             // 이 세션의 유효기간은 request ~ response 까지이다.
             Authentication authentication = authenticationManager.authenticate(authenticationToken);
 
-            requestBodyHolder.set(mapper.writeValueAsString(loginReqDto));
+            requestBodyHolder.set(loginReqDto);
 
             return authentication;
         } catch (Exception e) {
@@ -69,8 +69,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
 
-        String requestBody = requestBodyHolder.get();
-        UserLoginReqDto loginReqDto = mapper.readValue(requestBody, UserLoginReqDto.class);
+        UserLoginReqDto loginReqDto = requestBodyHolder.get();
 
         LoginUser loginUser = (LoginUser) authResult.getPrincipal();
 
