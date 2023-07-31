@@ -27,6 +27,9 @@ public class Matching {
     private String cafeId;
 
     @Column(nullable = false)
+    private Integer number;
+
+    @Column(nullable = false)
     private LocalDateTime matchingTime;
 
     @DBRef

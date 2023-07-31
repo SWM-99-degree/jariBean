@@ -35,7 +35,6 @@ public class CafeSearchServiceTest {
         for (Cafe cafe : cafes) {
             System.out.println(cafe.getId());
         }
-        System.out.println(123);
     }
 
 
