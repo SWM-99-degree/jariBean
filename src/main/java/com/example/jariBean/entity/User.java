@@ -35,6 +35,11 @@ public class User {
     @Column(nullable = false)
     private String socialId;
 
+    private String imageUrl;
+
+    @Column(nullable = false)
+    private String password;
+
     @Enumerated(STRING)
     @Column(nullable = false)
     private UserRole role;
@@ -81,11 +86,18 @@ public class User {
     }
 
     @Builder
-    public User(String id, String nickname, String socialId, UserRole role) {
+    public User(String id, String nickname, String socialId, String password, String imageUrl, UserRole role) {
         this.id = id;
         this.nickname = nickname;
         this.socialId = socialId;
+        this.password = password;
+        this.imageUrl = imageUrl;
         this.role = role;
         this.alarm = true;
+    }
+
+    public void updateInfo(String nickname, String imageUrl) {
+        this.nickname = nickname;
+        this.imageUrl = imageUrl;
     }
 }

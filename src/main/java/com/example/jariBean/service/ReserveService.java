@@ -1,6 +1,5 @@
 package com.example.jariBean.service;
 
-import com.example.jariBean.dto.reserved.ReservedResDto;
 import com.example.jariBean.dto.reserved.ReservedResDto.NearestReservedResDto;
 import com.example.jariBean.dto.reserved.ReservedResDto.ReservedTableListResDto;
 import com.example.jariBean.entity.Cafe;
