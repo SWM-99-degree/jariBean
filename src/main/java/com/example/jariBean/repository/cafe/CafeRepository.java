@@ -8,8 +8,6 @@ import java.util.Optional;
 
 public interface CafeRepository extends MongoRepository<Cafe, String>, CafeRepositoryTemplate {
 
-
-
     Optional<Cafe> findById(String id);
 
     Optional<Cafe> findByName(String cafeName);

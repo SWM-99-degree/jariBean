@@ -1,6 +1,7 @@
 package com.example.jariBean.repository.reserved;
 
 import com.example.jariBean.entity.Reserved;
+import com.example.jariBean.entity.TableClass;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -11,10 +12,70 @@ import org.springframework.data.mongodb.core.query.Query;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.List;
+import java.util.*;
 
 public class ReservedRepositoryImpl implements ReservedRepositoryTemplate{
     @Autowired private MongoTemplate mongoTemplate;
+
+    public static class Tuple<cafeId, tableId>{
+        private final String cafeId;
+        private final String tableId;
+
+        public Tuple(String cafeId, String tableId) {
+            this.cafeId = cafeId;
+            this.tableId = tableId;
+        }
+    }
+
+    @Override
+    public List<String> findCafeByReserved(List<String> cafes, LocalDateTime startTime, LocalDateTime endTime, List<TableClass.TableOption> tableOptionList) {
+
+        Map<String, Set> filterCafes = new HashMap<>();
+        Criteria mainCriteria = new Criteria();
+
+        if (cafes != null) {
+            mainCriteria.and("cafeId").in(cafes);
+        }
+        if (tableOptionList != null) {
+            mainCriteria.and("table.tableOptionList").all(tableOptionList);
+        }
+
+        Query queryByWordsandOptions = new Query(mainCriteria);
+        mongoTemplate.find(queryByWordsandOptions, Reserved.class).forEach(reserved ->
+                {
+                    if (filterCafes.containsKey(reserved.getCafeId())) {
+                        filterCafes.get(reserved.getCafeId()).add(reserved.getTable().getId());
+                    } else {
+                        Set<String> tableSet = new HashSet<>();
+                        tableSet.add(reserved.getTable().getId());
+                        filterCafes.put(reserved.getCafeId(), tableSet);
+                    }
+                });
+
+        Criteria reservedCriteria = new Criteria();
+
+        if (startTime != null){
+            // 겹치는 카페 예약
+            Criteria case1Criteria = Criteria.where("reservedStartTime").gte(startTime).lt(endTime);
+            Criteria case2Criteria = Criteria.where("reservedEndTime").gt(startTime).lte(endTime);
+            Criteria case3Criteria = Criteria.where("reservedStartTime").lt(startTime).and("reservedEndTime").gt(endTime);
+
+            reservedCriteria.orOperator(
+                    case1Criteria, case2Criteria, case3Criteria
+            );
+
+            Query queryByTime = new Query(reservedCriteria);
+            mongoTemplate.find(queryByTime, Reserved.class).forEach(reserved -> {
+                if (filterCafes.containsKey(reserved.getCafeId())) {filterCafes.get(reserved.getCafeId()).remove(reserved.getTable().getId());}
+            });
+        }
+
+        List<String> canReserveCafes = new ArrayList<>();
+        for (Map.Entry<String, Set> cafe : filterCafes.entrySet()) {
+            if (!cafe.getValue().isEmpty()) {canReserveCafes.add(cafe.getKey());}}
+
+        return canReserveCafes;
+    }
 
     @Override
     public Reserved findNearestReserved(String userId, LocalDateTime time) {

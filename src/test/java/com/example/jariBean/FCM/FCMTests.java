@@ -16,7 +16,7 @@ public class FCMTests {
     @Test
     public void FCMTest() throws Exception{
 
-        fcmNotificationService.sendNotificationByTokentest("토큰 내용");
+        fcmNotificationService.sendNotificationByTokentest("eiMZvMU4TvCk4BNeUEHBoz:APA91bH7pZYQBC_aTV0RR4Y2uvrvN1-5_kTrhZWkpzp3G5r03r86JuqRh3fPThKlgVNTQb_kp7_wsnVfQVh9x0XbiZscqSR6XT62CZ28m1SkBsnKmN12rlSHlDnqnS-v-7Z1gFGXxAv3");
 
     }
 }

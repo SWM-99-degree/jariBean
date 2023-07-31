@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.NearQuery;
+import org.springframework.data.mongodb.core.query.Query;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +32,13 @@ public class CafeRepositoryImpl implements CafeRepositoryTemplate{
 
         Cafe cafe = mongoTemplate.aggregate(aggregation, Cafe.class, Cafe.class).getUniqueMappedResult();
         return cafe;
+    }
+
+    @Override
+    public List<Cafe> findByIds(List<String> cafes) {
+        Criteria criteria = Criteria.where("cafeId").in(cafes);
+        Query query = Query.query(criteria);
+        return mongoTemplate.find(query, Cafe.class);
     }
 
     @Override

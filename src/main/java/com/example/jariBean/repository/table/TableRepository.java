@@ -8,4 +8,6 @@ import java.util.Optional;
 
 public interface TableRepository extends MongoRepository<Table, String>, TableRepositoryTemplate {
 
+    Table findByCafeId(String cafeId);
+
 }

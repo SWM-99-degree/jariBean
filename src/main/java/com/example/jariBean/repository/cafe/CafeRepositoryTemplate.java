@@ -11,6 +11,7 @@ public interface CafeRepositoryTemplate {
 
     List<Cafe> findByCoordinateNear(GeoJsonPoint point, Double distance);
 
+    List<Cafe> findByIds(List<String> cafes);
 
     Cafe findByIdwithOperatingTime(String cafeId);
 }
