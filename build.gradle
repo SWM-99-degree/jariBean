@@ -52,6 +52,9 @@ dependencies {
 
 	// embedded mongodb
 	testImplementation 'de.flapdoodle.embed:de.flapdoodle.embed.mongo'
+
+	// webflux
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 }
 
 tasks.named('test') {

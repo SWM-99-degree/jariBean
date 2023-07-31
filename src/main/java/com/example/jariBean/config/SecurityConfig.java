@@ -10,7 +10,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -75,9 +74,11 @@ public class SecurityConfig{
 
         http.authorizeRequests()
                 // 유저 회원가입, 유저 로그인 모두 허용
-                .antMatchers("/api/users/join", "/api/users/login").permitAll()
+                .antMatchers("/api/users/join").permitAll()
                 // swagger 모두 허용
                 .antMatchers("/swagger-ui/**", "/swagger-resources/**", "/v3/api-docs/**").permitAll()
+                // oauth2 모두 허용
+                .antMatchers("/login/**").permitAll()
                 .antMatchers("/api/admin/**").hasRole(ADMIN.toString())
                 .anyRequest().authenticated();
 
