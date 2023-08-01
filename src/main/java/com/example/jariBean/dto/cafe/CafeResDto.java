@@ -1,6 +1,7 @@
 package com.example.jariBean.dto.cafe;
 
 import com.example.jariBean.dto.reserved.ReservedResDto.TableReserveResDto;
+import com.example.jariBean.entity.Cafe;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,6 +17,13 @@ public class CafeResDto {
         private String name;
         private String address;
         private String imageUrl;
+
+        public CafeSummaryDto(Cafe cafe) {
+            this.id = cafe.getId();
+            this.name = cafe.getName();
+            this.address = cafe.getAddress();
+            this.imageUrl = cafe.getImageUrl();
+        }
     }
 
     @Getter
@@ -27,8 +35,10 @@ public class CafeResDto {
         private String description;
         private String instagram;
         private String image;
+
     }
 
+    @Setter
     public static class CafeDetailReserveDto {
         private CafeDetailDto cafeDetailDto;
         private List<TableReserveResDto> tableReserveResDtoList;

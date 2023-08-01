@@ -7,6 +7,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
+import org.springframework.data.mongodb.core.aggregation.MatchOperation;
+import org.springframework.data.mongodb.core.aggregation.SortOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
@@ -158,4 +160,18 @@ public class ReservedRepositoryImpl implements ReservedRepositoryTemplate{
     }
 
 
+    @Override
+    public List<Reserved> findTodayReservedById(String cafeId) {
+        LocalDateTime today = LocalDateTime.now();
+
+        MatchOperation matchToday = Aggregation.match(Criteria.where("reservedStartTime").gte(today.with(LocalTime.MIN)).lt(today.with(LocalTime.MAX)));
+
+        MatchOperation matchCafdId = Aggregation.match(Criteria.where("cafeId").is(cafeId));
+
+        SortOperation sortByTable = Aggregation.sort(Sort.Direction.ASC, "table._id").and(Sort.Direction.ASC, "reservedStartTime");
+
+        Aggregation aggregation = Aggregation.newAggregation(matchToday, matchCafdId, sortByTable);
+
+        return mongoTemplate.aggregate(aggregation, "reserved", Reserved.class).getMappedResults();
+    }
 }

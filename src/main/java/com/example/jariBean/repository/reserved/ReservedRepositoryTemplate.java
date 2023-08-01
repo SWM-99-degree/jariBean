@@ -16,6 +16,7 @@ public interface ReservedRepositoryTemplate {
 
     List<Reserved> findReservedByIdAndTableIdBetweenTime(String cafeId, String tableId,LocalDateTime time);
 
+    List<Reserved> findTodayReservedById(String cafeId);
 
     boolean isReservedByTableIdBetweenTime(String tableId, LocalDateTime startTime, LocalDateTime endTime);
 
