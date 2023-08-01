@@ -1,20 +1,37 @@
 package com.example.jariBean.dto.reserved;
 
-import com.example.jariBean.dto.dbconnect.ReservedJoinTableDto;
+import com.example.jariBean.dto.cafe.CafeResDto.CafeSummaryDto;
+import com.example.jariBean.dto.table.TableResDto.TableDetailDto;
 import com.example.jariBean.entity.Reserved;
-import com.example.jariBean.entity.TableClass;
+import com.example.jariBean.entity.TableClass.TableOption;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
 public class ReservedResDto {
+
+
+    @Getter
+    @Setter
+    public static class ReserveSummaryResDto {
+        private String reserveId;
+        private LocalDateTime reserveStartTime;
+        private Integer matchingSeating;
+        private CafeSummaryDto cafeSummaryDto;
+    }
+
+    @Getter
+    @Setter
+    public static class TableReserveResDto {
+        private TableDetailDto tableDetailDto;
+        private List<String> availableList;
+    }
 
     @Getter
     @Setter
@@ -26,7 +43,7 @@ public class ReservedResDto {
         private LocalDateTime reservedStartTime;
         private LocalDateTime reservedEndTime;
         // test
-        private List<TableClass.TableOption> tableOptions;
+        private List<TableOption> tableOptions;
 
         @Builder
         public NearestReservedResDto(LocalDateTime time, Reserved reserved){
@@ -61,7 +78,7 @@ public class ReservedResDto {
         @Setter
         public static class TimeTable {
             private String tableId;
-            private List<TableClass.TableOption> tableOptions;
+            private List<TableOption> tableOptions;
             private List<ReservingTime> reservingTimes;
 
             @Builder

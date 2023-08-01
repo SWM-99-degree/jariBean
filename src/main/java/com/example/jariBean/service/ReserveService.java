@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.jariBean.dto.reserved.ReservedReqDto.*;
+import static com.example.jariBean.dto.reserved.ReserveReqDto.*;
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +30,7 @@ public class ReserveService {
     // 손님 앱
 
     // 가장 가까운 예약
-    public NearestReservedResDto getNearestReserved(NearestReservedReqDto nearestReservedReqDto){
+    public NearestReservedResDto getNearestReserved(ReserveNearestReqDto nearestReservedReqDto){
         String userId = nearestReservedReqDto.getUserId();
         LocalDateTime userNow = nearestReservedReqDto.getUserNow();
         // 예약정보
@@ -52,7 +52,7 @@ public class ReserveService {
      *  "table" : [(table 번호, table class, table img,[사용시간])]
      * }
      */
-    public ReservedTableListResDto findReservedListByCafeId(ReservedTableListReqDto reservedTableListReqDto) {
+    public ReservedTableListResDto findReservedListByCafeId(ReserveTableListReqDto reservedTableListReqDto) {
         // 카페의 운영 시간 확인
         LocalDateTime standardTime = reservedTableListReqDto.getStartTime();
         Cafe cafe = cafeRepository.findByIdwithOperatingTime(reservedTableListReqDto.getCafeId());
@@ -125,7 +125,7 @@ public class ReserveService {
      */
     // 예약 신청
     @Transactional
-    public void saveReserved(SaveReservedReqDto saveReservedReqDto) {
+    public void saveReserved(ReserveSaveReqDto saveReservedReqDto) {
         // 검증해야 할 테이블의 예약되어 있는 것들 중, 당일에 있는 것을 가져옴
         List<Reserved> reserveds = reservedRepository.findReservedByIdAndTableIdBetweenTime(
                 saveReservedReqDto.getCafeId(), saveReservedReqDto.getTableId(), saveReservedReqDto.getReservedStartTime()

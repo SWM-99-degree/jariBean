@@ -1,17 +1,13 @@
 package com.example.jariBean.dto.cafe;
 
-import com.example.jariBean.entity.Cafe;
+import com.example.jariBean.entity.TableClass.TableOption;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
-
-import static com.example.jariBean.entity.User.UserRole.MANAGER;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Slf4j
 public class CafeReqDto {
@@ -26,6 +22,26 @@ public class CafeReqDto {
         private double longitude; // 경도
 
         // Getter, Setter, 생성자 등 필요한 메서드 추가
+    }
+
+    @Getter
+    @Setter
+    public static class CafeSearchReqDto {
+        private String searchingWord;
+
+        @NotNull(message = "위치는 필수입니다.")
+        private Location location;
+
+        @NotNull(message = "예약 시작 시간은 필수입니다.")
+        private LocalDateTime reserveStartTime;
+
+        @NotNull(message = "예약 끝 시간 필수입니다.")
+        private LocalDateTime reserveEndTime;
+
+        @NotNull(message = "인원수는 필수입니다.")
+        private Integer peopleNumber;
+
+        private List<TableOption> tableOptionList;
     }
 
 }
