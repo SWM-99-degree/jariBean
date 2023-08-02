@@ -49,6 +49,7 @@ public class CafeController {
                 cafeSearchReqDto.getLocation().getLongitude(),
                 cafeSearchReqDto.getReserveStartTime(),
                 cafeSearchReqDto.getReserveEndTime(),
+                cafeSearchReqDto.getPeopleNumber(),
                 cafeSearchReqDto.getTableOptionList()
         );
 
