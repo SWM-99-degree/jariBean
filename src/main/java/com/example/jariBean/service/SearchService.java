@@ -48,14 +48,14 @@ public class SearchService {
     }
 
     @Transactional
-    public List<Cafe> findByText(String text, double latitude, double longitude, LocalDateTime startTime, LocalDateTime endTime, List<TableClass.TableOption> tableOptionsList){
+    public List<Cafe> findByText(String text, double latitude, double longitude, LocalDateTime startTime, LocalDateTime endTime, Integer seating ,List<TableClass.TableOption> tableOptionsList){
         try {
             Set<String> wordSet = new HashSet<>();
 
             List<String> searchingWords = dividedWord(text);
             List<String> wordFilterdCafes = cafeSearchRepository.findBySearchingWord(searchingWords, latitude, longitude);
             System.out.println(wordFilterdCafes);
-            List<String> optionsFilterdCafes = reservedRepository.findCafeByReserved(wordFilterdCafes, startTime, endTime, tableOptionsList);
+            List<String> optionsFilterdCafes = reservedRepository.findCafeByReserved(wordFilterdCafes, startTime, endTime, seating, tableOptionsList);
             System.out.println(optionsFilterdCafes);
             List<Cafe> cafes = cafeRepository.findByIds(optionsFilterdCafes);
 

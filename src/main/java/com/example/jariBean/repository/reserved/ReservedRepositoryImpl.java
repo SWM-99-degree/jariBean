@@ -2,6 +2,7 @@ package com.example.jariBean.repository.reserved;
 
 import com.example.jariBean.entity.Reserved;
 import com.example.jariBean.entity.TableClass;
+import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -30,7 +31,7 @@ public class ReservedRepositoryImpl implements ReservedRepositoryTemplate{
     }
 
     @Override
-    public List<String> findCafeByReserved(List<String> cafes, LocalDateTime startTime, LocalDateTime endTime, List<TableClass.TableOption> tableOptionList) {
+    public List<String> findCafeByReserved(List<String> cafes, LocalDateTime startTime, LocalDateTime endTime, Integer seating, List<TableClass.TableOption> tableOptionList) {
 
         Map<String, Set> filterCafes = new HashMap<>();
         Criteria mainCriteria = new Criteria();
@@ -40,6 +41,9 @@ public class ReservedRepositoryImpl implements ReservedRepositoryTemplate{
         }
         if (tableOptionList != null) {
             mainCriteria.and("table.tableOptionList").all(tableOptionList);
+        }
+        if (seating != null) {
+            mainCriteria.and("table.seating").gte(seating);
         }
 
         Query queryByWordsandOptions = new Query(mainCriteria);
