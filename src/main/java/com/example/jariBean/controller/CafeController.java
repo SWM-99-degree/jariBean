@@ -35,11 +35,10 @@ public class CafeController {
         return new ResponseEntity<>(new ResponseDto<>(1, "정보를 성공적으로 가져왔습니다.", cafeSummaryDtos), CREATED);
     }
     @GetMapping("/{cafeId}")
-    public CafeDetailReserveDto moreInfo(@PathVariable("cafeId") String cafeId) {
+    public ResponseEntity moreInfo(@PathVariable("cafeId") String cafeId) {
+        CafeDetailReserveDto cafeDetailReserveDto = cafeService.getCafeWithTodayReserved(cafeId);
 
-
-
-        return null;
+        return new ResponseEntity<>(new ResponseDto<>(1, "정보를 성공적으로 가져왔습니다", cafeDetailReserveDto), CREATED);
     }
 
     @PostMapping
