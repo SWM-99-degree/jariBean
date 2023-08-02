@@ -28,9 +28,25 @@ public class ReservedResDto {
 
     @Getter
     @Setter
+    public static class availableTime {
+        private LocalDateTime startTime;
+        private LocalDateTime endTime;
+
+        public availableTime(LocalDateTime startTime, LocalDateTime endTime){
+            this.startTime = startTime;
+            this.endTime = endTime;
+        }
+    }
+
+    @Getter
+    @Setter
     public static class TableReserveResDto {
         private TableDetailDto tableDetailDto;
-        private List<String> availableList;
+        private List<availableTime> availableTimeList;
+
+        public void addTime(availableTime availableTime) {
+            this.availableTimeList.add(availableTime);
+        }
     }
 
     @Getter

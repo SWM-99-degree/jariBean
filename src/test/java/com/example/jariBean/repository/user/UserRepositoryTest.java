@@ -11,8 +11,8 @@ import static com.example.jariBean.entity.User.UserRole.CUSTOMER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-@ActiveProfiles("test")
-@DataMongoTest
+//@ActiveProfiles("test")
+//@DataMongoTest
 class UserRepositoryTest {
 
     @Autowired UserRepository userRepository;

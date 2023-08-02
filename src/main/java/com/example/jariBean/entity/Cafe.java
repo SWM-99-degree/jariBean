@@ -30,6 +30,8 @@ public class Cafe {
 
     private String imageUrl;
 
+    private String instagramUrl;
+
     @Column(nullable = false, length = 60)
     private String address;
 

@@ -31,7 +31,7 @@ public class CafeSearchServiceTest {
 
         LocalDateTime dateTime1 = LocalDateTime.of(2023, 7, 1, 15, 0);
         LocalDateTime dateTime2 = LocalDateTime.of(2023, 7, 1, 16, 0);
-        List<Cafe> cafes = searchService.findByText("미추홀",  37.4467039276238, 37.4467039276238, dateTime1, dateTime2, null);
+        List<Cafe> cafes = searchService.findByText("미추홀",  37.4467039276238, 37.4467039276238, dateTime1, dateTime2, 3,null);
         for (Cafe cafe : cafes) {
             System.out.println(cafe.getId());
         }

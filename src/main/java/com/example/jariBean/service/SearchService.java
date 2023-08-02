@@ -2,6 +2,7 @@ package com.example.jariBean.service;
 
 import com.example.jariBean.entity.Cafe;
 import com.example.jariBean.entity.TableClass;
+import com.example.jariBean.handler.ex.CustomNoContentException;
 import com.example.jariBean.repository.cafe.CafeRepository;
 import com.example.jariBean.repository.cafe.elasticcafe.CafeSearchRepository;
 import com.example.jariBean.repository.reserved.ReservedRepository;
@@ -47,16 +48,21 @@ public class SearchService {
     }
 
     @Transactional
-    public List<Cafe> findByText(String text, double latitude, double longitude, LocalDateTime startTime, LocalDateTime endTime, List<TableClass.TableOption> tableOptionsList){
-        Set<String> wordSet = new HashSet<>();
+    public List<Cafe> findByText(String text, double latitude, double longitude, LocalDateTime startTime, LocalDateTime endTime, Integer seating ,List<TableClass.TableOption> tableOptionsList){
+        try {
+            Set<String> wordSet = new HashSet<>();
 
-        List<String> searchingWords = dividedWord(text);
-        List<String> wordFilterdCafes = cafeSearchRepository.findBySearchingWord(searchingWords, latitude, longitude);
-        System.out.println(wordFilterdCafes);
-        List<String> optionsFilterdCafes = reservedRepository.findCafeByReserved(wordFilterdCafes, startTime, endTime, tableOptionsList);
-        System.out.println(optionsFilterdCafes);
-        List<Cafe> cafes = cafeRepository.findByIds(optionsFilterdCafes);
+            List<String> searchingWords = dividedWord(text);
+            List<String> wordFilterdCafes = cafeSearchRepository.findBySearchingWord(searchingWords, latitude, longitude);
+            System.out.println(wordFilterdCafes);
+            List<String> optionsFilterdCafes = reservedRepository.findCafeByReserved(wordFilterdCafes, startTime, endTime, seating, tableOptionsList);
+            System.out.println(optionsFilterdCafes);
+            List<Cafe> cafes = cafeRepository.findByIds(optionsFilterdCafes);
 
-        return cafes;
+            return cafes;
+        } catch (Exception e) {
+            throw new CustomNoContentException("해당되는 결과가 없습니다.");
+        }
+
     }
 }

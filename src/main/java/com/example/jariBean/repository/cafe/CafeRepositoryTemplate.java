@@ -14,4 +14,5 @@ public interface CafeRepositoryTemplate {
     List<Cafe> findByIds(List<String> cafes);
 
     Cafe findByIdwithOperatingTime(String cafeId);
+
 }

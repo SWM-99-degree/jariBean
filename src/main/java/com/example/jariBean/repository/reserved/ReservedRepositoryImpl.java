@@ -2,11 +2,14 @@ package com.example.jariBean.repository.reserved;
 
 import com.example.jariBean.entity.Reserved;
 import com.example.jariBean.entity.TableClass;
+import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
+import org.springframework.data.mongodb.core.aggregation.MatchOperation;
+import org.springframework.data.mongodb.core.aggregation.SortOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
@@ -28,7 +31,7 @@ public class ReservedRepositoryImpl implements ReservedRepositoryTemplate{
     }
 
     @Override
-    public List<String> findCafeByReserved(List<String> cafes, LocalDateTime startTime, LocalDateTime endTime, List<TableClass.TableOption> tableOptionList) {
+    public List<String> findCafeByReserved(List<String> cafes, LocalDateTime startTime, LocalDateTime endTime, Integer seating, List<TableClass.TableOption> tableOptionList) {
 
         Map<String, Set> filterCafes = new HashMap<>();
         Criteria mainCriteria = new Criteria();
@@ -38,6 +41,9 @@ public class ReservedRepositoryImpl implements ReservedRepositoryTemplate{
         }
         if (tableOptionList != null) {
             mainCriteria.and("table.tableOptionList").all(tableOptionList);
+        }
+        if (seating != null) {
+            mainCriteria.and("table.seating").gte(seating);
         }
 
         Query queryByWordsandOptions = new Query(mainCriteria);
@@ -158,4 +164,18 @@ public class ReservedRepositoryImpl implements ReservedRepositoryTemplate{
     }
 
 
+    @Override
+    public List<Reserved> findTodayReservedById(String cafeId) {
+        LocalDateTime today = LocalDateTime.now();
+
+        MatchOperation matchToday = Aggregation.match(Criteria.where("reservedStartTime").gte(today.with(LocalTime.MIN)).lt(today.with(LocalTime.MAX)));
+
+        MatchOperation matchCafdId = Aggregation.match(Criteria.where("cafeId").is(cafeId));
+
+        SortOperation sortByTable = Aggregation.sort(Sort.Direction.ASC, "table._id").and(Sort.Direction.ASC, "reservedStartTime");
+
+        Aggregation aggregation = Aggregation.newAggregation(matchToday, matchCafdId, sortByTable);
+
+        return mongoTemplate.aggregate(aggregation, "reserved", Reserved.class).getMappedResults();
+    }
 }
