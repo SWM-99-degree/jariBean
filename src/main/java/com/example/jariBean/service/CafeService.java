@@ -51,7 +51,6 @@ public class CafeService {
 
     }
 
-    // TODO 완성 필요
     public CafeDetailReserveDto getCafeWithTodayReserved(String cafeId){
 
         CafeDetailReserveDto cafeDetailReserveDto = new CafeDetailReserveDto();

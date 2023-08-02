@@ -10,14 +10,14 @@ public class TableResDto {
 
     public static class TableDetailDto {
         private String id;
-        private String name;
+        private String description;
         private Integer seating;
         private String image;
         private List<TableOption> tableOptionList;
 
         public TableDetailDto(Table table){
             this.id = table.getId();
-            this.name = table.getDescription(); //TODO
+            this.description = table.getDescription();
             this.seating = table.getSeating();
             this.image = table.getImageUrl();
             this.tableOptionList = table.getTableOptionList();
