@@ -39,7 +39,7 @@ public class Matching {
         CANCEL, PROCESSING, COMPLETE, NOSHOW
     }
 
-    @DBRef
+    @Column(nullable = false)
     private Cafe cafe;
 
     @DBRef

@@ -42,7 +42,7 @@ public class CafeController {
     }
 
     @PostMapping
-    public List<CafeSummaryDto> cafes(@RequestBody CafeSearchReqDto cafeSearchReqDto) {
+    public ResponseEntity cafes(@RequestBody CafeSearchReqDto cafeSearchReqDto) {
         List<Cafe> cafes = searchService.findByText(
                 cafeSearchReqDto.getSearchingWord(),
                 cafeSearchReqDto.getLocation().getLatitude(),
@@ -55,7 +55,7 @@ public class CafeController {
 
         List<CafeSummaryDto> cafeSummaryDtos = new ArrayList<>();
         cafes.forEach(cafe -> cafeSummaryDtos.add(new CafeSummaryDto(cafe)));
-        return cafeSummaryDtos;
+        return new ResponseEntity<>(new ResponseDto<>(1, "정보를 성공적으로 가져왔습니다", cafeSummaryDtos), CREATED);
     }
 
 }
