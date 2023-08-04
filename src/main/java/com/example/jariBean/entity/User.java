@@ -40,6 +40,9 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    @Column(nullable = false)
+    private String description;
+
     @Enumerated(STRING)
     @Column(nullable = false)
     private UserRole role;
@@ -94,10 +97,23 @@ public class User {
         this.imageUrl = imageUrl;
         this.role = role;
         this.alarm = true;
+        this.description = null;
+    }
+
+    public void updateAlarm(boolean bool) {
+        this.alarm = bool;
     }
 
     public void updateInfo(String nickname, String imageUrl) {
         this.nickname = nickname;
         this.imageUrl = imageUrl;
     }
+
+    public void updateInfo(String nickname, String imageUrl, String description) {
+        this.nickname = nickname;
+        this.imageUrl = imageUrl;
+        this.description = description;
+    }
+
+
 }

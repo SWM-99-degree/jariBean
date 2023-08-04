@@ -30,6 +30,9 @@ public class TableClass {
     private String name;
 
     @Column(nullable = false)
+    private Integer seating;
+
+    @Column(nullable = false)
     private List<TableOption> tableOptionList;
 
     @DBRef

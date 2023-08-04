@@ -32,7 +32,14 @@ public class Matching {
     @Column(nullable = false)
     private LocalDateTime matchingTime;
 
-    @DBRef
+    @Column(nullable = false)
+    private Status status;
+
+    enum Status {
+        CANCEL, PROCESSING, COMPLETE, NOSHOW
+    }
+
+    @Column(nullable = false)
     private Cafe cafe;
 
     @DBRef

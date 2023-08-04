@@ -61,7 +61,7 @@ dependencies {
 	implementation 'org.apache.poi:poi-ooxml:5.0.0'
 
 	// embedded mongodb
-	testImplementation 'de.flapdoodle.embed:de.flapdoodle.embed.mongo'
+	//testImplementation 'de.flapdoodle.embed:de.flapdoodle.embed.mongo'
 
 	// webflux
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'

@@ -31,7 +31,10 @@ public class Table {
     private String tableClassId;
 
     @Column(nullable = false, length = 100)
-    private String description;
+    private String name; // 사장님이 알아볼 수 있는 이름 ex. 창가자리
+
+    @Column(nullable = false, length = 100)
+    private String description; // 사용자에게 보이는 이름 ex.스터디용 1-1
 
     @Column(nullable = false)
     private Integer seating; // 인원 수

@@ -10,4 +10,5 @@ public interface UserRepository extends MongoRepository<User, String>, UserRepos
     Optional<User> findBySocialId(String userPhoneNumber);
     boolean existsBySocialId(String phoneNumber);
 
+
 }
