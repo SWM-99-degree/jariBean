@@ -46,8 +46,8 @@ public class CafeController {
     }
 
     // 검색 이후 카페 상세 확인
-    @GetMapping("/{cafeId}")
-    public ResponseEntity moreInfoWithSearch(@PathVariable("cafeId") String cafeId, @RequestParam LocalDateTime startTime, @RequestParam LocalDateTime endTime, @RequestParam List<TableClass.TableOption> tableOptions, @RequestParam Integer peopleNumber){
+    @GetMapping("/{cafeId}/aftersearch")
+    public ResponseEntity moreInfoWithSearch(@PathVariable("cafeid") String cafeId, @RequestParam("starttime") LocalDateTime startTime, @RequestParam("endtime") LocalDateTime endTime, @RequestParam("tableoptions") List<TableClass.TableOption> tableOptions, @RequestParam Integer peopleNumber){
         CafeDetailReserveDto cafeDetailReserveDto = cafeService.getCafeWithSearchingReserved(cafeId, startTime, endTime, peopleNumber, tableOptions);
 
         return new ResponseEntity<>(new ResponseDto<>(1, "정보를 성공적으로 가져왔습니다", cafeDetailReserveDto), CREATED);

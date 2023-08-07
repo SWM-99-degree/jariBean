@@ -89,7 +89,7 @@ class CafeRepositoryTest {
             Table table = tableRepository.findByCafeId(cafe);
             LocalDateTime dateTime1 = LocalDateTime.of(2023, 7, 1, 15, 0);
             LocalDateTime dateTime2 = LocalDateTime.of(2023, 7, 1, 17, 0);
-            Reserved reserved = new Reserved("123", cafe, table, dateTime1, dateTime2);
+            Reserved reserved = new Reserved("123", new Cafe(), table, dateTime1, dateTime2);
             reservedRepository.save(reserved);
         }
 

@@ -1,6 +1,8 @@
 package com.example.jariBean.service;
 
+import com.example.jariBean.dto.cafe.CafeResDto;
 import com.example.jariBean.entity.Cafe;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,6 +17,9 @@ public class CafeSearchServiceTest {
     @Autowired
     SearchService searchService;
 
+    @Autowired
+    CafeService cafeService;
+
 
     @Test
     public void findByTextwithELKTest(){
@@ -26,6 +31,8 @@ public class CafeSearchServiceTest {
         System.out.println(LocalDateTime.now());
     }
 
+
+
     @Test
     public void findBySearchingTest(){
 
@@ -35,6 +42,18 @@ public class CafeSearchServiceTest {
         for (Cafe cafe : cafes) {
             System.out.println(cafe.getId());
         }
+    }
+
+    @Test
+    public void findReservedTest() {
+        LocalDateTime dateTime1 = LocalDateTime.of(2023, 8, 7, 15, 0);
+        LocalDateTime dateTime2 = LocalDateTime.of(2023, 8, 7, 16, 0);
+
+        Assertions.assertDoesNotThrow(()->cafeService.getCafeWithSearchingReserved("64c45ac3935eb61c140793e7", dateTime1,dateTime2, null, null));
+
+        //CafeResDto.CafeDetailReserveDto reserveDto = cafeService.getCafeWithSearchingReserved("64c45ac3935eb61c140793e7", dateTime1,dateTime2, null, null);
+        //System.out.println(reserveDto.getCafeDetailDto().getCafeSummaryDto().getId());
+
     }
 
 

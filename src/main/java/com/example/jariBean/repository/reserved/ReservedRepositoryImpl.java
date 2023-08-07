@@ -65,7 +65,9 @@ public class ReservedRepositoryImpl implements ReservedRepositoryTemplate{
 
         SortOperation sortByTable = Aggregation.sort(Sort.Direction.ASC, "table._id").and(Sort.Direction.ASC, "reservedStartTime");
 
-        Aggregation aggregation = Aggregation.newAggregation((AggregationOperation) mainCriteria, sortByTable);
+        MatchOperation matchOperation = Aggregation.match(mainCriteria);
+
+        Aggregation aggregation = Aggregation.newAggregation(matchOperation, sortByTable);
 
         return mongoTemplate.aggregate(aggregation, "reserved", Reserved.class).getMappedResults();
     }
