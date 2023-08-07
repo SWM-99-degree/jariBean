@@ -24,6 +24,13 @@ public class ReservedResDto {
         private LocalDateTime reserveStartTime;
         private Integer matchingSeating;
         private CafeSummaryDto cafeSummaryDto;
+
+        public ReserveSummaryResDto(Reserved reserved){
+            this.reserveId = reserved.getId();
+            this.reserveStartTime = reserved.getReservedStartTime();
+            this.matchingSeating = reserved.getTable().getSeating();
+            this.cafeSummaryDto = new CafeSummaryDto(reserved.getCafe());
+        }
     }
 
     @Getter
@@ -63,7 +70,7 @@ public class ReservedResDto {
 
         @Builder
         public NearestReservedResDto(LocalDateTime time, Reserved reserved){
-            this.cafeId = reserved.getCafeId();
+            this.cafeId = reserved.getCafe().getId();
             this.cafeImg = reserved.getCafe().getCafeImg();
             this.cafeAddress = reserved.getCafe().getAddress();
             this.reservedStartTime = reserved.getReservedStartTime();

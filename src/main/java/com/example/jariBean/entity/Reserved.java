@@ -26,7 +26,7 @@ public class Reserved {
     private String userId;
 
     @Column(nullable = false)
-    private String cafeId;
+    private Cafe cafe;
 
     @Column(nullable = false)
     private Table table;
@@ -44,8 +44,8 @@ public class Reserved {
     private ReservedStatus reservedStatus;
 
     //for aggregate
-    @DBRef
-    private Cafe cafe;
+//    @DBRef
+//    private Cafe cafe;
 
     @DBRef
     private User user;
@@ -69,9 +69,9 @@ public class Reserved {
     }
 
     @Builder
-    public Reserved(String userId, String cafeId, Table table, LocalDateTime reservedStartTime, LocalDateTime reservedEndTime) {
+    public Reserved(String userId, Cafe cafe, Table table, LocalDateTime reservedStartTime, LocalDateTime reservedEndTime) {
         this.userId = userId;
-        this.cafeId = cafeId;
+        this.cafe = cafe;
         this.table = table;
         this.reservedEndTime = reservedEndTime;
         this.reservedStartTime = reservedStartTime;

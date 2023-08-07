@@ -9,6 +9,7 @@ import com.example.jariBean.dto.table.TableResDto.TableDetailDto;
 import com.example.jariBean.entity.Cafe;
 import com.example.jariBean.entity.CafeOperatingTime;
 import com.example.jariBean.entity.Reserved;
+import com.example.jariBean.entity.TableClass;
 import com.example.jariBean.handler.ex.CustomDBException;
 import com.example.jariBean.repository.cafe.CafeRepository;
 import com.example.jariBean.repository.cafeOperatingTime.CafeOperatingTimeRepository;
@@ -50,6 +51,54 @@ public class CafeService {
         }
 
     }
+
+    public CafeDetailReserveDto getCafeWithSearchingReserved(String cafeId, LocalDateTime reserveStartTime, LocalDateTime reserveEndTime, Integer peopleNumber, List<TableClass.TableOption> tableOptions) {
+
+        CafeDetailReserveDto cafeDetailReserveDto = new CafeDetailReserveDto();
+        try {
+            // TODO 바꾸기
+            Cafe cafe = cafeRepository.findById(cafeId).orElseThrow();
+            CafeOperatingTime cafeOperatingTime = cafeOperatingTimeRepository.findById(cafeId).orElseThrow();
+            cafeDetailReserveDto.setCafeDetailDto(new CafeDetailDto(cafe, cafeOperatingTime));
+
+            Map<String, List<Reserved>> reservedListByTabldId = new HashMap<>();
+            reservedRepository.findReservedByConditions(cafeId, reserveStartTime, reserveEndTime, peopleNumber, tableOptions).forEach(reserved ->
+                    {
+                        if (!reservedListByTabldId.containsKey(reserved.getTable().getId())){
+                            reservedListByTabldId.put(reserved.getTable().getId(), new ArrayList<>());
+                        }
+                        reservedListByTabldId.get(reserved.getTable().getId()).add(reserved);
+                    }
+            );
+
+            for (Map.Entry<String, List<Reserved>> reservedList :reservedListByTabldId.entrySet()){
+                TableReserveResDto tableReserveResDto = new TableReserveResDto();
+                TableDetailDto tableDetailDto = new TableDetailDto(reservedList.getValue().get(0).getTable());
+                tableReserveResDto.setTableDetailDto(tableDetailDto);
+
+                List<availableTime> times = new ArrayList<>();
+                LocalDateTime startTime = reserveStartTime;
+                LocalDateTime endTime = reserveEndTime;
+                for (Reserved reserved : reservedList.getValue()) {
+                    if (!startTime.isEqual(reserved.getReservedStartTime())){
+                        times.add(new availableTime(startTime, reserved.getReservedStartTime()));
+                    }
+                    startTime = reserved.getReservedEndTime();
+                }
+                if (!startTime.isEqual(endTime)){
+                    times.add(new availableTime(startTime, endTime));
+                }
+
+                tableReserveResDto.setAvailableTimeList(times);
+                cafeDetailReserveDto.addTable(tableReserveResDto);
+            }
+            return cafeDetailReserveDto;
+        } catch (Exception e) {
+            throw new CustomDBException("해당 되는 카페가 없습니다.");
+        }
+
+    }
+
 
     public CafeDetailReserveDto getCafeWithTodayReserved(String cafeId){
 
