@@ -1,6 +1,8 @@
 package com.example.jariBean.dto.reserved;
 
+import com.example.jariBean.entity.Cafe;
 import com.example.jariBean.entity.Reserved;
+import com.example.jariBean.entity.Table;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -56,10 +58,11 @@ public class ReserveReqDto {
         @NotEmpty(message = "예약의 끝 시간은 필수입니다.")
         private LocalDateTime reservedEndTime;
 
-        public Reserved toEntity() {
+        public Reserved toEntity(String userId, Table table, Cafe cafe) {
             return Reserved.builder()
-                    .cafeId(cafeId)
-                    //.tableId(tableId)
+                    .userId(userId)
+                    .cafe(cafe)
+                    .table(table)
                     .reservedStartTime(reservedStartTime)
                     .reservedEndTime(reservedEndTime)
                     .build();

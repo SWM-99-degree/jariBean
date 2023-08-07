@@ -5,11 +5,14 @@ import com.example.jariBean.dto.reserved.ReservedResDto.NearestReservedResDto;
 import com.example.jariBean.dto.reserved.ReservedResDto.ReservedTableListResDto;
 import com.example.jariBean.entity.Cafe;
 import com.example.jariBean.entity.Reserved;
+import com.example.jariBean.entity.Table;
 import com.example.jariBean.handler.ex.CustomDBException;
 import com.example.jariBean.handler.ex.CustomNoContentException;
 import com.example.jariBean.repository.cafe.CafeRepository;
 import com.example.jariBean.repository.reserved.ReservedRepository;
+import com.example.jariBean.repository.table.TableRepository;
 import lombok.RequiredArgsConstructor;
+import org.bson.types.ObjectId;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +31,7 @@ public class ReserveService {
 
     private final ReservedRepository reservedRepository;
     private final CafeRepository cafeRepository;
+    private final TableRepository tableRepository;
 
     // 손님 앱
 
@@ -41,6 +45,15 @@ public class ReserveService {
             throw new CustomDBException("예약 관련 데이터에 문제가 있습니다.");
         }
         return  reserveSummaryResDtoList;
+    }
+
+    // 예약 삭제하기
+    public void deleteMyReserved(String reservedId) {
+        try {
+            reservedRepository.deleteById(reservedId);
+        } catch (Exception e) {
+            throw new CustomDBException("해당 데이터는 존재하지 않습니다");
+        }
     }
 
 
@@ -140,24 +153,21 @@ public class ReserveService {
      */
     // 예약 신청
     @Transactional
-    public void saveReserved(ReserveSaveReqDto saveReservedReqDto) {
+    public void saveReserved(String userId, ReserveSaveReqDto saveReservedReqDto) {
         // 검증해야 할 테이블의 예약되어 있는 것들 중, 당일에 있는 것을 가져옴
-        List<Reserved> reserveds = reservedRepository.findReservedByIdAndTableIdBetweenTime(
-                saveReservedReqDto.getCafeId(), saveReservedReqDto.getTableId(), saveReservedReqDto.getReservedStartTime()
-        );
-
-        // 검증의 과정 Mongo라서 DB 단에서 하기는 어렵다.
-        for (Reserved reserve : reserveds) {
-            if (saveReservedReqDto.getReservedEndTime().isBefore(reserve.getReservedStartTime()) ||
-                    saveReservedReqDto.getReservedStartTime().isAfter(reserve.getReservedEndTime()) ||
-                    saveReservedReqDto.getReservedStartTime().isEqual(reserve.getReservedEndTime()) ||
-                    saveReservedReqDto.getReservedEndTime().isEqual(reserve.getReservedStartTime())
-            ){
-            } else { throw new CustomDBException("데이터가 중복됩니다."); }
+        boolean isExist = reservedRepository.isReservedByTableIdBetweenTime(saveReservedReqDto.getTableId(), saveReservedReqDto.getReservedStartTime(), saveReservedReqDto.getReservedEndTime());
+        if (isExist){
+            throw new CustomDBException("데이터가 중복됩니다.");
+        } else {
+            try {
+                Cafe cafe = cafeRepository.findById(saveReservedReqDto.getCafeId()).orElseThrow();
+                Table table = tableRepository.findById(saveReservedReqDto.getTableId()).orElseThrow();
+                Reserved reserved = saveReservedReqDto.toEntity(userId, table, cafe);
+                reservedRepository.save(reserved);
+            } catch (Exception e) {
+                throw new CustomDBException("카페와 테이블 데이터에 문제가 존재합니다.");
+            }
         }
-
-        Reserved reserved = saveReservedReqDto.toEntity();
-        reservedRepository.save(reserved);
     }
 
     // 점주 앱

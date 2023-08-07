@@ -2,7 +2,6 @@ package com.example.jariBean.repository.reserved;
 
 import com.example.jariBean.entity.Reserved;
 import com.example.jariBean.entity.TableClass;
-import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -49,12 +48,12 @@ public class ReservedRepositoryImpl implements ReservedRepositoryTemplate{
         Query queryByWordsandOptions = new Query(mainCriteria);
         mongoTemplate.find(queryByWordsandOptions, Reserved.class).forEach(reserved ->
                 {
-                    if (filterCafes.containsKey(reserved.getCafeId())) {
-                        filterCafes.get(reserved.getCafeId()).add(reserved.getTable().getId());
+                    if (filterCafes.containsKey(reserved.getCafe().getId())) {
+                        filterCafes.get(reserved.getCafe().getId()).add(reserved.getTable().getId());
                     } else {
                         Set<String> tableSet = new HashSet<>();
                         tableSet.add(reserved.getTable().getId());
-                        filterCafes.put(reserved.getCafeId(), tableSet);
+                        filterCafes.put(reserved.getCafe().getId(), tableSet);
                     }
                 });
 
@@ -72,7 +71,7 @@ public class ReservedRepositoryImpl implements ReservedRepositoryTemplate{
 
             Query queryByTime = new Query(reservedCriteria);
             mongoTemplate.find(queryByTime, Reserved.class).forEach(reserved -> {
-                if (filterCafes.containsKey(reserved.getCafeId())) {filterCafes.get(reserved.getCafeId()).remove(reserved.getTable().getId());}
+                if (filterCafes.containsKey(reserved.getCafe().getId())) {filterCafes.get(reserved.getCafe().getId()).remove(reserved.getTable().getId());}
             });
         }
 

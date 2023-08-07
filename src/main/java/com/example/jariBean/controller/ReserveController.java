@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.CREATED;
@@ -31,14 +30,19 @@ public class ReserveController {
     }
 
     @PostMapping
-    public void saveReserve(@RequestBody ReserveSaveReqDto reserveSaveReqDto) {
-        return;
+    public ResponseEntity saveReserve(@AuthenticationPrincipal LoginUser loginUser, @RequestBody ReserveSaveReqDto reserveSaveReqDto) {
+
+        reserveService.saveReserved(loginUser.getUser().getId(), reserveSaveReqDto);
+
+        return new ResponseEntity<>(new ResponseDto<>(1, "정보가 성공적으로 등록되었습니다.", ""), CREATED);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteReserve(@PathVariable String id) {
+    public ResponseEntity deleteReserve(@PathVariable String id) {
 
+        reserveService.deleteMyReserved(id);
 
+        return new ResponseEntity<>(new ResponseDto<>(1, "정보가 성공적으로 삭제되었습니다.", ""), CREATED);
     }
 
 
