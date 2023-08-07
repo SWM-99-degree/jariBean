@@ -5,8 +5,10 @@ import com.example.jariBean.dto.cafe.CafeReqDto.CafeSearchReqDto;
 import com.example.jariBean.dto.cafe.CafeResDto.CafeDetailReserveDto;
 import com.example.jariBean.dto.cafe.CafeResDto.CafeSummaryDto;
 import com.example.jariBean.entity.Cafe;
+import com.example.jariBean.entity.TableClass;
 import com.example.jariBean.service.CafeService;
 import com.example.jariBean.service.SearchService;
+import io.swagger.models.auth.In;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,9 +36,19 @@ public class CafeController {
 
         return new ResponseEntity<>(new ResponseDto<>(1, "정보를 성공적으로 가져왔습니다.", cafeSummaryDtos), CREATED);
     }
+
+    // 핫플레이스 경로 카페 상세 확인
     @GetMapping("/{cafeId}")
     public ResponseEntity moreInfo(@PathVariable("cafeId") String cafeId) {
         CafeDetailReserveDto cafeDetailReserveDto = cafeService.getCafeWithTodayReserved(cafeId);
+
+        return new ResponseEntity<>(new ResponseDto<>(1, "정보를 성공적으로 가져왔습니다", cafeDetailReserveDto), CREATED);
+    }
+
+    // 검색 이후 카페 상세 확인
+    @GetMapping("/{cafeId}")
+    public ResponseEntity moreInfoWithSearch(@PathVariable("cafeId") String cafeId, @RequestParam LocalDateTime startTime, @RequestParam LocalDateTime endTime, @RequestParam List<TableClass.TableOption> tableOptions, @RequestParam Integer peopleNumber){
+        CafeDetailReserveDto cafeDetailReserveDto = cafeService.getCafeWithSearchingReserved(cafeId, startTime, endTime, peopleNumber, tableOptions);
 
         return new ResponseEntity<>(new ResponseDto<>(1, "정보를 성공적으로 가져왔습니다", cafeDetailReserveDto), CREATED);
     }
