@@ -57,8 +57,7 @@ public class CafeService {
         CafeDetailReserveDto cafeDetailReserveDto = new CafeDetailReserveDto();
         try {
             Cafe cafe = cafeRepository.findById(cafeId).orElseThrow();
-            //CafeOperatingTime cafeOperatingTime = cafeOperatingTimeRepository.findById(cafeId).orElseThrow();
-            CafeOperatingTime cafeOperatingTime = new CafeOperatingTime();
+            CafeOperatingTime cafeOperatingTime = cafeOperatingTimeRepository.findById(cafeId).orElseThrow();
             cafeDetailReserveDto.setCafeDetailDto(new CafeDetailDto(cafe, cafeOperatingTime));
 
             Map<String, List<Reserved>> reservedListByTabldId = new HashMap<>();
