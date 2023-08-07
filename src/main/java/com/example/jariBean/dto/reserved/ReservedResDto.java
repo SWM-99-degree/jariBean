@@ -24,6 +24,13 @@ public class ReservedResDto {
         private LocalDateTime reserveStartTime;
         private Integer matchingSeating;
         private CafeSummaryDto cafeSummaryDto;
+
+        public ReserveSummaryResDto(Reserved reserved){
+            this.reserveId = reserved.getId();
+            this.reserveStartTime = reserved.getReservedStartTime();
+            this.matchingSeating = reserved.getTable().getSeating();
+            this.cafeSummaryDto = new CafeSummaryDto(reserved.getCafe());
+        }
     }
 
     @Getter

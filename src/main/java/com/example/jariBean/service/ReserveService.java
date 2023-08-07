@@ -1,5 +1,6 @@
 package com.example.jariBean.service;
 
+import com.example.jariBean.dto.reserved.ReservedResDto.ReserveSummaryResDto;
 import com.example.jariBean.dto.reserved.ReservedResDto.NearestReservedResDto;
 import com.example.jariBean.dto.reserved.ReservedResDto.ReservedTableListResDto;
 import com.example.jariBean.entity.Cafe;
@@ -9,6 +10,7 @@ import com.example.jariBean.handler.ex.CustomNoContentException;
 import com.example.jariBean.repository.cafe.CafeRepository;
 import com.example.jariBean.repository.reserved.ReservedRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -28,6 +30,19 @@ public class ReserveService {
     private final CafeRepository cafeRepository;
 
     // 손님 앱
+
+    // 지금까지 한 예약 가져오기
+    public List<ReserveSummaryResDto> getMyReserved(String userId, Pageable pageable) {
+        List<ReserveSummaryResDto> reserveSummaryResDtoList = new ArrayList<>();
+        try {
+            List<Reserved> reservedList = reservedRepository.findByUserIdOrderByReservedStartTimeDesc(userId, pageable);
+            reservedList.forEach(reserved -> reserveSummaryResDtoList.add(new ReserveSummaryResDto(reserved)));
+        } catch (Exception e) {
+            throw new CustomDBException("예약 관련 데이터에 문제가 있습니다.");
+        }
+        return  reserveSummaryResDtoList;
+    }
+
 
     // 가장 가까운 예약
     public NearestReservedResDto getNearestReserved(ReserveNearestReqDto nearestReservedReqDto){

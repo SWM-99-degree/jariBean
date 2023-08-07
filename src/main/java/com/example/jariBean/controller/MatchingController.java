@@ -5,14 +5,13 @@ import com.example.jariBean.dto.ResponseDto;
 import com.example.jariBean.dto.matching.MatchingResDto.MatchingSummaryResDto;
 import com.example.jariBean.service.MatchingService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.awt.print.Pageable;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.CREATED;
