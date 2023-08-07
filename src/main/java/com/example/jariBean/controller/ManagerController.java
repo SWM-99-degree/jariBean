@@ -14,8 +14,8 @@ import static org.springframework.http.HttpStatus.*;
 @RequestMapping("/api/manager")
 public class ManagerController {
 
-    @PutMapping("/matching/{status}")
-    public ResponseEntity matching(@PathVariable("status") String status) {
+    @PutMapping("/matching")
+    public ResponseEntity matching() {
         return new ResponseEntity<>(new ResponseDto<>(1, "매칭 상태 변경 완료", null), OK);
     }
 

@@ -8,10 +8,14 @@ import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.util.List;
 
+@Data
 public class ManagerReqDto {
 
     @Data
     public static class ManagerTableReqDto {
+
+        @NotEmpty(message = "name은 필수입니다.")
+        private String tableClassId;
 
         @NotEmpty(message = "name은 필수입니다.")
         @Size(min = 1, max = 20)
