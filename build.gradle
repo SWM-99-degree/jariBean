@@ -70,3 +70,11 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+sourceSets {
+	test {
+		java {
+			exclude 'src/main/java/com/example/jariBean/config/elasticsearch/**'
+		}
+	}
+}
