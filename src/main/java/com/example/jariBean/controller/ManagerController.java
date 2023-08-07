@@ -1,7 +1,13 @@
 package com.example.jariBean.controller;
 
+import com.example.jariBean.dto.ResponseDto;
+import com.example.jariBean.dto.manager.ManagerReqDto.ManagerTableClassReqDto;
+import com.example.jariBean.dto.manager.ManagerReqDto.ManagerTableReqDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import static org.springframework.http.HttpStatus.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -9,38 +15,40 @@ import org.springframework.web.bind.annotation.*;
 public class ManagerController {
 
     @PutMapping("/matching/{status}")
-    public void matching(@PathVariable("status") String status) {
-
+    public ResponseEntity matching(@PathVariable("status") String status) {
+        return new ResponseEntity<>(new ResponseDto<>(1, "매칭 상태 변경 완료", null), OK);
     }
 
     @GetMapping("/reserve")
-    public void reservePage() {
-
+    public ResponseEntity reservePage() {
+        return new ResponseEntity<>(new ResponseDto<>(1, "매칭 상태 변경 완료", null), OK);
     }
 
     @GetMapping("/table")
-    public void tablePage() {
-
+    public ResponseEntity tablePage() {
+        return new ResponseEntity<>(new ResponseDto<>(1, "매칭 상태 변경 완료", null), OK);
     }
 
     @PutMapping("/table/{id}")
-    public void updateTable(@PathVariable("id") String id) {
-
+    public ResponseEntity updateTable(@PathVariable("id") String id,
+                            @RequestBody ManagerTableReqDto managerTableReqDto) {
+        return new ResponseEntity<>(new ResponseDto<>(1, "매칭 상태 변경 완료", null), OK);
     }
 
     @PostMapping("/table")
-    public void addTable() {
-
+    public ResponseEntity addTable(@RequestBody ManagerTableReqDto managerTableReqDto) {
+        return new ResponseEntity<>(new ResponseDto<>(1, "매칭 상태 변경 완료", null), CREATED);
     }
 
     @PutMapping("/tableclass/{id}")
-    public void updateTableClass(@PathVariable("id") String id)) {
-
+    public ResponseEntity updateTableClass(@PathVariable("id") String id,
+                                 @RequestBody ManagerTableClassReqDto managerTableClassReqDto) {
+        return new ResponseEntity<>(new ResponseDto<>(1, "매칭 상태 변경 완료", null), OK);
     }
 
     @PostMapping("/tableclass")
-    public void addTableClass() {
-
+    public ResponseEntity addTableClass(@RequestBody ManagerTableClassReqDto managerTableClassReqDto) {
+        return new ResponseEntity<>(new ResponseDto<>(1, "매칭 상태 변경 완료", null), CREATED);
     }
 
 }
