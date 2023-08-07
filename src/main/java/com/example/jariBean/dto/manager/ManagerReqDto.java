@@ -24,6 +24,8 @@ public class ManagerReqDto {
         @NotEmpty(message = "description은 필수입니다.")
         @Size(min = 1, max = 50)
         private String description;
+
+        private String image;
     }
 
     @Data
@@ -31,10 +33,10 @@ public class ManagerReqDto {
 
         @NotEmpty(message = "description은 필수입니다.")
         @Size(min = 1, max = 50)
-        private String description;
+        private String name;
 
         @Positive(message = "seating은 필수입니다.")
-        private String seating;
+        private Integer seating;
 
         private List<TableOption> option;
     }

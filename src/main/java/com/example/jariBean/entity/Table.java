@@ -68,7 +68,7 @@ public class Table {
     private Integer version;
 
     @Builder
-    public Table(String id, String cafeId, String tableClassId, String name, String description, Integer seating, String imageUrl, String number, List<TableClass.TableOption> tableOptionList, Cafe cafe, TableClass tableClass, List<Reserved> reservedList, LocalDateTime createdAt, LocalDateTime modifiedAt, Integer version) {
+    public Table(String id, String cafeId, String tableClassId, String name, String description, Integer seating, String imageUrl, String number, List<TableClass.TableOption> tableOptionList) {
         this.id = id;
         this.cafeId = cafeId;
         this.tableClassId = tableClassId;
@@ -78,11 +78,11 @@ public class Table {
         this.imageUrl = imageUrl;
         this.number = number;
         this.tableOptionList = tableOptionList;
-        this.cafe = cafe;
-        this.tableClass = tableClass;
-        this.reservedList = reservedList;
-        this.createdAt = createdAt;
-        this.modifiedAt = modifiedAt;
-        this.version = version;
+    }
+
+    public void update(String name, String description, String imageUrl) {
+        this.name = name;
+        this.description = description;
+        this.imageUrl = imageUrl;
     }
 }

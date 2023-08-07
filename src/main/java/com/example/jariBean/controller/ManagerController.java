@@ -21,16 +21,16 @@ public class ManagerController {
 
     @GetMapping("/reserve")
     public ResponseEntity reservePage() {
-        return new ResponseEntity<>(new ResponseDto<>(1, "매칭 상태 변경 완료", null), OK);
+        return new ResponseEntity<>(new ResponseDto<>(1, "예약 page 결과", null), OK);
     }
 
     @GetMapping("/table")
     public ResponseEntity tablePage() {
-        return new ResponseEntity<>(new ResponseDto<>(1, "매칭 상태 변경 완료", null), OK);
+        return new ResponseEntity<>(new ResponseDto<>(1, "좌석 page 결과", null), OK);
     }
 
-    @PutMapping("/table/{id}")
-    public ResponseEntity updateTable(@PathVariable("id") String id,
+    @PutMapping("/table/{tableId}")
+    public ResponseEntity updateTable(@PathVariable("tableId") String tableId,
                             @RequestBody ManagerTableReqDto managerTableReqDto) {
         return new ResponseEntity<>(new ResponseDto<>(1, "매칭 상태 변경 완료", null), OK);
     }
@@ -40,8 +40,8 @@ public class ManagerController {
         return new ResponseEntity<>(new ResponseDto<>(1, "매칭 상태 변경 완료", null), CREATED);
     }
 
-    @PutMapping("/tableclass/{id}")
-    public ResponseEntity updateTableClass(@PathVariable("id") String id,
+    @PutMapping("/tableclass/{tableClassId}")
+    public ResponseEntity updateTableClass(@PathVariable("tableClassId") String tableClassId,
                                  @RequestBody ManagerTableClassReqDto managerTableClassReqDto) {
         return new ResponseEntity<>(new ResponseDto<>(1, "매칭 상태 변경 완료", null), OK);
     }
