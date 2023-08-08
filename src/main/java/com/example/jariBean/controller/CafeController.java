@@ -8,7 +8,6 @@ import com.example.jariBean.entity.Cafe;
 import com.example.jariBean.entity.TableClass;
 import com.example.jariBean.service.CafeService;
 import com.example.jariBean.service.SearchService;
-import io.swagger.models.auth.In;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -46,7 +45,7 @@ public class CafeController {
     }
 
     // 검색 이후 카페 상세 확인
-    @GetMapping("/{cafeId}")
+    @GetMapping("/{cafeId}/aftersearch")
     public ResponseEntity moreInfoWithSearch(@PathVariable("cafeId") String cafeId, @RequestParam LocalDateTime startTime, @RequestParam LocalDateTime endTime, @RequestParam List<TableClass.TableOption> tableOptions, @RequestParam Integer peopleNumber){
         CafeDetailReserveDto cafeDetailReserveDto = cafeService.getCafeWithSearchingReserved(cafeId, startTime, endTime, peopleNumber, tableOptions);
 

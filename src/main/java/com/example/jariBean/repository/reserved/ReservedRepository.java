@@ -10,4 +10,6 @@ public interface ReservedRepository extends MongoRepository<Reserved, String>, R
 
 
     List<Reserved> findByUserIdOrderByReservedStartTimeDesc(String userId, Pageable pageable);
+
+    List<Reserved> findByTableIdIn(List<String> tableIdList);
 }

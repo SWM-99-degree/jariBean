@@ -1,14 +1,22 @@
 package com.example.jariBean.service;
 
 import com.example.jariBean.dto.manager.ManagerReqDto.ManagerTableClassReqDto;
+import com.example.jariBean.dto.manager.ManagerResDto.ManagerReserveResDto;
+import com.example.jariBean.dto.manager.ManagerResDto.ManagerTableResDto;
+import com.example.jariBean.dto.manager.ManagerResDto.TableReserveDto;
+import com.example.jariBean.entity.Reserved;
 import com.example.jariBean.entity.Table;
 import com.example.jariBean.entity.TableClass;
 import com.example.jariBean.handler.ex.CustomDBException;
 import com.example.jariBean.repository.cafe.CafeRepository;
+import com.example.jariBean.repository.reserved.ReservedRepository;
 import com.example.jariBean.repository.table.TableRepository;
 import com.example.jariBean.repository.tableClass.TableClassRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.example.jariBean.dto.manager.ManagerReqDto.ManagerTableReqDto;
 
@@ -19,6 +27,7 @@ public class ManagerService {
     private final CafeRepository cafeRepository;
     private final TableRepository tableRepository;
     private final TableClassRepository tableClassRepository;
+    private final ReservedRepository reservedRepository;
 
     public void toggleMatchingStatus(String id) {
         cafeRepository.findById(id)
@@ -26,12 +35,50 @@ public class ManagerService {
                         .toggleMatchingStatus();
     }
 
-    public void getReservePage() {
+    public List<ManagerTableResDto> getTablePage(String cafeId) {
 
+        List<TableClass> tableClassList = tableClassRepository.findByCafeId(cafeId);
+        List<Table> tableList = tableRepository.findByCafeId(cafeId);
+
+        return tableClassList.stream()
+                .map(tableClass -> {
+                    ManagerTableResDto managerTableResDto = new ManagerTableResDto();
+                    managerTableResDto.addTableClassSummaryDto(tableClass);
+                    tableList.stream()
+                            .filter(table -> table.getTableClassId().equals(tableClass.getId()))
+                            .collect(Collectors.toList())
+                            .forEach(table -> {
+                                managerTableResDto.addTableSummaryDto(table);
+                            });
+                    return managerTableResDto;
+                }).collect(Collectors.toList());
     }
 
-    public void getTablePage() {
+    public ManagerReserveResDto getReservePage(String cafeId) {
 
+        ManagerReserveResDto managerReserveResDto = new ManagerReserveResDto();
+
+        List<TableClass> tableClassList = tableClassRepository.findByCafeId(cafeId);
+        List<Table> tableList = tableRepository.findByCafeId(cafeId);
+        List<String> tableIdList = tableList.stream().map(Table::getId).collect(Collectors.toList());
+        List<Reserved> reservedList = reservedRepository.findByTableIdIn(tableIdList);
+
+        tableClassList.forEach(tableClass -> {
+            managerReserveResDto.addTableClassSummaryDto(tableClass);
+        });
+
+        tableList.forEach(table -> {
+            TableReserveDto tableReserveDto = new TableReserveDto();
+            tableReserveDto.setTable(table);
+            reservedList.stream()
+                    .filter(reserved -> reserved.getTable().getId().equals(table.getId()))
+                    .collect(Collectors.toList())
+                    .forEach(reserved -> {
+                        tableReserveDto.addReservePeriod(reserved);
+                    });
+            managerReserveResDto.addTableReserveDtoList(tableReserveDto);
+        });
+        return managerReserveResDto;
     }
 
     public void updateTable(String tableId, ManagerTableReqDto managerTableReqDto) {
