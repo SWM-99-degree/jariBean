@@ -35,4 +35,9 @@ public class Notice {
 
     @LastModifiedDate
     private LocalDateTime modifiedAt;
+
+    public Notice(String title, String content){
+        this.title = title;
+        this.content = content;
+    }
 }

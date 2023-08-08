@@ -12,7 +12,6 @@ import org.springframework.data.elasticsearch.repository.config.EnableElasticsea
 @Lazy
 @Configuration
 @EnableElasticsearchRepositories
-@Lazy
 public class ElasticSearchConfig extends AbstractElasticSearchConfig{
 
     @Override

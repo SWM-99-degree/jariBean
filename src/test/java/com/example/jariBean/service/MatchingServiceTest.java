@@ -26,11 +26,12 @@ public class MatchingServiceTest {
     private MatchingService matchingService;
 
 
+
     @Test
     public void matchingTest() {
         // given
         String userId = "64d1082828032028b33c4450";
-        Cafe cafe = cafeRepository.findById("64c45ac3935eb61c140793e7").orElseThrow();
+        Cafe cafe = cafeRepository.save(new Cafe());
         Integer number = 2;
         Matching matching = new Matching(userId, cafe, number);
 

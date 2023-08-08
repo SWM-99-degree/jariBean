@@ -2,6 +2,7 @@ package com.example.jariBean.service;
 
 import com.example.jariBean.dto.reserved.ReserveReqDto;
 import com.example.jariBean.dto.reserved.ReservedResDto;
+import com.example.jariBean.entity.Reserved;
 import com.example.jariBean.handler.ex.CustomDBException;
 import com.example.jariBean.repository.cafe.CafeRepository;
 import com.example.jariBean.repository.reserved.ReservedRepository;
@@ -59,7 +60,9 @@ public class ReservedServiceTest {
     @Test
     public void delteMyReservedTest() {
         // given
-        String reservedId = "64d09fd8520d313df06257e7";
+        String userId = "testUser";
+        Reserved reserved = reservedRepository.findByUserIdOrderByReservedStartTimeDesc(userId, Pageable.ofSize(1)).get(0);
+        String reservedId = reserved.getId();
 
         // then
         Assertions.assertDoesNotThrow(()-> reserveService.deleteMyReserved(reservedId));
@@ -76,7 +79,7 @@ public class ReservedServiceTest {
     }
 
     @Test
-    public void getNearest성ReservedTest() {
+    public void getNearestReservedTest() {
         // given
         String userId = "testUser";
         String dateFormat = "yyyy-MM-dd HH:mm:ss";
