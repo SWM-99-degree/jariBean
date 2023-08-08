@@ -2,7 +2,6 @@ package com.example.jariBean.repository.cafe;
 
 
 import com.example.jariBean.entity.Cafe;
-import com.example.jariBean.entity.Reserved;
 import com.example.jariBean.entity.Table;
 import com.example.jariBean.entity.TableClass;
 import com.example.jariBean.repository.cafe.elasticcafe.CafeSearchRepository;
@@ -19,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SpringBootTest
+@ActiveProfiles("test")
 class CafeRepositoryTest {
 
     @Autowired CafeRepository cafeRepository;
@@ -86,11 +87,11 @@ class CafeRepositoryTest {
 //        cafes.add("64c45ac3935eb61c140793e9");
 //        cafes.add("64c45ac3935eb61c140793ed");
         for (String cafe : cafes) {
-            Table table = tableRepository.findByCafeId(cafe);
+//            Table table = tableRepository.findByCafeId(cafe);
             LocalDateTime dateTime1 = LocalDateTime.of(2023, 7, 1, 15, 0);
             LocalDateTime dateTime2 = LocalDateTime.of(2023, 7, 1, 17, 0);
-            Reserved reserved = new Reserved("123", cafe, table, dateTime1, dateTime2);
-            reservedRepository.save(reserved);
+//            Reserved reserved = new Reserved("123", cafe, table, dateTime1, dateTime2);
+//            reservedRepository.save(reserved);
         }
 
     }

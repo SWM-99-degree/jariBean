@@ -1,11 +1,11 @@
 package com.example.jariBean.entity;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -50,5 +50,20 @@ public class TableClass {
 
     public enum TableOption {
         PLUG, HEIGHT, RECTANGLE, BACKREST
+    }
+
+    @Builder
+    public TableClass(String id, String cafeId, String name, Integer seating, List<TableOption> tableOptionList) {
+        this.id = id;
+        this.cafeId = cafeId;
+        this.name = name;
+        this.seating = seating;
+        this.tableOptionList = tableOptionList;
+    }
+
+    public void update(String name, Integer seating, List<TableOption> option) {
+        this.name = name;
+        this.seating = seating;
+        this.tableOptionList = option;
     }
 }

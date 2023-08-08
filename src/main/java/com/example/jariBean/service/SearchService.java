@@ -11,6 +11,7 @@ import kr.co.shineware.nlp.komoran.core.Komoran;
 import kr.co.shineware.nlp.komoran.model.KomoranResult;
 import kr.co.shineware.nlp.komoran.model.Token;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,10 +22,12 @@ import java.util.List;
 import java.util.Set;
 
 @Service
+@Lazy
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class SearchService {
 
+    @Lazy
     private final CafeSearchRepository cafeSearchRepository;
 
     private final ReservedRepository reservedRepository;
