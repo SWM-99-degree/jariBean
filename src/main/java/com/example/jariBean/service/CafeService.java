@@ -56,7 +56,6 @@ public class CafeService {
 
         CafeDetailReserveDto cafeDetailReserveDto = new CafeDetailReserveDto();
         try {
-            // TODO 바꾸기
             Cafe cafe = cafeRepository.findById(cafeId).orElseThrow();
             CafeOperatingTime cafeOperatingTime = cafeOperatingTimeRepository.findById(cafeId).orElseThrow();
             cafeDetailReserveDto.setCafeDetailDto(new CafeDetailDto(cafe, cafeOperatingTime));
@@ -94,6 +93,7 @@ public class CafeService {
             }
             return cafeDetailReserveDto;
         } catch (Exception e) {
+            e.printStackTrace();
             throw new CustomDBException("해당 되는 카페가 없습니다.");
         }
 

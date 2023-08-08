@@ -51,6 +51,7 @@ public class CafeResDto {
     }
 
     @Setter
+    @Getter
     public static class CafeDetailReserveDto {
         private CafeDetailDto cafeDetailDto;
         private List<TableReserveResDto> tableReserveResDtoList;

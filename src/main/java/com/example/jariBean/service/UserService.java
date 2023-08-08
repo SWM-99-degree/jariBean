@@ -35,7 +35,6 @@ public class UserService {
         // 회원가입 결과 반환
         return new UserJoinRespDto(savedUser);
     }
-
     public ProfileSummaryResDto findProfile(String userId) {
         try {
             User user = userRepository.findById(userId).orElseThrow();
@@ -45,6 +44,7 @@ public class UserService {
         }
     }
 
+    @Transactional
     public void updateUserInfo(String userId, ProfileReqDto.ProfileUpdateReqDto profileUpdateReqDto){
         try {
             User user = userRepository.findById(userId).orElseThrow();
@@ -55,6 +55,7 @@ public class UserService {
         }
     }
 
+    @Transactional
     public void updateAlarmStatus(String userId){
         try {
             User user = userRepository.findById(userId).orElseThrow();

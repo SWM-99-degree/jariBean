@@ -1,5 +1,6 @@
 package com.example.jariBean.entity;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
@@ -24,13 +25,10 @@ public class Matching {
     private String userId;
 
     @Column(nullable = false)
-    private String cafeId;
-
-    @Column(nullable = false)
     private Integer number;
 
     @Column(nullable = false)
-    private LocalDateTime matchingTime;
+    private LocalDateTime matchingTime = LocalDateTime.now();
 
     @Column(nullable = false)
     private Status status;
@@ -54,5 +52,12 @@ public class Matching {
 
     @Version //
     private Integer version;
+
+    @Builder
+    public Matching(String userId, Cafe cafe, Integer number){
+        this.userId = userId;
+        this.cafe = cafe;
+        this.number = number;
+    }
 
 }

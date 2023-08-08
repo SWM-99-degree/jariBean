@@ -22,9 +22,9 @@ import java.util.List;
 import java.util.Set;
 
 @Service
-@Lazy
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Lazy
 public class SearchService {
 
     @Lazy

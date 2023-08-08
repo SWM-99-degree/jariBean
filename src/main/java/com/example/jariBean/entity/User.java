@@ -110,9 +110,15 @@ public class User {
     }
 
     public void updateInfo(String nickname, String imageUrl, String description) {
-        this.nickname = nickname;
-        this.imageUrl = imageUrl;
-        this.description = description;
+        if (nickname != null){
+            this.nickname = nickname;
+        }
+        if (imageUrl != null){
+            this.imageUrl = imageUrl;
+        }
+        if (description != null){
+            this.description = description;
+        }
     }
 
 

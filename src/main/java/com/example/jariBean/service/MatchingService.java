@@ -5,6 +5,7 @@ import com.example.jariBean.entity.Matching;
 import com.example.jariBean.handler.ex.CustomDBException;
 import com.example.jariBean.repository.matching.MatchingRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +17,8 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class MatchingService {
+
+    @Autowired
     private MatchingRepository matchingRepository;
 
     public List<MatchingSummaryResDto> findMatchingByUserId(String userId, Pageable pageable) {

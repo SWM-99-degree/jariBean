@@ -3,6 +3,7 @@ package com.example.jariBean.repository.cafe;
 import com.example.jariBean.dto.dbconnect.CafeJoinOperatingTimeDto;
 import com.example.jariBean.entity.Cafe;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
@@ -16,6 +17,7 @@ import java.util.List;
 import static org.springframework.data.geo.Metrics.KILOMETERS;
 
 
+@Lazy
 public class CafeRepositoryImpl implements CafeRepositoryTemplate{
 
     @Autowired private MongoTemplate mongoTemplate;

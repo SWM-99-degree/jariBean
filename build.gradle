@@ -71,11 +71,6 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
-test {
-	useJUnitPlatform {
-		exclude("com/example/jariBean/config/elasticsarch/**")
-		exclude("com/example/jariBean/entity/elasticentity/**")
-		exclude("com/example/jariBean/repository/cafe/elasticcafe/**")
-		exclude("com/example/jariBean/service/SearchService.class")
-	}
+sourceSets {
+	test {}
 }

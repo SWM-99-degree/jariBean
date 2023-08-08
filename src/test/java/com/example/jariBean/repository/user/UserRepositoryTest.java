@@ -5,6 +5,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import static com.example.jariBean.entity.User.UserRole.CUSTOMER;
@@ -13,9 +14,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 //@ActiveProfiles("test")
 //@DataMongoTest
+@SpringBootTest
 class UserRepositoryTest {
 
-    @Autowired UserRepository userRepository;
+    @Autowired private UserRepository userRepository;
 
     @Test
     public void saveUser() throws Exception {

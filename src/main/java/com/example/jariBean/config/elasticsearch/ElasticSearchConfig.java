@@ -1,6 +1,7 @@
 package com.example.jariBean.config.elasticsearch;
 
 import org.elasticsearch.client.RestHighLevelClient;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.elasticsearch.client.ClientConfiguration;

@@ -69,84 +69,6 @@ public class ReserveService {
         NearestReservedResDto reservedResDto = new NearestReservedResDto(userNow, reserved);
         return reservedResDto;
     }
-
-    /**
-     * 최기성
-     * [검색결과-테이블] 에서 예약 가능한 테이블의 예약내역을 가져오는 로직
-     * @param reservedTableListReqDto
-     * @return {
-     *  "cafeName" : "카페 이름",
-     *  "cafeImg" : "이미지 url",
-     *  "table" : [(table 번호, table class, table img,[사용시간])]
-     * }
-     */
-    public ReservedTableListResDto findReservedListByCafeId(ReserveTableListReqDto reservedTableListReqDto) {
-        // 카페의 운영 시간 확인
-        LocalDateTime standardTime = reservedTableListReqDto.getStartTime();
-        Cafe cafe = cafeRepository.findByIdwithOperatingTime(reservedTableListReqDto.getCafeId());
-        LocalDateTime openTime = cafe.getCafeOperatingTimeList().get(0).getOpenTime().withYear(standardTime.getYear()).withMonth(standardTime.getMonthValue()).withDayOfMonth(standardTime.getDayOfMonth());
-        LocalDateTime closeTime = cafe.getCafeOperatingTimeList().get(0).getCloseTime().withYear(standardTime.getYear()).withMonth(standardTime.getMonthValue()).withDayOfMonth(standardTime.getDayOfMonth());
-
-        // +1시간 넓히는 단위에 운영시간을 침범하는 경우를 계산
-        if (Duration.between(reservedTableListReqDto.getStartTime().minusHours(1L), openTime).toMinutes() > 0) {
-        } else {openTime = reservedTableListReqDto.getStartTime().minusHours(1L);}
-
-        if (Duration.between(closeTime, reservedTableListReqDto.getEndTime().plusHours(1L)).toMinutes() > 0) {
-        } else {closeTime = reservedTableListReqDto.getEndTime().plusHours(1L);}
-
-
-        // 예약 내역 가져오기 및 카페 내용 가져오기
-        List<Reserved> reservedList = reservedRepository.findReservedByIdBetweenTime(reservedTableListReqDto.getCafeId(), reservedTableListReqDto.getStartTime(), reservedTableListReqDto.getEndTime());
-
-        LocalDateTime endTime = null;
-        String tableId = "";
-
-        // 초기화
-        List<ReservedTableListResDto.TimeTable.ReservingTime> reservingTimes = new ArrayList<>();
-        ReservedTableListResDto.TimeTable timeTable = new ReservedTableListResDto.TimeTable();
-        ReservedTableListResDto reservedTableListResDto = new ReservedTableListResDto();
-
-        // 카페 정보
-        reservedTableListResDto.setCafeImg(cafe.getCafeImg());
-        reservedTableListResDto.setCafeName(cafe.getName());
-        boolean flag = false;
-        for (Reserved reserved : reservedList) {
-            // 만약 테이블id가 달라지게 된다면 형성된 테이블의 정보를 넣고, 새로운 테이블의 정보를 구성한다.
-            if (!tableId.equals(reserved.getTable().getId())){
-                if (flag == Boolean.TRUE) {
-                    reservingTimes.add(new ReservedTableListResDto.TimeTable.ReservingTime(endTime, closeTime));
-                    timeTable.setReservingTimes(reservingTimes);
-                    reservedTableListResDto.appendTimetable(timeTable);
-                }
-                flag = true;
-
-                // 초기화
-                reservingTimes = new ArrayList<>();
-                timeTable = new ReservedTableListResDto.TimeTable();
-                tableId = reserved.getTable().getId();
-                endTime = reserved.getReservedEndTime();
-                ReservedTableListResDto.TimeTable.ReservingTime reservingTime = new ReservedTableListResDto.TimeTable.ReservingTime(openTime, reserved.getReservedStartTime());
-                // 테이블의 대한 정보 입력
-                timeTable.setTableOptions(reserved.getTableClass().getTableOptionList());
-                timeTable.setTableId(tableId);
-                reservingTimes.add(reservingTime);
-            } else {
-                if (reserved.getReservedStartTime().equals(endTime)) {
-                    endTime = reserved.getReservedEndTime();
-                } else {
-                    reservingTimes.add(new ReservedTableListResDto.TimeTable.ReservingTime(endTime, reserved.getReservedStartTime()));
-                    endTime = reserved.getReservedEndTime();
-                }
-            }
-        }
-        reservingTimes.add(new ReservedTableListResDto.TimeTable.ReservingTime(endTime, closeTime));
-        timeTable.setReservingTimes(reservingTimes);
-        reservedTableListResDto.appendTimetable(timeTable);
-
-        return reservedTableListResDto;
-
-    }
-
     /**
      * 예약하기 로직
      * @param saveReservedReqDto
@@ -160,11 +82,12 @@ public class ReserveService {
             throw new CustomDBException("데이터가 중복됩니다.");
         } else {
             try {
-                Cafe cafe = cafeRepository.findById(saveReservedReqDto.getCafeId()).orElseThrow();
-                Table table = tableRepository.findById(saveReservedReqDto.getTableId()).orElseThrow();
+                Cafe cafe = cafeRepository.findById(saveReservedReqDto.getCafeId()).orElse(null);
+                Table table = tableRepository.findById(saveReservedReqDto.getTableId()).orElse(null);
                 Reserved reserved = saveReservedReqDto.toEntity(userId, table, cafe);
                 reservedRepository.save(reserved);
             } catch (Exception e) {
+                e.printStackTrace();
                 throw new CustomDBException("카페와 테이블 데이터에 문제가 존재합니다.");
             }
         }

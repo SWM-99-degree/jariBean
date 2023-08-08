@@ -11,7 +11,6 @@ import org.springframework.data.elasticsearch.core.convert.ElasticsearchConverte
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 
 
-@Lazy
 @Configuration
 @EnableElasticsearchRepositories
 public abstract class AbstractElasticSearchConfig extends ElasticsearchConfigurationSupport {
