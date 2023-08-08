@@ -39,6 +39,7 @@ public class CafeSearchServiceTest {
         }
     }
 
+    // getCafeWithTodayReserved 과 동일한 로직이라서 추가적인 테스트 코드를 작성하지 않았습니다.
     @Test
     public void findReservedTest() {
         // given

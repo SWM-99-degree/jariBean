@@ -1,6 +1,7 @@
 package com.example.jariBean.service;
 
 import com.example.jariBean.dto.reserved.ReserveReqDto;
+import com.example.jariBean.dto.reserved.ReservedResDto;
 import com.example.jariBean.handler.ex.CustomDBException;
 import com.example.jariBean.repository.cafe.CafeRepository;
 import com.example.jariBean.repository.reserved.ReservedRepository;
@@ -71,6 +72,30 @@ public class ReservedServiceTest {
 
         // then
         Assertions.assertDoesNotThrow(()-> reserveService.getMyReserved(userId, Pageable.ofSize(1)));
+
+    }
+
+    @Test
+    public void getNearest성ReservedTest() {
+        // given
+        String userId = "testUser";
+        String dateFormat = "yyyy-MM-dd HH:mm:ss";
+        String startTime = "2023-08-07 10:00:00";
+        String checkStartTime = "2023-08-07 12:00:00";
+        String checkEndTime = "2023-08-07 14:00:00";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateFormat);
+        LocalDateTime time = LocalDateTime.parse(startTime, formatter);
+        ReserveReqDto.ReserveNearestReqDto reserveNearestReqDto = new ReserveReqDto.ReserveNearestReqDto();
+        reserveNearestReqDto.setUserId(userId);
+        reserveNearestReqDto.setUserNow(time);
+
+        // when
+        ReservedResDto.NearestReservedResDto nearestReservedResDto = reserveService.getNearestReserved(reserveNearestReqDto);
+
+        // then
+        Assertions.assertEquals(nearestReservedResDto.getReservedStartTime(), LocalDateTime.parse(checkStartTime, formatter));
+        Assertions.assertEquals(nearestReservedResDto.getReservedEndTime(), LocalDateTime.parse(checkEndTime, formatter));
+
 
     }
 
