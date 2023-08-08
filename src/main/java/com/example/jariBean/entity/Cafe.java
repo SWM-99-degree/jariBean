@@ -19,7 +19,6 @@ import java.util.List;
 public class Cafe {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
 
     @Column(unique = true, nullable = false, length = 20)
@@ -45,6 +44,9 @@ public class Cafe {
     @Column(nullable = false)
     private GeoJsonPoint coordinate;
 
+    @Column(nullable = false)
+    private boolean matching;
+
     @CreatedDate
     @Column(updatable = false) // 생성일자(createdDate)에 대한 정보는 생성시에만 할당 가능, 갱신 불가
     private LocalDateTime createdAt;
@@ -67,10 +69,16 @@ public class Cafe {
         this.address = address;
         this.description = description;
         this.coordinate = coordinate;
+        this.matching = true;
     }
 
     public void updateCafeName(String name) {
         this.name = name;
+    }
+
+    public boolean toggleMatchingStatus() {
+        matching = !matching;
+        return matching;
     }
 
 }

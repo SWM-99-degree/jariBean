@@ -1,11 +1,11 @@
 package com.example.jariBean.entity;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -66,4 +66,23 @@ public class Table {
 
     @Version //
     private Integer version;
+
+    @Builder
+    public Table(String id, String cafeId, String tableClassId, String name, String description, Integer seating, String imageUrl, String number, List<TableClass.TableOption> tableOptionList) {
+        this.id = id;
+        this.cafeId = cafeId;
+        this.tableClassId = tableClassId;
+        this.name = name;
+        this.description = description;
+        this.seating = seating;
+        this.imageUrl = imageUrl;
+        this.number = number;
+        this.tableOptionList = tableOptionList;
+    }
+
+    public void update(String name, String description, String imageUrl) {
+        this.name = name;
+        this.description = description;
+        this.imageUrl = imageUrl;
+    }
 }

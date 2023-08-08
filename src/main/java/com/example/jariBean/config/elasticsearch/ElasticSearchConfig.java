@@ -9,6 +9,7 @@ import org.springframework.data.elasticsearch.client.RestClients;
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 
 
+@Lazy
 @Configuration
 @EnableElasticsearchRepositories
 @Lazy

@@ -1,13 +1,14 @@
 package com.example.jariBean.repository.table;
 
 import com.example.jariBean.entity.Table;
-import com.example.jariBean.entity.User;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-import java.util.Optional;
+import java.util.List;
 
 public interface TableRepository extends MongoRepository<Table, String>, TableRepositoryTemplate {
 
-    Table findByCafeId(String cafeId);
+    List<Table> findByCafeId(String cafeId);
+
+    List<Table> findByTableClassId(String tableClassId);
 
 }
