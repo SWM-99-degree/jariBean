@@ -45,6 +45,7 @@ public class UserService {
         }
     }
 
+    @Transactional
     public void updateUserInfo(String userId, ProfileReqDto.ProfileUpdateReqDto profileUpdateReqDto){
         try {
             User user = userRepository.findById(userId).orElseThrow();
@@ -55,6 +56,7 @@ public class UserService {
         }
     }
 
+    @Transactional
     public void updateAlarmStatus(String userId){
         try {
             User user = userRepository.findById(userId).orElseThrow();

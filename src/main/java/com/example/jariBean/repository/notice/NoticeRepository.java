@@ -9,6 +9,6 @@ import java.util.Optional;
 
 public interface NoticeRepository extends MongoRepository<Notice, String>, NoticeRepositoryTemplate {
 
-    List<Notice> findAllByOrderByCreatedAtDesc();
+    Optional<List<Notice>> findAllByOrderByCreatedAtDesc();
 
 }
