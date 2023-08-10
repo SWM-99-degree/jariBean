@@ -48,7 +48,7 @@ jobs:
     - name: Create Build Directory
       run: |
         mkdir -p build/libs 
-        mv /github/workspace/build/libs/app.jar build/libs/app.jar
+        mv /github/workspace/build/libs/jariBean-0.0.1-SNAPSHOT.jar build/libs/app.jar
 
       
     - name: Setup docker buildx
