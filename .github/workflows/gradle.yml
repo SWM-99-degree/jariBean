@@ -46,15 +46,6 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
       
-    - name: Create Build Directory
-      run: |
-        mkdir -p build/libs
-        pwd
-        ls -al
-        cd build/libs
-        ls -al
-
-      
     - name: Setup docker buildx
       id: buildx
       uses: docker/setup-buildx-action@v1
