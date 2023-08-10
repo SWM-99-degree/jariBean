@@ -46,7 +46,7 @@ jobs:
       
     - name: Create Build Directory
       run: |
-        cd /build/libs
+        pwd
         ls
 
       
