@@ -38,10 +38,10 @@ jobs:
       run: chmod +x gradlew
         
     - name: Build with Gradle
-      run: ./gradlew build -x test
-      artifacts:
-        paths:
-          - build/libs/your-jar-file.jar
+      run: |
+        ./gradlew build -x test
+        ls -R
+      
      
     - name: Checkout
       uses: actions/checkout@v2
