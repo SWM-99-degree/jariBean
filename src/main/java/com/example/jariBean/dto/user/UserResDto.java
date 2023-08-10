@@ -1,10 +1,9 @@
 package com.example.jariBean.dto.user;
 
 import com.example.jariBean.entity.User;
+import com.example.jariBean.entity.User.UserRole;
 import com.example.jariBean.util.CustomDateUtil;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 public class UserResDto {
     @Getter
@@ -31,6 +30,24 @@ public class UserResDto {
         public UserJoinRespDto(User user) {
             this.id = user.getId();
             this.nickname = user.getNickname();
+        }
+    }
+
+    @Data
+    public static class UserInfoRespDto {
+        private String id;
+        private String nickname;
+        private String imageUrl;
+        private String description;
+        private UserRole role;
+
+        @Builder
+        public UserInfoRespDto(String id, String nickname, String imageUrl, String description, UserRole role) {
+            this.id = id;
+            this.nickname = nickname;
+            this.imageUrl = imageUrl;
+            this.description = description;
+            this.role = role;
         }
     }
 }

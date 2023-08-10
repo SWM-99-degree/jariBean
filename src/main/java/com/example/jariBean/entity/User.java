@@ -17,6 +17,7 @@ import javax.persistence.Id;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static com.example.jariBean.entity.User.UserRole.CUSTOMER;
 import static javax.persistence.EnumType.STRING;
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -72,19 +73,16 @@ public class User {
     @Version //
     private Integer version;
 
+    public void register() {
+        this.role = CUSTOMER;
+    }
+
     // TODO userRole, UserType
 
     @Getter
     @AllArgsConstructor
     public enum UserRole {
-        ADMIN("관리자"), CUSTOMER("고객"), MANAGER("매니저");
-        private String role;
-    }
-
-    @Getter
-    @AllArgsConstructor
-    public enum UserType {
-        NORMAL("기본"), KAKAO("카카오");
+        ADMIN("관리자"), CUSTOMER("고객"), MANAGER("매니저"), UNREGISTERED("미등록");
         private String role;
     }
 
@@ -100,13 +98,14 @@ public class User {
         this.description = null;
     }
 
-    public void updateAlarm(boolean bool) {
-        this.alarm = bool;
+    public void updateAlarm() {
+        this.alarm = !alarm;
     }
 
-    public void updateInfo(String nickname, String imageUrl) {
+    public void updateBySocialInfo(String nickname, String imageUrl, String password) {
         this.nickname = nickname;
         this.imageUrl = imageUrl;
+        this.password = password;
     }
 
     public void updateInfo(String nickname, String imageUrl, String description) {

@@ -74,7 +74,7 @@ public class SecurityConfig{
 
         http.authorizeRequests()
                 // 유저 회원가입, 유저 로그인 모두 허용
-                .antMatchers("/api/users/join").permitAll()
+                .antMatchers("/join").permitAll()
                 // swagger 모두 허용
                 .antMatchers("/swagger-ui/**", "/swagger-resources/**", "/v3/api-docs/**").permitAll()
                 // oauth2 모두 허용
