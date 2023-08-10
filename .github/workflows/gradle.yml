@@ -35,7 +35,9 @@ jobs:
         distribution: 'temurin'
         
     - name: Build with Gradle
-      run: ./gradlew build -x test
+      run: |
+        ./gradlew build -x test
+        ./gradlew bootJar
      
     - name: Checkout
       uses: actions/checkout@v2
