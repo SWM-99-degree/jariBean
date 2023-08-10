@@ -46,8 +46,8 @@ jobs:
       
     - name: Create Build Directory
       run: |
-        mkdir -p build/libs
-        find -name "*.jar"
+        cd /github/workspace/build/libs
+        ls
 
       
     - name: Setup docker buildx
