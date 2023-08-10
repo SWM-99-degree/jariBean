@@ -45,10 +45,17 @@ jobs:
     
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
+    - name: Build with Gradle
+      uses: gradle/gradle-build-action@749f47bda3e44aa060e82d7b3ef7e40d953bd629
+      with:
+        arguments: build
+    - uses: actions/upload-artifact@v3
+      with:
+        name: Package
+        path: build/libs
         
     - name: Build with Gradle
       run: |
-        ./gradlew build -x test
         cp ./build/libs/jariBean-0.0.1-SNAPSHOT.jar app.jar
         ls -R
       
