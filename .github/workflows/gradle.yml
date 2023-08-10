@@ -39,13 +39,19 @@ jobs:
         
     - name: Build with Gradle
       run: ./gradlew build -x test
+      artifacts:
+        paths:
+          - build/libs/your-jar-file.jar
      
     - name: Checkout
       uses: actions/checkout@v2
       
     - name: Create Build Directory
       run: |
+        mkdir -p build/libs
         pwd
+        ls -al
+        cd build/libs
         ls -al
 
       
