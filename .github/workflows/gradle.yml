@@ -44,12 +44,11 @@ jobs:
      
     - name: Checkout
       uses: actions/checkout@v2
-    
-    - name: Create Docker Context
+      
+    - name: Create Build Directory
       run: |
-        mkdir docker-context
-        cp build/libs/*.jar docker-context/
-        cp Dockerfile docker-context/
+        mkdir -p build/libs 
+        mv app.jar build/libs/app.jar
 
       
     - name: Setup docker buildx
