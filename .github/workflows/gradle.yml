@@ -81,7 +81,7 @@ jobs:
       - name: Docker run
         run: |
           docker stop ${{ env.NAME }} && docker rm ${{ env.NAME }} && docker rmi ${{ env.DOCKER_IMAGE }}:latest
-          aws s3 cp s3://your-bucket-name/path/to/.env /springboot
+          aws s3 cp s3://jaribean-env/spring/.env ~/spring_env/
           docker create --name ${{ env.NAME }} ${{ env.DOCKER_IMAGE }}:latest
-          docker cp /springboot/.env ${{ env.NAME }}:/
+          docker cp ~/spring_env/.env ${{ env.NAME }}:/
           docker start -d -p 8080:8080 --name ${{ env.NAME }}
