@@ -3,6 +3,7 @@ package com.example.jariBean.config.jwt;
 import com.example.jariBean.config.auth.LoginUser;
 import com.example.jariBean.dto.user.UserReqDto.UserLoginReqDto;
 import com.example.jariBean.dto.user.UserResDto.UserLoginResDto;
+import com.example.jariBean.entity.Token;
 import com.example.jariBean.repository.TokenRepository;
 import com.example.jariBean.util.CustomResponseUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,30 +25,33 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-
+    private static final ThreadLocal<UserLoginReqDto> requestBodyHolder = new ThreadLocal<>();
+    private static final ObjectMapper mapper = new ObjectMapper();
     private AuthenticationManager authenticationManager;
     private TokenRepository tokenRepository;
 
 
     public JwtAuthenticationFilter(AuthenticationManager authenticationManager, TokenRepository tokenRepository) {
         super(authenticationManager);
-        setFilterProcessesUrl("/api/users/login"); // 고객 로그인 URL 지정
+        setFilterProcessesUrl("/login"); // 고객 로그인 URL 지정
         this.authenticationManager = authenticationManager;
         this.tokenRepository = tokenRepository;
     }
 
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) {
 
         try {
-            ObjectMapper mapper = new ObjectMapper();
             UserLoginReqDto loginReqDto = mapper.readValue(request.getInputStream(), UserLoginReqDto.class);
             // 강제 로그인
-            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginReqDto.getUserPhoneNumber(), loginReqDto.getPassword());
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginReqDto.getUserId(), loginReqDto.getUserName());
             // UserDetailsService.LoadByUsername 호출
             // JWT를 쓴다고 하더라도, 컨트롤러에 진입을 하면 시큐리티 권한 체크, 인증 체크의 도움을 받을 수 있게 세션을 만든다.
             // 이 세션의 유효기간은 request ~ response 까지이다.
             Authentication authentication = authenticationManager.authenticate(authenticationToken);
+
+            requestBodyHolder.set(loginReqDto);
+
             return authentication;
         } catch (Exception e) {
             // JwtAuthenticationFilter.unsuccessfulAuthentication 메서드 호출
@@ -65,20 +69,26 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
 
+        UserLoginReqDto loginReqDto = requestBodyHolder.get();
+
         LoginUser loginUser = (LoginUser) authResult.getPrincipal();
 
         // refresh, access token 생성
         String accessToken = JwtProcess.create(loginUser);
         String refreshToken = JwtProcess.createRefreshToken(loginUser);
+        String firebaseToken = loginReqDto.getFirebaseToken();
 
-//        // `Token` 생성
-//        Token token = Token.builder()
-//                .refreshToken(refreshToken)
-//                .accessToken(accessToken)
-//                .build();
-//
-//        // `Token` 저장
-//        tokenRepository.save(token);
+
+        // `Token` 생성
+        Token token = Token.builder()
+                .userId(loginUser.getUser().getId())
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .firebaseToken(firebaseToken)
+                .build();
+
+        // `Token` 저장
+        tokenRepository.save(token);
 
         // refresh, access token 헤더에 추가
         response.addHeader(JwtVO.ACCESS_HEADER, accessToken);

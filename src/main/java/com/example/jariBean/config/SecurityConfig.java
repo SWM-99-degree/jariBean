@@ -22,7 +22,7 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 
 @Configuration
 @RequiredArgsConstructor
-public class SecurityConfig {
+public class SecurityConfig{
 
     private final TokenRepository tokenRepository;
 
@@ -41,6 +41,7 @@ public class SecurityConfig {
             builder.addFilter(new JwtAuthorizationFilter(authenticationManager));
             super.configure(builder);
         }
+
     }
 
 
@@ -73,9 +74,11 @@ public class SecurityConfig {
 
         http.authorizeRequests()
                 // 유저 회원가입, 유저 로그인 모두 허용
-                .antMatchers("/api/users/join", "/api/users/login").permitAll()
+                .antMatchers("/api/users/join").permitAll()
                 // swagger 모두 허용
                 .antMatchers("/swagger-ui/**", "/swagger-resources/**", "/v3/api-docs/**").permitAll()
+                // oauth2 모두 허용
+                .antMatchers("/login/**").permitAll()
                 .antMatchers("/api/admin/**").hasRole(ADMIN.toString())
                 .anyRequest().authenticated();
 

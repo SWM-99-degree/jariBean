@@ -1,6 +1,9 @@
 package com.example.jariBean.config.jwt;
 
 import com.example.jariBean.config.auth.LoginUser;
+import com.example.jariBean.config.jwt.jwtdto.JwtDto;
+import com.example.jariBean.entity.Cafe;
+import com.example.jariBean.entity.User;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -25,11 +28,14 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
         if(isExist(header)) {
             String jwt = header.replace(JwtVO.TOKEN_PREFIX, ""); // "BEARER " 제거
-            LoginUser loginUser = JwtProcess.verify(jwt);
+            JwtDto jwtDto = JwtProcess.verify(jwt);
 
+            User user = User.builder().id(jwtDto.getId()).role(User.UserRole.valueOf(jwtDto.getUserRole())).build();
+            LoginUser loginUser = new LoginUser(user);
             // 임시 세션 강제 주입 (생명주기 request ~ response)
             Authentication authentication = new UsernamePasswordAuthenticationToken(loginUser, null, loginUser.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
+
         }
         chain.doFilter(request, response);
     }

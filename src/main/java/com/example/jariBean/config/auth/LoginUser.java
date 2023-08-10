@@ -22,13 +22,13 @@ public class LoginUser implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         ArrayList<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(() -> user.getUserRole().toString());
+        authorities.add(() -> user.getRole().toString());
         return authorities;
     }
 
     @Override
     public String getPassword() {
-        return user.getUserPassword();
+        return user.getPassword();
     }
 
     @Override
@@ -37,7 +37,7 @@ public class LoginUser implements UserDetails {
          * username → password
          * password를 idnentifier로 사용한다.
          */
-        return user.getUserPhoneNumber();
+        return user.getSocialId();
     }
 
     @Override

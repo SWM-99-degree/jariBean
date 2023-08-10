@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.annotation.Version;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.Column;
@@ -14,6 +15,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static javax.persistence.EnumType.STRING;
 import static javax.persistence.GenerationType.IDENTITY;
@@ -27,21 +29,25 @@ public class User {
     @Column(name = "user_id")
     private String id;
 
-    @Column(unique = true, nullable = false, length = 20)
-    private String userName;
-
-    @Column(nullable = false, length = 11)
-    private String userPhoneNumber;
-
-    @Column(nullable = false, length = 60) // (Bcrypt)
-    private String userPassword;
-
     @Column(nullable = false, length = 20)
-    private String userNickname;
+    private String nickname;
+
+    @Column(nullable = false)
+    private String socialId;
+
+    private String imageUrl;
+
+    @Column(nullable = false)
+    private String password;
+
+    @Column(nullable = false)
+    private String description;
 
     @Enumerated(STRING)
     @Column(nullable = false)
-    private UserRole userRole;
+    private UserRole role;
+
+    private boolean alarm;
 
     @CreatedDate
     @Column(updatable = false) // 생성일자(createdDate)에 대한 정보는 생성시에만 할당 가능, 갱신 불가
@@ -49,6 +55,19 @@ public class User {
 
     @LastModifiedDate
     private LocalDateTime modifiedAt;
+
+    @DBRef
+    private List<Matching> matchingList;
+
+    @DBRef
+    private List<Reserved> reservedList;
+
+    @DBRef
+    private List<Table> tableList;
+
+    @DBRef
+    private List<TableClass> tableClassList;
+
 
     @Version //
     private Integer version;
@@ -70,13 +89,36 @@ public class User {
     }
 
     @Builder
-    public User(String id, String userName, String userPhoneNumber, String userPassword, String userNickname, UserRole userRole) {
+    public User(String id, String nickname, String socialId, String password, String imageUrl, UserRole role) {
         this.id = id;
-        this.userName = userName;
-        this.userPhoneNumber = userPhoneNumber;
-        this.userPassword = userPassword;
-        this.userNickname = userNickname;
-        this.userRole = userRole;
+        this.nickname = nickname;
+        this.socialId = socialId;
+        this.password = password;
+        this.imageUrl = imageUrl;
+        this.role = role;
+        this.alarm = true;
+        this.description = null;
+    }
+
+    public void updateAlarm(boolean bool) {
+        this.alarm = bool;
+    }
+
+    public void updateInfo(String nickname, String imageUrl) {
+        this.nickname = nickname;
+        this.imageUrl = imageUrl;
+    }
+
+    public void updateInfo(String nickname, String imageUrl, String description) {
+        if (nickname != null){
+            this.nickname = nickname;
+        }
+        if (imageUrl != null){
+            this.imageUrl = imageUrl;
+        }
+        if (description != null){
+            this.description = description;
+        }
     }
 
 
