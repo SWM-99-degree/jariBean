@@ -41,6 +41,7 @@ jobs:
       run: |
         ./gradlew build -x test
         ./gradlew bootJar
+        cp -r build/libs .
      
     - name: Checkout
       uses: actions/checkout@v2
