@@ -69,6 +69,7 @@ jobs:
           ${{ runner.os }}-buildx-
     
     - name: Build Docker image
+      if: contains(github.ref, 'CICD')
       run: |
         docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASS }}
         docker build -t ${{ env.DOCKER_IMAGE }}:latest .
