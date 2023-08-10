@@ -38,8 +38,7 @@ jobs:
       run: chmod +x gradlew
         
     - name: Build with Gradle
-      run: |
-        ./gradlew build -x test
+      run: ./gradlew build -x test
      
     - name: Checkout
       uses: actions/checkout@v2
@@ -47,7 +46,7 @@ jobs:
     - name: Create Build Directory
       run: |
         pwd
-        ls
+        ls -al
 
       
     - name: Setup docker buildx
