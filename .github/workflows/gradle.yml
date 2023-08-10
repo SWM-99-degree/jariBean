@@ -46,7 +46,7 @@ jobs:
       
     - name: Create Build Directory
       run: |
-        cd /github/workspace/build/libs
+        cd /build/libs
         ls
 
       
