@@ -33,6 +33,15 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
+    - name: Gradle Caching
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
     
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
@@ -41,7 +50,7 @@ jobs:
       run: |
         ./gradlew build -x test
         ls -R
-        cp ./build/libs/jariBean-0.0.1-SNAPSHOT.jar ./app.jar
+        cp ./build/libs/jariBean-0.0.1-SNAPSHOT.jar app.jar
       
      
     - name: Checkout
