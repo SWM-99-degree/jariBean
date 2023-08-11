@@ -17,6 +17,7 @@ import static com.example.jariBean.entity.User.UserRole.UNREGISTERED;
 public abstract class OAuthService {
 
     private final UserRepository userRepository;
+    private final JwtProcess jwtProcess;
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
@@ -42,8 +43,8 @@ public abstract class OAuthService {
         User savedUser = userRepository.save(user);
 
         return LoginSuccessResDto.builder()
-                .accessToken(JwtProcess.create(savedUser))
-                .refreshToken(JwtProcess.createRefreshToken(savedUser))
+                .accessToken(jwtProcess.createAccessToken(savedUser))
+                .refreshToken(jwtProcess.createRefreshToken(savedUser))
                 .build();
     }
 

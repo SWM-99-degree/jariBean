@@ -2,7 +2,6 @@ package com.example.jariBean.config.jwt;
 
 import com.example.jariBean.config.auth.LoginUser;
 import com.example.jariBean.config.jwt.jwtdto.JwtDto;
-import com.example.jariBean.entity.Cafe;
 import com.example.jariBean.entity.User;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,8 +16,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
-    public JwtAuthorizationFilter(AuthenticationManager authenticationManager) {
+
+    private JwtProcess jwtProcess;
+    public JwtAuthorizationFilter(AuthenticationManager authenticationManager, JwtProcess jwtProcess) {
         super(authenticationManager);
+        this.jwtProcess = jwtProcess;
     }
 
     @Override
@@ -28,7 +30,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
         if(isExist(header)) {
             String jwt = header.replace(JwtVO.TOKEN_PREFIX, ""); // "BEARER " 제거
-            JwtDto jwtDto = JwtProcess.verify(jwt);
+            JwtDto jwtDto = jwtProcess.verify(jwt);
 
             User user = User.builder().id(jwtDto.getId()).role(User.UserRole.valueOf(jwtDto.getUserRole())).build();
             LoginUser loginUser = new LoginUser(user);

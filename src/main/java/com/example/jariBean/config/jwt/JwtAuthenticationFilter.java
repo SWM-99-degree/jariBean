@@ -28,6 +28,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     private static final ObjectMapper mapper = new ObjectMapper();
     private AuthenticationManager authenticationManager;
     private TokenRepository tokenRepository;
+    private JwtProcess jwtProcess;
     private ThreadLocal<UserLoginReqDto> requestBodyHolder = new ThreadLocal<>();
 
 
@@ -72,8 +73,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         LoginUser loginUser = (LoginUser) authResult.getPrincipal();
 
         // refresh, access token 생성
-        String accessToken = JwtProcess.create(loginUser.getUser());
-        String refreshToken = JwtProcess.createRefreshToken(loginUser.getUser());
+        String accessToken = jwtProcess.createAccessToken(loginUser.getUser());
+        String refreshToken = jwtProcess.createRefreshToken(loginUser.getUser());
         String firebaseToken = loginReqDto.getFirebaseToken();
 
 

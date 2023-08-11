@@ -2,6 +2,7 @@ package com.example.jariBean.config;
 
 import com.example.jariBean.config.jwt.JwtAuthenticationFilter;
 import com.example.jariBean.config.jwt.JwtAuthorizationFilter;
+import com.example.jariBean.config.jwt.JwtProcess;
 import com.example.jariBean.repository.TokenRepository;
 import com.example.jariBean.util.CustomResponseUtil;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 public class SecurityConfig{
 
     private final TokenRepository tokenRepository;
+    private final JwtProcess jwtProcess;
 
     @Bean // IOC 컨테이너에 BCryptPasswordEncoder 객체 등록
     public BCryptPasswordEncoder passwordEncoder() {
@@ -38,7 +40,7 @@ public class SecurityConfig{
             // 필터 생성!
             AuthenticationManager authenticationManager = builder.getSharedObject(AuthenticationManager.class);
             builder.addFilter(new JwtAuthenticationFilter(authenticationManager, tokenRepository));
-            builder.addFilter(new JwtAuthorizationFilter(authenticationManager));
+            builder.addFilter(new JwtAuthorizationFilter(authenticationManager, jwtProcess));
             super.configure(builder);
         }
 
