@@ -1,17 +1,17 @@
 package com.example.jariBean.oauth;
 
-import com.example.jariBean.entity.User;
+import com.example.jariBean.dto.ResponseDto;
+import com.example.jariBean.oauth.dto.LoginCode;
+import com.example.jariBean.oauth.dto.LoginResDto.LoginSuccessResDto;
 import com.example.jariBean.oauth.service.OAuthKakaoService.SocialUserInfo;
 import com.example.jariBean.oauth.service.OAuthService;
 import com.example.jariBean.oauth.service.OAuthServiceFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
+import static org.springframework.http.HttpStatus.OK;
 
 
 @Controller
@@ -22,26 +22,28 @@ public class OAuthController {
     private final OAuthServiceFactory authServiceFactory;
 
     @GetMapping("/login/oauth2/code/{registrationId}")
-    public String authorize(@PathVariable("registrationId") String registrationId,
-                            @RequestParam("code") String code,
-                            RedirectAttributes redirect) throws IOException {
+    public String returnCode(@RequestParam("code") String code) {
+//        return "redirect:jaribean://code?code=" + code;
+        return "code";
+    }
 
-        // registrationId에 해당하는 oauthService 할당
+    @PostMapping("/login/{registrationId}")
+    public ResponseEntity login(@PathVariable("registrationId") String registrationId,
+                                        @RequestBody LoginCode loginCode) {
+
+        // assign an oauthService corresponding to the registrationId
         oAuthService = authServiceFactory.get(registrationId);
 
-        // code를 이용해 accessToken 요청
-        String accessToken1 = oAuthService.getAccessToken(code);
+        // get accessToken using code
+        String accessToken = oAuthService.getAccessToken(loginCode.getCode());
 
-        // accessToken을 이용해 유저 정보(id, nickname, imageUrl)를 요청
-        SocialUserInfo userInfo = oAuthService.getUserInfo(accessToken1);
+        // get user information using accessToken
+        SocialUserInfo socialUserInfo = oAuthService.getUserInfo(accessToken);
 
-        // 유저 정보(id, nickname, imageUrl)로 로그인
-        User user = oAuthService.saveOrUpdate(userInfo);
+        // save or update oauth information
+        LoginSuccessResDto loginSuccessResDto = oAuthService.saveOrUpdate(socialUserInfo, registrationId);
 
-        redirect.addAttribute("userId", user.getSocialId());
-        redirect.addAttribute("nickName", user.getNickname());
-
-        return "redirect:jaribean://login";
+        return new ResponseEntity<>(new ResponseDto<>(1, "로그인 성공", loginSuccessResDto), OK);
     }
 
 }

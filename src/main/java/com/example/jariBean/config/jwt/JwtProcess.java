@@ -3,28 +3,18 @@ package com.example.jariBean.config.jwt;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.example.jariBean.config.auth.LoginUser;
 import com.example.jariBean.config.jwt.jwtdto.JwtDto;
-import com.example.jariBean.entity.Cafe;
 import com.example.jariBean.entity.User;
-import com.example.jariBean.entity.User.UserRole;
 import com.example.jariBean.handler.ex.CustomForbiddenException;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
 
 @Slf4j
 public class JwtProcess {
 
     // create access JWT
-    public static String create(LoginUser loginUser) {
-
-        User user = loginUser.getUser();
+    public static String create(User user) {
 
         String jwt = JWT.create()
                 .withSubject("jariBean")
@@ -37,9 +27,7 @@ public class JwtProcess {
     }
 
     // create refresh JWT
-    public static String createRefreshToken(LoginUser loginUser) {
-
-        User user = loginUser.getUser();
+    public static String createRefreshToken(User user) {
 
         String jwt = JWT.create()
                 .withSubject("jariBean")
