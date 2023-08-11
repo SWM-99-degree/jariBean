@@ -102,4 +102,4 @@ jobs:
           docker pull ${{ env.DOCKER_IMAGE }}:latest
           docker create --name ${{ env.NAME }} ${{ env.DOCKER_IMAGE }}:latest
           docker cp ~/spring_env/.env ${{ env.NAME }}:/
-          docker run -p 8080:8080 -d ${{ env.NAME }}
+          docker run -p 8080:8080 -d --name ${{ env.NAME }}
