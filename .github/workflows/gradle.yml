@@ -14,7 +14,7 @@ on:
     branches: [ "main" , "CICD"]
 
 env:
-  DOCKER_IMAGE: ghcr.io/swm-99-degree/jaribean
+  DOCKER_IMAGE: chlrltjd5263/jaribean
   VERSION: ${{ github.sha }}
   NAME: jaribean
 
