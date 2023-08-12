@@ -1,5 +1,6 @@
 package com.example.jariBean.oauth.service;
 
+import com.example.jariBean.config.jwt.JwtProcess;
 import com.example.jariBean.oauth.dto.GoogleOAuthInfo;
 import com.example.jariBean.oauth.dto.GoogleUserInfo;
 import com.example.jariBean.oauth.service.OAuthKakaoService.SocialUserInfo;
@@ -26,8 +27,8 @@ public class OAuthGoogleService extends OAuthService{
 
     private final String REGISTRATION = "google";
 
-    public OAuthGoogleService(UserRepository userRepository) {
-        super(userRepository);
+    public OAuthGoogleService(UserRepository userRepository, JwtProcess jwtProcess) {
+        super(userRepository, jwtProcess);
     }
 
     @Override
