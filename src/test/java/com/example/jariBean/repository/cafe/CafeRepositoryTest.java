@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @SpringBootTest
-@ActiveProfiles("test")
+//@ActiveProfiles("test")
 class CafeRepositoryTest {
 
     @Autowired CafeRepository cafeRepository;
@@ -204,13 +204,17 @@ class CafeRepositoryTest {
 
     @Test
     public void findByCoordinateNearTest() throws Exception {
+        String word = "무인";
+        List<String> words = new ArrayList<>();
+        words.add(word);
+
         GeoJsonPoint coordinate = new GeoJsonPoint(126.9841888305794, 37.53697168039137);
         Double distance = 50D;
 
-        List<Cafe> cafeList = cafeRepository.findByCoordinateNear(coordinate, distance);
+        List<String> cafeList = cafeRepository.findByWordAndCoordinateNear(words,coordinate);
         System.out.println("byCoordinateDistance.getContent().size() = " + cafeList.size());
         cafeList.forEach(cafe -> {
-            System.out.println(cafe.getId());
+            System.out.println(cafe);
         });
     }
 

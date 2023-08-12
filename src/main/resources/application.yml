@@ -2,9 +2,10 @@ spring:
   data:
     mongodb:
       uri: ${MONGODB_URI}
-    elasticsearch:
-      rest:
-        uris : ${ELASTICSEARCH_URI}
+  elasticsearch:
+    host: ${ELASTICSEARCH_HOST}
+    username: ${ELASTICSEARCH_USERNAME}
+    password: ${ELASTICSEARCH_PASSWORD}
 
   mvc:
     pathmatch:
@@ -12,7 +13,7 @@ spring:
 
   redis:
     port: 6379
-    host: 127.0.0.1
+    host: ${REDIS_URI}
 
 logging:
   level:
