@@ -36,7 +36,7 @@ public class User {
     @Column(nullable = false)
     private String socialId;
 
-    private String imageUrl;
+    private String image;
 
     @Column(nullable = false)
     private String password;
@@ -87,12 +87,12 @@ public class User {
     }
 
     @Builder
-    public User(String id, String nickname, String socialId, String password, String imageUrl, UserRole role) {
+    public User(String id, String nickname, String socialId, String password, String image, UserRole role) {
         this.id = id;
         this.nickname = nickname;
         this.socialId = socialId;
         this.password = password;
-        this.imageUrl = imageUrl;
+        this.image = image;
         this.role = role;
         this.alarm = true;
         this.description = null;
@@ -102,18 +102,18 @@ public class User {
         this.alarm = !alarm;
     }
 
-    public void updateBySocialInfo(String nickname, String imageUrl, String password) {
+    public void updateBySocialInfo(String nickname, String image, String password) {
         this.nickname = nickname;
-        this.imageUrl = imageUrl;
+        this.image = image;
         this.password = password;
     }
 
-    public void updateInfo(String nickname, String imageUrl, String description) {
+    public void updateInfo(String nickname, String image, String description) {
         if (nickname != null){
             this.nickname = nickname;
         }
-        if (imageUrl != null){
-            this.imageUrl = imageUrl;
+        if (image != null){
+            this.image = image;
         }
         if (description != null){
             this.description = description;

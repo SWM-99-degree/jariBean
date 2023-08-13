@@ -63,8 +63,8 @@ public class ReserveReqDto {
                     .userId(userId)
                     .cafe(cafe)
                     .table(table)
-                    .reservedStartTime(reservedStartTime)
-                    .reservedEndTime(reservedEndTime)
+                    .startTime(reservedStartTime)
+                    .endTime(reservedEndTime)
                     .build();
         }
     }

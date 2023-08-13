@@ -52,7 +52,7 @@ public class ManagerResDto {
             tableSummaryDto.setId(table.getId());
             tableSummaryDto.setName(table.getName());
             tableSummaryDto.setDescription(table.getDescription());
-            tableSummaryDto.setImage(table.getImageUrl());
+            tableSummaryDto.setImage(table.getImage());
             tableSummaryDtoList.add(tableSummaryDto);
         }
     }
@@ -108,8 +108,8 @@ public class ManagerResDto {
 
         public void setReservePeriodDto(Reserved reserved) {
             this.username = reserved.getUserId();
-            this.startTime = reserved.getReservedStartTime();
-            this.endTime = reserved.getReservedEndTime();
+            this.startTime = reserved.getStartTime();
+            this.endTime = reserved.getEndTime();
         }
     }
 

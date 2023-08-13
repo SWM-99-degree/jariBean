@@ -40,7 +40,7 @@ public class Table {
     private Integer seating; // 인원 수
 
     @Column(nullable = false)
-    private String imageUrl;
+    private String image;
 
     @Column(nullable = false)
     private String number;
@@ -68,21 +68,21 @@ public class Table {
     private Integer version;
 
     @Builder
-    public Table(String id, String cafeId, String tableClassId, String name, String description, Integer seating, String imageUrl, String number, List<TableClass.TableOption> tableOptionList) {
+    public Table(String id, String cafeId, String tableClassId, String name, String description, Integer seating, String image, String number, List<TableClass.TableOption> tableOptionList) {
         this.id = id;
         this.cafeId = cafeId;
         this.tableClassId = tableClassId;
         this.name = name;
         this.description = description;
         this.seating = seating;
-        this.imageUrl = imageUrl;
+        this.image = image;
         this.number = number;
         this.tableOptionList = tableOptionList;
     }
 
-    public void update(String name, String description, String imageUrl) {
+    public void update(String name, String description, String image) {
         this.name = name;
         this.description = description;
-        this.imageUrl = imageUrl;
+        this.image = image;
     }
 }

@@ -23,7 +23,7 @@ public class CafeResDto {
             this.id = cafe.getId();
             this.name = cafe.getName();
             this.address = cafe.getAddress();
-            this.imageUrl = cafe.getImageUrl();
+            this.imageUrl = cafe.getImage();
         }
     }
 
@@ -44,8 +44,8 @@ public class CafeResDto {
             this.closingHour = cafeOperatingTime.getCloseTime();
             this.phoneNumber = cafe.getPhoneNumber();
             this.description = cafe.getDescription();
-            this.instagram = cafe.getInstagramUrl();
-            this.image = cafe.getCafeImg();
+            this.instagram = cafe.getInstagram();
+            this.image = cafe.getImage();
         }
 
     }

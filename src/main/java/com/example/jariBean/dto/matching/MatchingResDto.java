@@ -19,7 +19,7 @@ public class MatchingResDto {
 
         public MatchingSummaryResDto(Matching matching){
             this.id = matching.getId();
-            this.seating = matching.getNumber();
+            this.seating = matching.getSeating();
             this.startTime = matching.getMatchingTime();
             this.cafeSummaryDto = new CafeResDto.CafeSummaryDto(matching.getCafe());
         }
