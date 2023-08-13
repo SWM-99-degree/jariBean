@@ -34,13 +34,13 @@ public class Reserved {
     private String tableClassId;
 
     @Column(nullable = false)
-    private LocalDateTime reservedStartTime;
+    private LocalDateTime startTime;
 
     @Column(nullable = false)
-    private LocalDateTime reservedEndTime;
+    private LocalDateTime endTime;
 
     @Column(nullable = false)
-    private ReservedStatus reservedStatus;
+    private ReservedStatus status;
 
     @DBRef
     private User user;
@@ -64,12 +64,12 @@ public class Reserved {
     }
 
     @Builder
-    public Reserved(String userId, Cafe cafe, Table table, LocalDateTime reservedStartTime, LocalDateTime reservedEndTime) {
+    public Reserved(String userId, Cafe cafe, Table table, LocalDateTime startTime, LocalDateTime endTime) {
         this.userId = userId;
         this.cafe = cafe;
         this.table = table;
-        this.reservedEndTime = reservedEndTime;
-        this.reservedStartTime = reservedStartTime;
-        this.reservedStatus = ReservedStatus.VALID;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.status = ReservedStatus.VALID;
     }
 }

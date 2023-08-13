@@ -27,7 +27,7 @@ public class ReservedResDto {
 
         public ReserveSummaryResDto(Reserved reserved){
             this.reserveId = reserved.getId();
-            this.reserveStartTime = reserved.getReservedStartTime();
+            this.reserveStartTime = reserved.getStartTime();
             this.matchingSeating = reserved.getTable().getSeating();
             this.cafeSummaryDto = new CafeSummaryDto(reserved.getCafe());
         }
@@ -73,8 +73,8 @@ public class ReservedResDto {
             this.cafeId = reserved.getCafe().getId();
             this.cafeImg = reserved.getCafe().getImage();
             this.cafeAddress = reserved.getCafe().getAddress();
-            this.reservedStartTime = reserved.getReservedStartTime();
-            this.reservedEndTime = reserved.getReservedEndTime();
+            this.reservedStartTime = reserved.getStartTime();
+            this.reservedEndTime = reserved.getEndTime();
             this.cafeName = reserved.getCafe().getName();
         }
     }

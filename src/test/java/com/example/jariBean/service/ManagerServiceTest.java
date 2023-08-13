@@ -76,12 +76,12 @@ class ManagerServiceTest {
 
         LocalDateTime now = LocalDateTime.now();
 
-        Reserved r1 = Reserved.builder().table(t1).cafe(cafe).reservedStartTime(now).reservedEndTime(now.plusMinutes(120)).userId("user-1").build();
-        Reserved r2 = Reserved.builder().table(t1).cafe(cafe).reservedStartTime(now).reservedEndTime(now.plusMinutes(120)).userId("user-2").build();
-        Reserved r3 = Reserved.builder().table(t1).cafe(cafe).reservedStartTime(now).reservedEndTime(now.plusMinutes(120)).userId("user-2").build();
-        Reserved r4 = Reserved.builder().table(t2).cafe(cafe).reservedStartTime(now).reservedEndTime(now.plusMinutes(120)).userId("user-1").build();
-        Reserved r5 = Reserved.builder().table(t2).cafe(cafe).reservedStartTime(now).reservedEndTime(now.plusMinutes(120)).userId("user-3").build();
-        Reserved r6 = Reserved.builder().table(t3).cafe(cafe).reservedStartTime(now).reservedEndTime(now.plusMinutes(120)).userId("user-4").build();
+        Reserved r1 = Reserved.builder().table(t1).cafe(cafe).startTime(now).endTime(now.plusMinutes(120)).userId("user-1").build();
+        Reserved r2 = Reserved.builder().table(t1).cafe(cafe).startTime(now).endTime(now.plusMinutes(120)).userId("user-2").build();
+        Reserved r3 = Reserved.builder().table(t1).cafe(cafe).startTime(now).endTime(now.plusMinutes(120)).userId("user-2").build();
+        Reserved r4 = Reserved.builder().table(t2).cafe(cafe).startTime(now).endTime(now.plusMinutes(120)).userId("user-1").build();
+        Reserved r5 = Reserved.builder().table(t2).cafe(cafe).startTime(now).endTime(now.plusMinutes(120)).userId("user-3").build();
+        Reserved r6 = Reserved.builder().table(t3).cafe(cafe).startTime(now).endTime(now.plusMinutes(120)).userId("user-4").build();
 
         reservedRepository.save(r1);
         reservedRepository.save(r2);

@@ -108,8 +108,8 @@ public class ManagerResDto {
 
         public void setReservePeriodDto(Reserved reserved) {
             this.username = reserved.getUserId();
-            this.startTime = reserved.getReservedStartTime();
-            this.endTime = reserved.getReservedEndTime();
+            this.startTime = reserved.getStartTime();
+            this.endTime = reserved.getEndTime();
         }
     }
 

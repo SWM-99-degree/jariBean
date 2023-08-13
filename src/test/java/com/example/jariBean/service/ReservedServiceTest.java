@@ -98,7 +98,7 @@ public class ReservedServiceTest {
     public void delteMyReservedTest() {
         // given
         String userId = "testUser";
-        Reserved reserved = reservedRepository.findByUserIdOrderByReservedStartTimeDesc(userId, Pageable.ofSize(1)).get(0);
+        Reserved reserved = reservedRepository.findByUserIdOrderByStartTimeDesc(userId, Pageable.ofSize(1)).get(0);
         String reservedId = reserved.getId();
 
         // then

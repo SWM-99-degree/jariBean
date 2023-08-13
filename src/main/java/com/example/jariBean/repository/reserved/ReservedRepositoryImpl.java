@@ -39,9 +39,9 @@ public class ReservedRepositoryImpl implements ReservedRepositoryTemplate{
             LocalDateTime newStartTime = startTime.plusMinutes(30);
             LocalDateTime newEndTime = endTime.minusMinutes(30);
             Criteria reservedCriteria = new Criteria();
-            Criteria case1Criteria = Criteria.where("reservedStartTime").gte(newStartTime).lt(newEndTime);
-            Criteria case2Criteria = Criteria.where("reservedEndTime").gt(newStartTime).lte(newEndTime);
-            Criteria case3Criteria = Criteria.where("reservedStartTime").lt(newStartTime).and("reservedEndTime").gt(newEndTime);
+            Criteria case1Criteria = Criteria.where("startTime").gte(newStartTime).lt(newEndTime);
+            Criteria case2Criteria = Criteria.where("endTime").gt(newStartTime).lte(newEndTime);
+            Criteria case3Criteria = Criteria.where("startTime").lt(newStartTime).and("endTime").gt(newEndTime);
 
             reservedCriteria.orOperator(
                     case1Criteria, case2Criteria, case3Criteria
@@ -50,10 +50,10 @@ public class ReservedRepositoryImpl implements ReservedRepositoryTemplate{
             Query query = new Query(reservedCriteria);
             mongoTemplate.find(query, Reserved.class).forEach(reserved -> tableIdList.add(reserved.getTable().getId()));
             mainCriteria.and("table.tableId").in(tableIdList.stream().toList());
-            mainCriteria.and("reservedStartTime").gte(startTime.with(LocalTime.MIN)).lt(startTime.with(LocalTime.MAX));
+            mainCriteria.and("startTime").gte(startTime.with(LocalTime.MIN)).lt(startTime.with(LocalTime.MAX));
         } else {
             LocalDateTime today = LocalDateTime.now();
-            mainCriteria.and("reservedStartTime").gte(today.with(LocalTime.MIN)).lt(today.with(LocalTime.MAX));
+            mainCriteria.and("startTime").gte(today.with(LocalTime.MIN)).lt(today.with(LocalTime.MAX));
         }
 
         if (tableOptionList != null) {
@@ -63,7 +63,7 @@ public class ReservedRepositoryImpl implements ReservedRepositoryTemplate{
             mainCriteria.and("table.seating").gte(seating);
         }
 
-        SortOperation sortByTable = Aggregation.sort(Sort.Direction.ASC, "table._id").and(Sort.Direction.ASC, "reservedStartTime");
+        SortOperation sortByTable = Aggregation.sort(Sort.Direction.ASC, "table._id").and(Sort.Direction.ASC, "startTime");
 
         MatchOperation matchOperation = Aggregation.match(mainCriteria);
 
@@ -104,9 +104,9 @@ public class ReservedRepositoryImpl implements ReservedRepositoryTemplate{
 
         if (startTime != null){
             // 겹치는 카페 예약
-            Criteria case1Criteria = Criteria.where("reservedStartTime").gte(startTime).lt(endTime);
-            Criteria case2Criteria = Criteria.where("reservedEndTime").gt(startTime).lte(endTime);
-            Criteria case3Criteria = Criteria.where("reservedStartTime").lt(startTime).and("reservedEndTime").gt(endTime);
+            Criteria case1Criteria = Criteria.where("startTime").gte(startTime).lt(endTime);
+            Criteria case2Criteria = Criteria.where("endTime").gt(startTime).lte(endTime);
+            Criteria case3Criteria = Criteria.where("startTime").lt(startTime).and("endTime").gt(endTime);
 
             reservedCriteria.orOperator(
                     case1Criteria, case2Criteria, case3Criteria
@@ -127,14 +127,14 @@ public class ReservedRepositoryImpl implements ReservedRepositoryTemplate{
 
     @Override
     public Reserved findNearestReserved(String userId, LocalDateTime time) {
-        Criteria criteria = Criteria.where("userId").is(userId).and("reservedStatus").is("VALID").and("reservedEndTime").gte(time);
+        Criteria criteria = Criteria.where("userId").is(userId).and("status").is("VALID").and("endTime").gte(time);
 
         AggregationOperation match = Aggregation.match(criteria);
         AggregationOperation lookupTableClass = Aggregation.lookup("tableClass", "id", "tableClassId", "tableClass");
         AggregationOperation lookupCafe = Aggregation.lookup("cafe", "id", "cafeId", "cafe");
-        AggregationOperation project = Aggregation.project("id", "userId", "cafeId", "tableId", "reservedStartTime", "reservedEndTime", "reservedStatus")
+        AggregationOperation project = Aggregation.project("id", "userId", "cafeId", "tableId", "startTime", "endTime", "status")
                 .andExpression("cafe").arrayElementAt(0).as("cafe");
-        AggregationOperation sort = Aggregation.sort(Sort.Direction.ASC, "reservedStartTime");
+        AggregationOperation sort = Aggregation.sort(Sort.Direction.ASC, "startTime");
         AggregationOperation limit = Aggregation.limit(1);
 
         Aggregation aggregation = Aggregation.newAggregation(
@@ -153,9 +153,9 @@ public class ReservedRepositoryImpl implements ReservedRepositoryTemplate{
     @Override
     public boolean isReservedByTableIdBetweenTime(String tableId, LocalDateTime startTime, LocalDateTime endTime) {
 
-        Criteria criteria1 = Criteria.where("reservedStartTime").gte(startTime).lt(endTime);
-        Criteria criteria2 = Criteria.where("reservedEndTime").gt(startTime).lte(endTime);
-        Criteria criteria3 = Criteria.where("reservedStartTime").lt(startTime).and("reservedEndTime").gt(endTime);
+        Criteria criteria1 = Criteria.where("startTime").gte(startTime).lt(endTime);
+        Criteria criteria2 = Criteria.where("endTime").gt(startTime).lte(endTime);
+        Criteria criteria3 = Criteria.where("startTime").lt(startTime).and("endTime").gt(endTime);
 
         return mongoTemplate.exists(new Query(Criteria.where("tableId").is(tableId)
                 .orOperator(criteria1, criteria2, criteria3)), Reserved.class);
@@ -169,13 +169,13 @@ public class ReservedRepositoryImpl implements ReservedRepositoryTemplate{
 
         startTime = startTime.plusMinutes(30);
         endTime = endTime.minusMinutes(30);
-        Criteria tableLimitCriteria = Criteria.where("reservedStartTime").lte(tableEndTime).and("reservedEndTime").gte(tableStartTime);
-        Criteria criteria1 = Criteria.where("reservedStartTime").gte(startTime).lt(endTime);
-        Criteria criteria2 = Criteria.where("reservedEndTime").gt(startTime).lte(endTime);
-        Criteria criteria3 = Criteria.where("reservedStartTime").lt(startTime).and("reservedEndTime").gt(endTime);
+        Criteria tableLimitCriteria = Criteria.where("startTime").lte(tableEndTime).and("endTime").gte(tableStartTime);
+        Criteria criteria1 = Criteria.where("startTime").gte(startTime).lt(endTime);
+        Criteria criteria2 = Criteria.where("endTime").gt(startTime).lte(endTime);
+        Criteria criteria3 = Criteria.where("startTime").lt(startTime).and("endTime").gt(endTime);
 
         AggregationOperation sort1 = Aggregation.sort(Sort.Direction.ASC, "tableId");
-        AggregationOperation sort2 = Aggregation.sort(Sort.Direction.ASC, "reservedStartTime");
+        AggregationOperation sort2 = Aggregation.sort(Sort.Direction.ASC, "startTime");
         Aggregation aggregation = Aggregation.newAggregation(
                 Aggregation.match(tableLimitCriteria),
                 Aggregation.match(criteria1),
@@ -183,7 +183,7 @@ public class ReservedRepositoryImpl implements ReservedRepositoryTemplate{
                 Aggregation.match(criteria3),
                 Aggregation.lookup("tableClass", "id", "tableClassId", "tableClass"),
                 Aggregation.lookup("cafe", "id", "cafeId", "cafe"),
-                Aggregation.project("id", "userId", "cafeId", "tableId", "reservedStartTime", "reservedEndTime")
+                Aggregation.project("id", "userId", "cafeId", "tableId", "startTime", "endTime")
                         .andExpression("tableClass").arrayElementAt(0).as("tableClass"),
                 sort1,
                 sort2
@@ -197,11 +197,11 @@ public class ReservedRepositoryImpl implements ReservedRepositoryTemplate{
     public List<Reserved> findTodayReservedById(String cafeId) {
         LocalDateTime today = LocalDateTime.now();
 
-        MatchOperation matchToday = Aggregation.match(Criteria.where("reservedStartTime").gte(today.with(LocalTime.MIN)).lt(today.with(LocalTime.MAX)));
+        MatchOperation matchToday = Aggregation.match(Criteria.where("startTime").gte(today.with(LocalTime.MIN)).lt(today.with(LocalTime.MAX)));
 
         MatchOperation matchCafdId = Aggregation.match(Criteria.where("cafeId").is(cafeId));
 
-        SortOperation sortByTable = Aggregation.sort(Sort.Direction.ASC, "table._id").and(Sort.Direction.ASC, "reservedStartTime");
+        SortOperation sortByTable = Aggregation.sort(Sort.Direction.ASC, "table._id").and(Sort.Direction.ASC, "startTime");
 
         Aggregation aggregation = Aggregation.newAggregation(matchToday, matchCafdId, sortByTable);
 
