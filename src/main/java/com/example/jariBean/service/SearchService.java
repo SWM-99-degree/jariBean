@@ -4,7 +4,6 @@ import com.example.jariBean.entity.Cafe;
 import com.example.jariBean.entity.TableClass;
 import com.example.jariBean.handler.ex.CustomNoContentException;
 import com.example.jariBean.repository.cafe.CafeRepository;
-import com.example.jariBean.repository.cafe.elasticcafe.CafeSearchRepository;
 import com.example.jariBean.repository.reserved.ReservedRepository;
 import kr.co.shineware.nlp.komoran.constant.DEFAULT_MODEL;
 import kr.co.shineware.nlp.komoran.core.Komoran;
@@ -12,6 +11,7 @@ import kr.co.shineware.nlp.komoran.model.KomoranResult;
 import kr.co.shineware.nlp.komoran.model.Token;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,8 +27,8 @@ import java.util.Set;
 @Lazy
 public class SearchService {
 
-    @Lazy
-    private final CafeSearchRepository cafeSearchRepository;
+//    @Lazy
+//    private final CafeSearchRepository cafeSearchRepository;
 
     private final ReservedRepository reservedRepository;
 
@@ -56,10 +56,10 @@ public class SearchService {
             Set<String> wordSet = new HashSet<>();
 
             List<String> searchingWords = dividedWord(text);
-            List<String> wordFilterdCafes = cafeSearchRepository.findBySearchingWord(searchingWords, latitude, longitude);
-            System.out.println(wordFilterdCafes);
+            GeoJsonPoint point = new GeoJsonPoint(latitude, longitude);
+            // TODO
+            List<String> wordFilterdCafes = cafeRepository.findByWordAndCoordinateNear(searchingWords, point);
             List<String> optionsFilterdCafes = reservedRepository.findCafeByReserved(wordFilterdCafes, startTime, endTime, seating, tableOptionsList);
-            System.out.println(optionsFilterdCafes);
             List<Cafe> cafes = cafeRepository.findByIds(optionsFilterdCafes);
 
             return cafes;

@@ -4,6 +4,7 @@ import com.example.jariBean.dto.dbconnect.CafeJoinOperatingTimeDto;
 import com.example.jariBean.entity.Cafe;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.geo.Metrics;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.data.geo.Metrics.KILOMETERS;
+import static org.springframework.data.geo.Metrics.MILES;
 
 
 @Lazy
@@ -44,15 +46,34 @@ public class CafeRepositoryImpl implements CafeRepositoryTemplate{
     }
 
     @Override
+    public List<String> findByWordAndCoordinateNear(List<String> searchingWords, GeoJsonPoint point) {
+        Criteria geoCriteria = new Criteria("coordinate").near(point).maxDistance(5000D);
+
+        Criteria wordCriteria = new Criteria();
+        List<Criteria> orCriterias = new ArrayList<>();
+
+        for (String searchingWord : searchingWords) {
+            Criteria regexCriteria = new Criteria("name").regex(".*" + searchingWord + ".*");
+            orCriterias.add(regexCriteria);
+        }
+        wordCriteria.orOperator(orCriterias.toArray(new Criteria[0]));
+        geoCriteria.andOperator(wordCriteria);
+
+        Query query = new Query(geoCriteria);
+
+        List<String> cafeIds = new ArrayList<>();
+        mongoTemplate.find(query, Cafe.class).forEach(cafe -> cafeIds.add(cafe.getId()));
+
+        return cafeIds;
+    }
+
+    @Override
     public List<Cafe> findByCoordinateNear(GeoJsonPoint point, Double distance) {
         NearQuery nearQuery = NearQuery.near(point, KILOMETERS);    // 기준 지역
         nearQuery.maxDistance(convertKiloMeterToMeter(distance));   // 반경 거리
-
-        List<Cafe> cafeList = new ArrayList<>();
-        mongoTemplate.geoNear(nearQuery, Cafe.class, "cafe", Cafe.class)
-                .forEach(cafeGeoResult -> {
-                    cafeList.add(cafeGeoResult.getContent());
-        });
+        Criteria geoCriteria = new Criteria("coordinate").near(point).maxDistance(5000D);
+        Query query = new Query(geoCriteria);
+        List<Cafe> cafeList = mongoTemplate.find(query, Cafe.class);
 
         return cafeList;
     }
