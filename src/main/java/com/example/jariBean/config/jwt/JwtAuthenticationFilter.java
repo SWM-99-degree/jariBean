@@ -25,10 +25,11 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-    private static final ThreadLocal<UserLoginReqDto> requestBodyHolder = new ThreadLocal<>();
     private static final ObjectMapper mapper = new ObjectMapper();
     private AuthenticationManager authenticationManager;
     private TokenRepository tokenRepository;
+    private JwtProcess jwtProcess;
+    private ThreadLocal<UserLoginReqDto> requestBodyHolder = new ThreadLocal<>();
 
 
     public JwtAuthenticationFilter(AuthenticationManager authenticationManager, TokenRepository tokenRepository) {
@@ -49,8 +50,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             // JWT를 쓴다고 하더라도, 컨트롤러에 진입을 하면 시큐리티 권한 체크, 인증 체크의 도움을 받을 수 있게 세션을 만든다.
             // 이 세션의 유효기간은 request ~ response 까지이다.
             Authentication authentication = authenticationManager.authenticate(authenticationToken);
-
-            requestBodyHolder.set(loginReqDto);
 
             return authentication;
         } catch (Exception e) {
@@ -74,8 +73,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         LoginUser loginUser = (LoginUser) authResult.getPrincipal();
 
         // refresh, access token 생성
-        String accessToken = JwtProcess.create(loginUser);
-        String refreshToken = JwtProcess.createRefreshToken(loginUser);
+        String accessToken = jwtProcess.createAccessToken(loginUser.getUser());
+        String refreshToken = jwtProcess.createRefreshToken(loginUser.getUser());
         String firebaseToken = loginReqDto.getFirebaseToken();
 
 

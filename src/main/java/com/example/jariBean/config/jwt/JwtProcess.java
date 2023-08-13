@@ -3,59 +3,51 @@ package com.example.jariBean.config.jwt;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.example.jariBean.config.auth.LoginUser;
 import com.example.jariBean.config.jwt.jwtdto.JwtDto;
-import com.example.jariBean.entity.Cafe;
 import com.example.jariBean.entity.User;
-import com.example.jariBean.entity.User.UserRole;
 import com.example.jariBean.handler.ex.CustomForbiddenException;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
 
-@Slf4j
+@Component
 public class JwtProcess {
 
-    // create access JWT
-    public static String create(LoginUser loginUser) {
+    @Value("${JWT_SECRET_KEY}")
+    private String JWT_SECRET_KEY;
 
-        User user = loginUser.getUser();
+    // create access JWT
+    public String createAccessToken(User user) {
 
         String jwt = JWT.create()
                 .withSubject("jariBean")
                 .withExpiresAt(new Date(System.currentTimeMillis() + JwtVO.ACCESS_EXPIRATION_TIME))
                 .withClaim("userId", user.getId())
                 .withClaim("userRole", user.getRole().toString())
-                .sign(Algorithm.HMAC512(JwtVO.SECRET));
+                .sign(Algorithm.HMAC512(JWT_SECRET_KEY));
 
         return JwtVO.TOKEN_PREFIX + jwt;
     }
 
     // create refresh JWT
-    public static String createRefreshToken(LoginUser loginUser) {
-
-        User user = loginUser.getUser();
+    public String createRefreshToken(User user) {
 
         String jwt = JWT.create()
                 .withSubject("jariBean")
                 .withExpiresAt(new Date(System.currentTimeMillis() + JwtVO.REFRESH_EXPIRATION_TIME))
                 .withClaim("userId", user.getId())
                 .withClaim("userRole", user.getRole().toString())
-                .sign(Algorithm.HMAC512(JwtVO.SECRET));
+                .sign(Algorithm.HMAC512(JWT_SECRET_KEY));
 
         return JwtVO.TOKEN_PREFIX + jwt;
     }
 
 
     // verify JWT (return 되는 LoginUser 객체를 강제로 시큐리티 세션에 직접 주입할 예정)
-    public static JwtDto verify(String jwt) {
+    public JwtDto verify(String jwt) {
 
-        DecodedJWT decodedJwt = JWT.require(Algorithm.HMAC512(JwtVO.SECRET)).build().verify(jwt);
+        DecodedJWT decodedJwt = JWT.require(Algorithm.HMAC512(JWT_SECRET_KEY)).build().verify(jwt);
 
         // 토큰 만료기간 검증
         Date expiresAt = decodedJwt.getExpiresAt();

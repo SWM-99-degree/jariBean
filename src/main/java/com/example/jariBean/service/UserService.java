@@ -3,6 +3,8 @@ package com.example.jariBean.service;
 import com.example.jariBean.dto.profile.ProfileReqDto;
 import com.example.jariBean.dto.profile.ProfileResDto.ProfileSummaryResDto;
 import com.example.jariBean.dto.user.UserReqDto.UserJoinReqDto;
+import com.example.jariBean.dto.user.UserReqDto.UserRegisterReqDto;
+import com.example.jariBean.dto.user.UserResDto.UserInfoRespDto;
 import com.example.jariBean.dto.user.UserResDto.UserJoinRespDto;
 import com.example.jariBean.entity.User;
 import com.example.jariBean.handler.ex.CustomApiException;
@@ -59,16 +61,36 @@ public class UserService {
     public void updateAlarmStatus(String userId){
         try {
             User user = userRepository.findById(userId).orElseThrow();
-            if (user.isAlarm()) {
-                user.updateAlarm(false);
-            } else {
-                user.updateAlarm(true);
-            }
+            user.updateAlarm();
             userRepository.save(user);
         } catch (Exception e) {
             throw new CustomDBException("유저 DB에 오류가 존재합니다.");
         }
-
     }
 
+    public UserInfoRespDto findUserInfo(String id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new CustomDBException("no user exists for the given id"));
+        return UserInfoRespDto.builder()
+                .id(user.getId())
+                .nickname(user.getNickname())
+                .imageUrl(user.getImage())
+                .description(user.getDescription())
+                .role(user.getRole())
+                .build();
+    }
+
+    public UserInfoRespDto register(UserRegisterReqDto userReqDto) {
+        User user = userRepository.findByIdAndNickname(userReqDto.getId(), userReqDto.getNickname())
+                .orElseThrow(() -> new CustomDBException("no user exists for the given id and nickname"));
+
+        user.register();
+
+        return UserInfoRespDto.builder()
+                .id(user.getId())
+                .nickname(user.getNickname())
+                .imageUrl(user.getImage())
+                .description(user.getDescription())
+                .role(user.getRole())
+                .build();
+    }
 }

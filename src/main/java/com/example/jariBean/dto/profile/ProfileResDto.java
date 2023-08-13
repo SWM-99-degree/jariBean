@@ -13,7 +13,7 @@ public class ProfileResDto {
 
         public ProfileSummaryResDto(User user) {
             this.nickName = user.getNickname();
-            this.imageUrl = user.getImageUrl();
+            this.imageUrl = user.getImage();
             this.description = user.getDescription();
         }
     }

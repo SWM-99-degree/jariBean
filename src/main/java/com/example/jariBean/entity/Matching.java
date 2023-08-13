@@ -25,7 +25,7 @@ public class Matching {
     private String userId;
 
     @Column(nullable = false)
-    private Integer number;
+    private Integer seating;
 
     @Column(nullable = false)
     private LocalDateTime matchingTime = LocalDateTime.now();
@@ -54,10 +54,10 @@ public class Matching {
     private Integer version;
 
     @Builder
-    public Matching(String userId, Cafe cafe, Integer number){
+    public Matching(String userId, Cafe cafe, Integer seating){
         this.userId = userId;
         this.cafe = cafe;
-        this.number = number;
+        this.seating = seating;
     }
 
 }

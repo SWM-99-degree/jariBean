@@ -8,6 +8,8 @@ import java.util.List;
 
 public interface CafeRepositoryTemplate {
 
+    List<String> findByWordAndCoordinateNear(List<String> searchingWords,GeoJsonPoint point);
+
 
     List<Cafe> findByCoordinateNear(GeoJsonPoint point, Double distance);
 

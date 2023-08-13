@@ -1,8 +1,7 @@
 package com.example.jariBean.service;
 
-import com.example.jariBean.dto.reserved.ReservedResDto.ReserveSummaryResDto;
 import com.example.jariBean.dto.reserved.ReservedResDto.NearestReservedResDto;
-import com.example.jariBean.dto.reserved.ReservedResDto.ReservedTableListResDto;
+import com.example.jariBean.dto.reserved.ReservedResDto.ReserveSummaryResDto;
 import com.example.jariBean.entity.Cafe;
 import com.example.jariBean.entity.Reserved;
 import com.example.jariBean.entity.Table;
@@ -12,17 +11,16 @@ import com.example.jariBean.repository.cafe.CafeRepository;
 import com.example.jariBean.repository.reserved.ReservedRepository;
 import com.example.jariBean.repository.table.TableRepository;
 import lombok.RequiredArgsConstructor;
-import org.bson.types.ObjectId;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.jariBean.dto.reserved.ReserveReqDto.*;
+import static com.example.jariBean.dto.reserved.ReserveReqDto.ReserveNearestReqDto;
+import static com.example.jariBean.dto.reserved.ReserveReqDto.ReserveSaveReqDto;
 
 @Service
 @RequiredArgsConstructor
@@ -39,7 +37,7 @@ public class ReserveService {
     public List<ReserveSummaryResDto> getMyReserved(String userId, Pageable pageable) {
         List<ReserveSummaryResDto> reserveSummaryResDtoList = new ArrayList<>();
         try {
-            List<Reserved> reservedList = reservedRepository.findByUserIdOrderByReservedStartTimeDesc(userId, pageable);
+            List<Reserved> reservedList = reservedRepository.findByUserIdOrderByStartTimeDesc(userId, pageable);
             reservedList.forEach(reserved -> reserveSummaryResDtoList.add(new ReserveSummaryResDto(reserved)));
         } catch (Exception e) {
             throw new CustomDBException("예약 관련 데이터에 문제가 있습니다.");

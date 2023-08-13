@@ -9,7 +9,7 @@ import java.util.List;
 public interface ReservedRepository extends MongoRepository<Reserved, String>, ReservedRepositoryTemplate {
 
 
-    List<Reserved> findByUserIdOrderByReservedStartTimeDesc(String userId, Pageable pageable);
+    List<Reserved> findByUserIdOrderByStartTimeDesc(String userId, Pageable pageable);
 
     List<Reserved> findByTableIdIn(List<String> tableIdList);
 }

@@ -15,7 +15,6 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -204,13 +203,17 @@ class CafeRepositoryTest {
 
     @Test
     public void findByCoordinateNearTest() throws Exception {
+        String word = "무인";
+        List<String> words = new ArrayList<>();
+        words.add(word);
+
         GeoJsonPoint coordinate = new GeoJsonPoint(126.9841888305794, 37.53697168039137);
         Double distance = 50D;
 
-        List<Cafe> cafeList = cafeRepository.findByCoordinateNear(coordinate, distance);
+        List<String> cafeList = cafeRepository.findByWordAndCoordinateNear(words,coordinate);
         System.out.println("byCoordinateDistance.getContent().size() = " + cafeList.size());
         cafeList.forEach(cafe -> {
-            System.out.println(cafe.getId());
+            System.out.println(cafe);
         });
     }
 

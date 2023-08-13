@@ -1,6 +1,7 @@
 package com.example.jariBean.oauth.service;
 
 
+import com.example.jariBean.config.jwt.JwtProcess;
 import com.example.jariBean.oauth.dto.KakaoOAuthInfo;
 import com.example.jariBean.oauth.dto.KakaoUserInfo;
 import com.example.jariBean.repository.user.UserRepository;
@@ -25,8 +26,8 @@ public class OAuthKakaoService extends OAuthService{
 
     private final String REGISTRATION = "kakao";
 
-    public OAuthKakaoService(UserRepository userRepository) {
-        super(userRepository);
+    public OAuthKakaoService(UserRepository userRepository, JwtProcess jwtProcess) {
+        super(userRepository, jwtProcess);
     }
 
     @Override

@@ -79,10 +79,10 @@ public class CafeService {
                 LocalDateTime startTime = reserveStartTime;
                 LocalDateTime endTime = reserveEndTime;
                 for (Reserved reserved : reservedList.getValue()) {
-                    if (!startTime.isEqual(reserved.getReservedStartTime())){
-                        times.add(new availableTime(startTime, reserved.getReservedStartTime()));
+                    if (!startTime.isEqual(reserved.getStartTime())){
+                        times.add(new availableTime(startTime, reserved.getStartTime()));
                     }
-                    startTime = reserved.getReservedEndTime();
+                    startTime = reserved.getEndTime();
                 }
                 if (!startTime.isEqual(endTime)){
                     times.add(new availableTime(startTime, endTime));
@@ -129,10 +129,10 @@ public class CafeService {
                 LocalDateTime startTime = cafeOperatingTime.getOpenTime().withDayOfMonth(now.getDayOfMonth()).withMonth(now.getMonthValue()).withYear(now.getYear());
                 LocalDateTime endTime = cafeOperatingTime.getCloseTime().withDayOfMonth(now.getDayOfMonth()).withMonth(now.getMonthValue()).withYear(now.getYear());
                 for (Reserved reserved : reservedList.getValue()) {
-                    if (!startTime.isEqual(reserved.getReservedStartTime())){
-                        times.add(new availableTime(startTime, reserved.getReservedStartTime()));
+                    if (!startTime.isEqual(reserved.getStartTime())){
+                        times.add(new availableTime(startTime, reserved.getStartTime()));
                     }
-                    startTime = reserved.getReservedEndTime();
+                    startTime = reserved.getEndTime();
                 }
                 if (!startTime.isEqual(endTime)){
                     times.add(new availableTime(startTime, endTime));

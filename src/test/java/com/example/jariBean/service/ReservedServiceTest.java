@@ -2,22 +2,28 @@ package com.example.jariBean.service;
 
 import com.example.jariBean.dto.reserved.ReserveReqDto;
 import com.example.jariBean.dto.reserved.ReservedResDto;
+import com.example.jariBean.entity.Cafe;
 import com.example.jariBean.entity.Reserved;
 import com.example.jariBean.handler.ex.CustomDBException;
 import com.example.jariBean.repository.cafe.CafeRepository;
 import com.example.jariBean.repository.reserved.ReservedRepository;
 import com.example.jariBean.repository.user.UserRepository;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
-@SpringBootTest
+
+@DataMongoTest
+@ActiveProfiles("test")
 public class ReservedServiceTest {
 
     @Autowired
@@ -30,6 +36,36 @@ public class ReservedServiceTest {
 
     @Autowired
     ReserveService reserveService;
+
+    @Test
+    public void findByWordAndCoordinateNearTest() throws Exception {
+        String word1 = "무인";
+        String word2 = "인천";
+        List<String> words = new ArrayList<>();
+        words.add(word1);
+        words.add(word2);
+
+        GeoJsonPoint coordinate = new GeoJsonPoint(126.6487782154, 37.4538193246568);
+        Double distance = 50D;
+
+        List<String> cafeList = cafeRepository.findByWordAndCoordinateNear(words,coordinate);
+        System.out.println("byCoordinateDistance.getContent().size() = " + cafeList.size());
+        cafeList.forEach(cafe -> {
+            System.out.println(cafe);
+        });
+    }
+
+    @Test
+    public void findByCoordinateNearTest() throws Exception {
+        GeoJsonPoint coordinate = new GeoJsonPoint(126.6487782154, 37.4538193246568);
+        Double distance = 5000D;
+
+        List<Cafe> cafeList = cafeRepository.findByCoordinateNear(coordinate, distance);
+        System.out.println("byCoordinateDistance.getContent().size() = " + cafeList.size());
+        cafeList.forEach(cafe -> {
+            System.out.println(cafe.getId());
+        });
+    }
 
 
     @Test
@@ -57,11 +93,12 @@ public class ReservedServiceTest {
 
     }
 
+
     @Test
     public void delteMyReservedTest() {
         // given
         String userId = "testUser";
-        Reserved reserved = reservedRepository.findByUserIdOrderByReservedStartTimeDesc(userId, Pageable.ofSize(1)).get(0);
+        Reserved reserved = reservedRepository.findByUserIdOrderByStartTimeDesc(userId, Pageable.ofSize(1)).get(0);
         String reservedId = reserved.getId();
 
         // then
