@@ -52,7 +52,7 @@ public class ManagerResDto {
             tableSummaryDto.setId(table.getId());
             tableSummaryDto.setName(table.getName());
             tableSummaryDto.setDescription(table.getDescription());
-            tableSummaryDto.setImage(table.getImageUrl());
+            tableSummaryDto.setImage(table.getImage());
             tableSummaryDtoList.add(tableSummaryDto);
         }
     }

@@ -27,9 +27,9 @@ public class Cafe {
     @Column(nullable = false, length = 11)
     private String phoneNumber;
 
-    private String imageUrl;
+    private String image;
 
-    private String instagramUrl;
+    private String instagram;
 
     @Column(nullable = false, length = 60)
     private String address;
@@ -37,10 +37,6 @@ public class Cafe {
     @Column(length = 200)
     private String description;
 
-    @Column
-    private String cafeImg;
-
-    // 수정한 부분 충돌!!
     @Column(nullable = false)
     private GeoJsonPoint coordinate;
 
@@ -61,11 +57,11 @@ public class Cafe {
     private List<CafeOperatingTime> cafeOperatingTimeList;
 
     @Builder
-    public Cafe(String id, String name, String phoneNumber, String imageUrl, String address, String description, GeoJsonPoint coordinate) {
+    public Cafe(String id, String name, String phoneNumber, String image, String address, String description, GeoJsonPoint coordinate) {
         this.id = id;
         this.name = name;
         this.phoneNumber = phoneNumber;
-        this.imageUrl = imageUrl;
+        this.image = image;
         this.address = address;
         this.description = description;
         this.coordinate = coordinate;

@@ -10,7 +10,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Document
 @Getter
@@ -42,10 +41,6 @@ public class Reserved {
 
     @Column(nullable = false)
     private ReservedStatus reservedStatus;
-
-    //for aggregate
-//    @DBRef
-//    private Cafe cafe;
 
     @DBRef
     private User user;

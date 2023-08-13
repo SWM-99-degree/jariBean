@@ -170,7 +170,7 @@ class ManagerServiceTest {
         // then
         Assertions.assertThat(savedTable.getName()).isEqualTo(name);
         Assertions.assertThat(savedTable.getDescription()).isEqualTo(description);
-        Assertions.assertThat(savedTable.getImageUrl()).isEqualTo(image);
+        Assertions.assertThat(savedTable.getImage()).isEqualTo(image);
     }
 
     @Test
@@ -188,7 +188,7 @@ class ManagerServiceTest {
         // then
         Assertions.assertThat(savedTable.getName()).isEqualTo(name);
         Assertions.assertThat(savedTable.getDescription()).isEqualTo(description);
-        Assertions.assertThat(savedTable.getImageUrl()).isEqualTo(image);
+        Assertions.assertThat(savedTable.getImage()).isEqualTo(image);
     }
 
     @Test

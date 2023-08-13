@@ -71,7 +71,7 @@ public class ReservedResDto {
         @Builder
         public NearestReservedResDto(LocalDateTime time, Reserved reserved){
             this.cafeId = reserved.getCafe().getId();
-            this.cafeImg = reserved.getCafe().getCafeImg();
+            this.cafeImg = reserved.getCafe().getImage();
             this.cafeAddress = reserved.getCafe().getAddress();
             this.reservedStartTime = reserved.getReservedStartTime();
             this.reservedEndTime = reserved.getReservedEndTime();

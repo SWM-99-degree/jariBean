@@ -19,7 +19,7 @@ public class TableResDto {
             this.id = table.getId();
             this.description = table.getDescription();
             this.seating = table.getSeating();
-            this.image = table.getImageUrl();
+            this.image = table.getImage();
             this.tableOptionList = table.getTableOptionList();
         }
     }

@@ -73,7 +73,7 @@ public class UserService {
         return UserInfoRespDto.builder()
                 .id(user.getId())
                 .nickname(user.getNickname())
-                .imageUrl(user.getImageUrl())
+                .imageUrl(user.getImage())
                 .description(user.getDescription())
                 .role(user.getRole())
                 .build();
@@ -88,7 +88,7 @@ public class UserService {
         return UserInfoRespDto.builder()
                 .id(user.getId())
                 .nickname(user.getNickname())
-                .imageUrl(user.getImageUrl())
+                .imageUrl(user.getImage())
                 .description(user.getDescription())
                 .role(user.getRole())
                 .build();
