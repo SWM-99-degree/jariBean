@@ -35,14 +35,14 @@ public class HomeController {
     private ReserveService reserveService;
 
     @GetMapping("/reserve")
-    public ResponseEntity home(@AuthenticationPrincipal LoginUser loginUser) {
+    public ResponseEntity homeReserve(@AuthenticationPrincipal LoginUser loginUser) {
         ReservedResDto.ReserveSummaryResDto reserveSummaryResDto = reserveService.getNearestReserved(loginUser.getUser().getId());
 
         return new ResponseEntity<>(new ResponseDto<>(1, "정보를 성공적으로 가져왔습니다.", reserveSummaryResDto), CREATED);
     }
 
     @GetMapping("/best")
-    public ResponseEntity home(Pageable pageable) {
+    public ResponseEntity homeBest(Pageable pageable) {
         List<CafeResDto.CafeSummaryDto> cafeSummaryDtos = cafeService.getCafeByMatchingCount(pageable);
 
         return new ResponseEntity<>(new ResponseDto<>(1, "정보를 성공적으로 가져왔습니다.", cafeSummaryDtos), CREATED);
