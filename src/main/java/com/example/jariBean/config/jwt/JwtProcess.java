@@ -27,7 +27,7 @@ public class JwtProcess {
                 .withClaim("userRole", user.getRole().toString())
                 .sign(Algorithm.HMAC512(JWT_SECRET_KEY));
 
-        return JwtVO.TOKEN_PREFIX + jwt;
+        return jwt;
     }
 
     // create refresh JWT
@@ -40,7 +40,7 @@ public class JwtProcess {
                 .withClaim("userRole", user.getRole().toString())
                 .sign(Algorithm.HMAC512(JWT_SECRET_KEY));
 
-        return JwtVO.TOKEN_PREFIX + jwt;
+        return jwt;
     }
 
 
