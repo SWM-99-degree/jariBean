@@ -26,23 +26,19 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
 
-        String header = request.getHeader(JwtVO.ACCESS_HEADER);
+        String jwt = request.getHeader(JwtVO.ACCESS_HEADER);
 
-        if(isExist(header)) {
-            String jwt = header.replace(JwtVO.TOKEN_PREFIX, ""); // "BEARER " 제거
+        if(jwt != null) {
             JwtDto jwtDto = jwtProcess.verify(jwt);
 
             User user = User.builder().id(jwtDto.getId()).role(User.UserRole.valueOf(jwtDto.getUserRole())).build();
             LoginUser loginUser = new LoginUser(user);
+
             // 임시 세션 강제 주입 (생명주기 request ~ response)
             Authentication authentication = new UsernamePasswordAuthenticationToken(loginUser, null, loginUser.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
         }
         chain.doFilter(request, response);
-    }
-
-    private boolean isExist(String header) {
-        return (header != null && header.startsWith(JwtVO.TOKEN_PREFIX));
     }
 }
