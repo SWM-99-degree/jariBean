@@ -9,9 +9,9 @@ name: Java CI with Gradle
 
 on:
   push:
-    branches: [ "main" , "CICD", "dev"]
+    branches: [ "main" , "CICD"]
   pull_request:
-    branches: [ "main" , "CICD", "dev"]
+    branches: [ "main" , "CICD"]
 
 env:
   DOCKER_IMAGE: chlrltjd5263/jaribean
