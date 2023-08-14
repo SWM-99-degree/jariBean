@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Value;
 
 public class JwtVO {
     public String SECRET; // HS256 대칭키
-    public static String TOKEN_PREFIX = "BEARER ";
 
     public static String ACCESS_HEADER = "ACCESS_AUTHORIZATION";
     public static String REFRESH_HEADER = "REFRESH_AUTHORIZATION";
