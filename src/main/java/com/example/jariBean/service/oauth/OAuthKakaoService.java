@@ -1,9 +1,9 @@
-package com.example.jariBean.oauth.service;
+package com.example.jariBean.service.oauth;
 
 
 import com.example.jariBean.config.jwt.JwtProcess;
-import com.example.jariBean.oauth.dto.KakaoOAuthInfo;
-import com.example.jariBean.oauth.dto.KakaoUserInfo;
+import com.example.jariBean.dto.oauth.KakaoOAuthInfo;
+import com.example.jariBean.dto.oauth.KakaoUserInfo;
 import com.example.jariBean.repository.user.UserRepository;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;

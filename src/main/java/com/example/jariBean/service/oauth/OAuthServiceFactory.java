@@ -1,4 +1,4 @@
-package com.example.jariBean.oauth.service;
+package com.example.jariBean.service.oauth;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

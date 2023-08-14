@@ -1,9 +1,9 @@
-package com.example.jariBean.oauth.service;
+package com.example.jariBean.service.oauth;
 
 import com.example.jariBean.config.jwt.JwtProcess;
 import com.example.jariBean.entity.User;
-import com.example.jariBean.oauth.dto.LoginResDto.LoginSuccessResDto;
-import com.example.jariBean.oauth.service.OAuthKakaoService.SocialUserInfo;
+import com.example.jariBean.dto.oauth.LoginResDto.LoginSuccessResDto;
+import com.example.jariBean.service.oauth.OAuthKakaoService.SocialUserInfo;
 import com.example.jariBean.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

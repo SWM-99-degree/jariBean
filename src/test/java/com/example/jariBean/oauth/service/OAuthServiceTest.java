@@ -4,6 +4,8 @@ import com.example.jariBean.config.jwt.JwtProcess;
 import com.example.jariBean.entity.User;
 import com.example.jariBean.repository.user.UserRepository;
 
+import com.example.jariBean.service.oauth.OAuthKakaoService;
+import com.example.jariBean.service.oauth.OAuthService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
