@@ -1,11 +1,12 @@
-package com.example.jariBean.oauth;
+package com.example.jariBean.controller;
 
 import com.example.jariBean.dto.ResponseDto;
-import com.example.jariBean.oauth.dto.LoginCode;
-import com.example.jariBean.oauth.dto.LoginResDto.LoginSuccessResDto;
-import com.example.jariBean.oauth.service.OAuthKakaoService.SocialUserInfo;
-import com.example.jariBean.oauth.service.OAuthService;
-import com.example.jariBean.oauth.service.OAuthServiceFactory;
+import com.example.jariBean.dto.oauth.LoginCode;
+import com.example.jariBean.dto.oauth.LoginResDto.LoginSuccessResDto;
+import com.example.jariBean.service.oauth.OAuthKakaoService.SocialUserInfo;
+import com.example.jariBean.service.oauth.OAuthService;
+import com.example.jariBean.service.oauth.OAuthServiceFactory;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -21,10 +22,10 @@ public class OAuthController {
     private OAuthService oAuthService;
     private final OAuthServiceFactory authServiceFactory;
 
+    @Operation(summary = "return social code", description = "api for return social code")
     @GetMapping("/login/oauth2/code/{registrationId}")
     public String returnCode(@RequestParam("code") String code) {
-//        return "redirect:jaribean://code?code=" + code;
-        return "code";
+        return "redirect:jaribean://code?code=" + code;
     }
 
     @PostMapping("/login/{registrationId}")

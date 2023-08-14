@@ -1,9 +1,9 @@
-package com.example.jariBean.oauth.service;
+package com.example.jariBean.service.oauth;
 
 import com.example.jariBean.config.jwt.JwtProcess;
-import com.example.jariBean.oauth.dto.GoogleOAuthInfo;
-import com.example.jariBean.oauth.dto.GoogleUserInfo;
-import com.example.jariBean.oauth.service.OAuthKakaoService.SocialUserInfo;
+import com.example.jariBean.dto.oauth.GoogleOAuthInfo;
+import com.example.jariBean.dto.oauth.GoogleUserInfo;
+import com.example.jariBean.service.oauth.OAuthKakaoService.SocialUserInfo;
 import com.example.jariBean.repository.user.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

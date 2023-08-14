@@ -4,6 +4,7 @@ spring:
       uri: ${MONGODB_URI}
   elasticsearch:
     host: ${ELASTICSEARCH_HOST}
+    port: 9200
     username: ${ELASTICSEARCH_USERNAME}
     password: ${ELASTICSEARCH_PASSWORD}
 
