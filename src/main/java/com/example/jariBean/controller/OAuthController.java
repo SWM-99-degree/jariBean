@@ -28,6 +28,7 @@ public class OAuthController {
         return "redirect:jaribean://code?code=" + code;
     }
 
+    @Operation(summary = "social login", description = "api for social login")
     @PostMapping("/login/{registrationId}")
     public ResponseEntity login(@PathVariable("registrationId") String registrationId,
                                         @RequestBody LoginCode loginCode) {
