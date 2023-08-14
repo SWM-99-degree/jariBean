@@ -130,18 +130,11 @@ public class ReservedRepositoryImpl implements ReservedRepositoryTemplate{
         Criteria criteria = Criteria.where("userId").is(userId).and("status").is("VALID").and("endTime").gte(time);
 
         AggregationOperation match = Aggregation.match(criteria);
-        AggregationOperation lookupTableClass = Aggregation.lookup("tableClass", "id", "tableClassId", "tableClass");
-        AggregationOperation lookupCafe = Aggregation.lookup("cafe", "id", "cafeId", "cafe");
-        AggregationOperation project = Aggregation.project("id", "userId", "cafeId", "tableId", "startTime", "endTime", "status")
-                .andExpression("cafe").arrayElementAt(0).as("cafe");
         AggregationOperation sort = Aggregation.sort(Sort.Direction.ASC, "startTime");
-        AggregationOperation limit = Aggregation.limit(1);
+        AggregationOperation limit = Aggregation.limit(1L);
 
         Aggregation aggregation = Aggregation.newAggregation(
                 match,
-                lookupTableClass,
-                lookupCafe,
-                project,
                 sort,
                 limit
         );
