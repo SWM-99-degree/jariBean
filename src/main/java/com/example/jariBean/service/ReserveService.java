@@ -56,16 +56,23 @@ public class ReserveService {
 
 
     // 가장 가까운 예약
-    public NearestReservedResDto getNearestReserved(ReserveNearestReqDto nearestReservedReqDto){
-        String userId = nearestReservedReqDto.getUserId();
-        LocalDateTime userNow = nearestReservedReqDto.getUserNow();
-        // 예약정보
-        Reserved reserved = reservedRepository.findNearestReserved(userId, userNow);
-        // 정보가 없다면 null 값으로 반환하며, 예외처리로 204를 보냄
-        if (reserved == null) { throw new CustomNoContentException("예약이 존재하지 않습니다.");}
-        // 예약 정보 넣기
-        NearestReservedResDto reservedResDto = new NearestReservedResDto(userNow, reserved);
-        return reservedResDto;
+    public ReserveSummaryResDto getNearestReserved(String userId) {
+        LocalDateTime userNow = LocalDateTime.now();
+        Reserved reserved = null;
+        try {
+            // 예약정보
+            reserved = reservedRepository.findNearestReserved(userId, userNow);
+            // 정보가 없다면 null 값으로 반환하며, 예외처리로 204를 보냄
+        } catch (Exception e) {
+            throw new CustomDBException("예약 DB에 문제가 있습니다.");
+        } finally {
+            if (reserved == null) {
+                throw new CustomNoContentException("예약이 존재하지 않습니다.");
+            }
+            // 예약 정보 넣기
+            ReserveSummaryResDto reserveSummaryResDto = new ReserveSummaryResDto(reserved);
+            return reserveSummaryResDto;
+        }
     }
     /**
      * 예약하기 로직

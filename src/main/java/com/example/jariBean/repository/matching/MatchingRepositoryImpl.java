@@ -2,12 +2,10 @@ package com.example.jariBean.repository.matching;
 
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.aggregation.Aggregation;
-import org.springframework.data.mongodb.core.aggregation.AggregationResults;
-import org.springframework.data.mongodb.core.aggregation.GroupOperation;
-import org.springframework.data.mongodb.core.aggregation.SortOperation;
+import org.springframework.data.mongodb.core.aggregation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,10 +14,12 @@ public class MatchingRepositoryImpl implements MatchingRepositoryTemplate {
     @Autowired private MongoTemplate mongoTemplate;
 
     @Override
-    public List<String> findCafeIdSortedByCount() {
+    public List<String> findCafeIdSortedByCount(Pageable pageable) {
         GroupOperation groupOperation = Aggregation.group("cafeId").count().as("matchingCount");
         SortOperation sortByCountDesc = Aggregation.sort(Sort.Direction.DESC, "count");
-        Aggregation aggregation = Aggregation.newAggregation(groupOperation, sortByCountDesc);
+        SkipOperation skipOperation = Aggregation.skip(pageable.getOffset());
+        LimitOperation limitOperation = Aggregation.limit(pageable.getPageSize());
+        Aggregation aggregation = Aggregation.newAggregation(groupOperation, sortByCountDesc, skipOperation, limitOperation);
 
         AggregationResults<CafeCount> results = mongoTemplate.aggregate(aggregation, "matching", CafeCount.class);
 

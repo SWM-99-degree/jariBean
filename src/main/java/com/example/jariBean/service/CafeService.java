@@ -17,6 +17,7 @@ import com.example.jariBean.repository.matching.MatchingRepository;
 import com.example.jariBean.repository.reserved.ReservedRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,9 +41,9 @@ public class CafeService {
     private final CafeOperatingTimeRepository cafeOperatingTimeRepository;
 
 
-    public List<CafeSummaryDto> getCafeByMatchingCount(){
+    public List<CafeSummaryDto> getCafeByMatchingCount(Pageable pageable){
         try {
-            List<String> cafeList = matchingRepository.findCafeIdSortedByCount();
+            List<String> cafeList = matchingRepository.findCafeIdSortedByCount(pageable);
             List<CafeSummaryDto> cafeSummaryDtos = new ArrayList<>();
             cafeRepository.findByIds(cafeList).forEach(cafe -> cafeSummaryDtos.add(new CafeSummaryDto(cafe)));
             return cafeSummaryDtos;

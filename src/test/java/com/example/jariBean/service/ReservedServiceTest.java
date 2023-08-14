@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.test.context.ActiveProfiles;
@@ -22,8 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-@DataMongoTest
-@ActiveProfiles("test")
+@SpringBootTest
 public class ReservedServiceTest {
 
     @Autowired
@@ -76,8 +76,8 @@ public class ReservedServiceTest {
         saveReservedReqDto.setCafeId("64c45ac3935eb61c140793e7");
         saveReservedReqDto.setTableId("64a021f82ff24a6d8c7bd57c");
         String dateFormat = "yyyy-MM-dd HH:mm:ss";
-        String startTime = "2023-08-07 12:00:00";
-        String endTime = "2023-08-07 14:00:00";
+        String startTime = "2023-08-15 12:00:00";
+        String endTime = "2023-08-15 14:00:00";
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateFormat);
         LocalDateTime newStartTime = LocalDateTime.parse(startTime, formatter);
         LocalDateTime newEndTime = LocalDateTime.parse(endTime, formatter);
@@ -120,9 +120,9 @@ public class ReservedServiceTest {
         // given
         String userId = "testUser";
         String dateFormat = "yyyy-MM-dd HH:mm:ss";
-        String startTime = "2023-08-07 10:00:00";
-        String checkStartTime = "2023-08-07 12:00:00";
-        String checkEndTime = "2023-08-07 14:00:00";
+        String startTime = "2023-08-17 10:00:00";
+        String checkStartTime = "2023-08-17 12:00:00";
+        String checkEndTime = "2023-08-17 14:00:00";
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateFormat);
         LocalDateTime time = LocalDateTime.parse(startTime, formatter);
         ReserveReqDto.ReserveNearestReqDto reserveNearestReqDto = new ReserveReqDto.ReserveNearestReqDto();
@@ -130,11 +130,10 @@ public class ReservedServiceTest {
         reserveNearestReqDto.setUserNow(time);
 
         // when
-        ReservedResDto.NearestReservedResDto nearestReservedResDto = reserveService.getNearestReserved(reserveNearestReqDto);
+        ReservedResDto.ReserveSummaryResDto nearestReservedResDto = reserveService.getNearestReserved(userId);
 
         // then
-        Assertions.assertEquals(nearestReservedResDto.getReservedStartTime(), LocalDateTime.parse(checkStartTime, formatter));
-        Assertions.assertEquals(nearestReservedResDto.getReservedEndTime(), LocalDateTime.parse(checkEndTime, formatter));
+        Assertions.assertEquals(nearestReservedResDto.getReserveStartTime(), LocalDateTime.parse(checkStartTime, formatter));
 
 
     }
