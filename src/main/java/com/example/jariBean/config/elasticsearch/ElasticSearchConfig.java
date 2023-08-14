@@ -2,7 +2,6 @@ package com.example.jariBean.config.elasticsearch;
 
 import org.elasticsearch.client.RestHighLevelClient;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.elasticsearch.client.ClientConfiguration;
@@ -18,13 +17,13 @@ public class ElasticSearchConfig extends AbstractElasticSearchConfig{
     @Value("${spring.elasticsearch.host}")
     private String host;
 
-    @Value("${elasticsearch.port}")
+    @Value("${spring.elasticsearch.port}")
     private int port;
 
-    @Value("${elasticsearch.username}")
+    @Value("${spring.elasticsearch.username}")
     private String username;
 
-    @Value("${elasticsearch.password}")
+    @Value("${spring.elasticsearch.password}")
     private String password;
 
     @Override

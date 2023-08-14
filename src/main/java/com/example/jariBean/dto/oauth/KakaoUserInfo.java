@@ -1,4 +1,4 @@
-package com.example.jariBean.oauth.dto;
+package com.example.jariBean.dto.oauth;
 
 import lombok.*;
 
