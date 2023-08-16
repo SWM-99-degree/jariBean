@@ -4,7 +4,6 @@ package com.example.jariBean.service.oauth;
 import com.example.jariBean.config.jwt.JwtProcess;
 import com.example.jariBean.dto.oauth.KakaoOAuthInfo;
 import com.example.jariBean.dto.oauth.KakaoUserInfo;
-import com.example.jariBean.handler.ex.CustomApiException;
 import com.example.jariBean.repository.user.UserRepository;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
@@ -45,23 +44,15 @@ public class OAuthKakaoService extends OAuthService{
         bodyValue.add("code", code);
 
         WebClient client = WebClient.create();
-        client.post()
+        KakaoOAuthInfo kakaoOAuthInfo = client.post()
                 .uri("https://kauth.kakao.com/oauth/token")
                 .contentType(APPLICATION_FORM_URLENCODED)
                 .bodyValue(bodyValue)
                 .retrieve()
                 .bodyToMono(KakaoOAuthInfo.class)
-                .subscribe(
-                        response -> {
-                            responseReference.set(response); // 응답 값을 저장
-                        },
-                        error -> {
-                            // 오류 처리 로직
-                            throw new CustomApiException("카카오 Access Token 발급에 실패하였습니다.");
-                        }
-                );
+                .block();
 
-        return responseReference.get().getAccess_token();
+        return kakaoOAuthInfo.getAccess_token();
     }
 
     @Override
