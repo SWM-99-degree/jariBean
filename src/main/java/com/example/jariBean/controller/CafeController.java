@@ -9,6 +9,7 @@ import com.example.jariBean.entity.TableClass;
 import com.example.jariBean.service.CafeService;
 import com.example.jariBean.service.SearchService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,8 +31,8 @@ public class CafeController {
 
 
     @GetMapping("/best")
-    public ResponseEntity bestCafe() {
-        List<CafeSummaryDto> cafeSummaryDtos = cafeService.getCafeByMatchingCount();
+    public ResponseEntity bestCafe(Pageable pageable) {
+        List<CafeSummaryDto> cafeSummaryDtos = cafeService.getCafeByMatchingCount(pageable);
 
         return new ResponseEntity<>(new ResponseDto<>(1, "정보를 성공적으로 가져왔습니다.", cafeSummaryDtos), CREATED);
     }
