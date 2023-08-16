@@ -4,6 +4,7 @@ package com.example.jariBean.service.oauth;
 import com.example.jariBean.config.jwt.JwtProcess;
 import com.example.jariBean.dto.oauth.KakaoOAuthInfo;
 import com.example.jariBean.dto.oauth.KakaoUserInfo;
+import com.example.jariBean.handler.ex.CustomApiException;
 import com.example.jariBean.repository.user.UserRepository;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
+
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
 
@@ -33,6 +36,8 @@ public class OAuthKakaoService extends OAuthService{
     @Override
     public String getAccessToken(String code) {
 
+        AtomicReference<KakaoOAuthInfo> responseReference = new AtomicReference<>();
+
         MultiValueMap<String, String> bodyValue = new LinkedMultiValueMap<>();
         bodyValue.add("grant_type", "authorization_code");
         bodyValue.add("client_id", KAKAO_CLIENT_ID);
@@ -40,15 +45,23 @@ public class OAuthKakaoService extends OAuthService{
         bodyValue.add("code", code);
 
         WebClient client = WebClient.create();
-        KakaoOAuthInfo kakaoOAuthInfo = client.post()
+        client.post()
                 .uri("https://kauth.kakao.com/oauth/token")
                 .contentType(APPLICATION_FORM_URLENCODED)
                 .bodyValue(bodyValue)
                 .retrieve()
                 .bodyToMono(KakaoOAuthInfo.class)
-                .block();
+                .subscribe(
+                        response -> {
+                            responseReference.set(response); // 응답 값을 저장
+                        },
+                        error -> {
+                            // 오류 처리 로직
+                            throw new CustomApiException("카카오 Access Token 발급에 실패하였습니다.");
+                        }
+                );
 
-        return kakaoOAuthInfo.getAccess_token();
+        return responseReference.get().getAccess_token();
     }
 
     @Override
