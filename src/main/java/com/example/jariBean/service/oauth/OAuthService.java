@@ -58,8 +58,8 @@ public abstract class OAuthService {
         tokenRepository.save(token);
 
         return LoginSuccessResDto.builder()
-                .accessToken(jwtProcess.createAccessToken(savedUser))
-                .refreshToken(jwtProcess.createRefreshToken(savedUser))
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
                 .build();
     }
 
