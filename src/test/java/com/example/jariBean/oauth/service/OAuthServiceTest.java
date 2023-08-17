@@ -2,8 +2,8 @@ package com.example.jariBean.oauth.service;
 
 import com.example.jariBean.config.jwt.JwtProcess;
 import com.example.jariBean.entity.User;
+import com.example.jariBean.repository.TokenRepository;
 import com.example.jariBean.repository.user.UserRepository;
-
 import com.example.jariBean.service.oauth.OAuthKakaoService;
 import com.example.jariBean.service.oauth.OAuthService;
 import org.assertj.core.api.Assertions;
@@ -17,12 +17,14 @@ import org.springframework.test.context.ActiveProfiles;
 class OAuthServiceTest {
 
     @Autowired UserRepository userRepository;
+    @Autowired TokenRepository tokenRepository;
     @Autowired JwtProcess jwtProcess;
+
 
     @Test
     public void isExistUserTest() throws Exception {
 
-        OAuthService oAuthService = new OAuthKakaoService(userRepository, jwtProcess);
+        OAuthService oAuthService = new OAuthKakaoService(userRepository, jwtProcess, tokenRepository);
 
         // 회원가입을 하지 않은 유저
         boolean isNotLoggedIn = oAuthService.isExistUser("no-social-id");
