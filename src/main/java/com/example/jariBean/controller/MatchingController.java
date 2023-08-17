@@ -5,6 +5,7 @@ import com.example.jariBean.dto.ResponseDto;
 import com.example.jariBean.dto.matching.MatchingResDto.MatchingSummaryResDto;
 import com.example.jariBean.service.MatchingService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -21,6 +22,7 @@ import static org.springframework.http.HttpStatus.CREATED;
 @RequestMapping("/api/matching")
 public class MatchingController {
 
+    @Autowired
     private MatchingService matchingService;
 
     @GetMapping
