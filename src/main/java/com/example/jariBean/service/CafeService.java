@@ -48,6 +48,7 @@ public class CafeService {
             cafeRepository.findByIds(cafeList).forEach(cafe -> cafeSummaryDtos.add(new CafeSummaryDto(cafe)));
             return cafeSummaryDtos;
         } catch (Exception e) {
+            e.printStackTrace();
             throw new CustomDBException("DB에 조회하신 정보가 없습니다.");
         }
 
