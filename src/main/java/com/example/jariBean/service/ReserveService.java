@@ -64,6 +64,7 @@ public class ReserveService {
             reserved = reservedRepository.findNearestReserved(userId, userNow);
             // 정보가 없다면 null 값으로 반환하며, 예외처리로 204를 보냄
         } catch (Exception e) {
+            e.printStackTrace();
             throw new CustomDBException("예약 DB에 문제가 있습니다.");
         } finally {
             if (reserved == null) {
