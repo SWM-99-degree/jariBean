@@ -45,6 +45,7 @@ public abstract class OAuthService {
         // save or update user
         User savedUser = userRepository.save(user);
 
+        //create JWT
         String accessToken = jwtProcess.createAccessToken(savedUser);
         String refreshToken = jwtProcess.createRefreshToken(savedUser);
 
