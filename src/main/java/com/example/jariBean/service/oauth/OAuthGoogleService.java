@@ -3,8 +3,9 @@ package com.example.jariBean.service.oauth;
 import com.example.jariBean.config.jwt.JwtProcess;
 import com.example.jariBean.dto.oauth.GoogleOAuthInfo;
 import com.example.jariBean.dto.oauth.GoogleUserInfo;
-import com.example.jariBean.service.oauth.OAuthKakaoService.SocialUserInfo;
+import com.example.jariBean.repository.TokenRepository;
 import com.example.jariBean.repository.user.UserRepository;
+import com.example.jariBean.service.oauth.OAuthKakaoService.SocialUserInfo;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -27,8 +28,8 @@ public class OAuthGoogleService extends OAuthService{
 
     private final String REGISTRATION = "google";
 
-    public OAuthGoogleService(UserRepository userRepository, JwtProcess jwtProcess) {
-        super(userRepository, jwtProcess);
+    public OAuthGoogleService(UserRepository userRepository, JwtProcess jwtProcess, TokenRepository tokenRepository) {
+        super(userRepository, tokenRepository, jwtProcess);
     }
 
     @Override

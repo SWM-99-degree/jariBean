@@ -4,6 +4,7 @@ package com.example.jariBean.service.oauth;
 import com.example.jariBean.config.jwt.JwtProcess;
 import com.example.jariBean.dto.oauth.KakaoOAuthInfo;
 import com.example.jariBean.dto.oauth.KakaoUserInfo;
+import com.example.jariBean.repository.TokenRepository;
 import com.example.jariBean.repository.user.UserRepository;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,8 +27,8 @@ public class OAuthKakaoService extends OAuthService{
 
     private final String REGISTRATION = "kakao";
 
-    public OAuthKakaoService(UserRepository userRepository, JwtProcess jwtProcess) {
-        super(userRepository, jwtProcess);
+    public OAuthKakaoService(UserRepository userRepository, JwtProcess jwtProcess, TokenRepository tokenRepository) {
+        super(userRepository, tokenRepository, jwtProcess);
     }
 
     @Override
