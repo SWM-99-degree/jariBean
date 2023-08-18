@@ -6,6 +6,6 @@ public class FCMReqDto {
 
     @Data
     public static class FCMTokenReqDto {
-        private String token;
+        private String firebaseToken;
     }
 }
