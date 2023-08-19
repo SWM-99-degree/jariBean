@@ -18,6 +18,9 @@ public class Token {
     private String refreshToken;
     private String firebaseToken;
 
+    public void updateFcmToken(String firebaseToken) {
+        this.firebaseToken = firebaseToken;
+    }
 
     @Builder
     public Token(String userId, String accessToken, String refreshToken, String firebaseToken) {
