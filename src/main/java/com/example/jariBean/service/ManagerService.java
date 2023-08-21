@@ -1,18 +1,23 @@
 package com.example.jariBean.service;
 
+import com.example.jariBean.dto.manager.ManagerReqDto.ManagerLoginReqDto;
 import com.example.jariBean.dto.manager.ManagerReqDto.ManagerTableClassReqDto;
+import com.example.jariBean.dto.manager.ManagerResDto.ManagerLoginResDto;
 import com.example.jariBean.dto.manager.ManagerResDto.ManagerReserveResDto;
 import com.example.jariBean.dto.manager.ManagerResDto.ManagerTableResDto;
 import com.example.jariBean.dto.manager.ManagerResDto.TableReserveDto;
+import com.example.jariBean.entity.CafeManager;
 import com.example.jariBean.entity.Reserved;
 import com.example.jariBean.entity.Table;
 import com.example.jariBean.entity.TableClass;
 import com.example.jariBean.handler.ex.CustomDBException;
 import com.example.jariBean.repository.cafe.CafeRepository;
+import com.example.jariBean.repository.cafemanager.CafeManagerRepository;
 import com.example.jariBean.repository.reserved.ReservedRepository;
 import com.example.jariBean.repository.table.TableRepository;
 import com.example.jariBean.repository.tableClass.TableClassRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,6 +33,9 @@ public class ManagerService {
     private final TableRepository tableRepository;
     private final TableClassRepository tableClassRepository;
     private final ReservedRepository reservedRepository;
+
+    private final PasswordEncoder passwordEncoder;
+    private final CafeManagerRepository cafeManagerRepository;
 
     public void toggleMatchingStatus(String id) {
         cafeRepository.findById(id)
@@ -120,5 +128,20 @@ public class ManagerService {
 
         tableClass.update(managerTableClassReqDto.getName(), managerTableClassReqDto.getSeating(), managerTableClassReqDto.getOption());
         tableClassRepository.save(tableClass);
+    }
+
+    public ManagerLoginResDto join(ManagerLoginReqDto managerLoginReqDto) {
+
+        if(cafeManagerRepository.existsByEmail(managerLoginReqDto.getEmail())) {
+            throw new CustomDBException("email에 해당하는 cafeManager가 이미 존재합니다.");
+        }
+
+        CafeManager cafeManager = managerLoginReqDto.toEntity(passwordEncoder);
+        CafeManager savedManager = cafeManagerRepository.save(cafeManager);
+        return ManagerLoginResDto.builder()
+                .id(savedManager.getId())
+                .email(savedManager.getEmail())
+                .role(savedManager.getRole().toString())
+                .build();
     }
 }
