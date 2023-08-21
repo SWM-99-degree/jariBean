@@ -57,16 +57,20 @@ public class ManagerReqDto {
         @NotEmpty(message = "password는 필수입니다.")
         private String password;
 
+        private String cafeId;
+
         @Builder
-        public ManagerLoginReqDto(String email, String password) {
+        public ManagerLoginReqDto(String email, String password, String cafeId) {
             this.email = email;
             this.password = password;
+            this.cafeId = cafeId;
         }
 
         public CafeManager toEntity(PasswordEncoder passwordEncoder) {
             return CafeManager.builder()
                     .email(email)
                     .password(passwordEncoder.encode(password))
+                    .cafeId(cafeId)
                     .role(MANAGER)
                     .build();
         }

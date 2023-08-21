@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import static com.example.jariBean.entity.User.UserRole.CUSTOMER;
+import static com.example.jariBean.entity.Role.CUSTOMER;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ActiveProfiles("test")

@@ -12,7 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import static com.example.jariBean.entity.User.UserRole.UNREGISTERED;
+import static com.example.jariBean.config.jwt.JwtProcess.TokenType.ACCESS;
+import static com.example.jariBean.config.jwt.JwtProcess.TokenType.REFRESH;
+import static com.example.jariBean.entity.Role.UNREGISTERED;
 
 @Service
 @RequiredArgsConstructor
@@ -46,8 +48,8 @@ public abstract class OAuthService {
         User savedUser = userRepository.save(user);
 
         //create JWT
-        String accessToken = jwtProcess.createAccessToken(savedUser);
-        String refreshToken = jwtProcess.createRefreshToken(savedUser);
+        String accessToken = jwtProcess.createJWT(savedUser.getId(), savedUser.getRole().toString(), ACCESS);
+        String refreshToken = jwtProcess.createJWT(savedUser.getId(), savedUser.getRole().toString(), REFRESH);
 
         // storing jwt in redis
         Token token = Token.builder()
