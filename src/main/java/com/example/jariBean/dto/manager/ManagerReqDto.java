@@ -1,12 +1,17 @@
 package com.example.jariBean.dto.manager;
 
+import com.example.jariBean.entity.CafeManager;
 import com.example.jariBean.entity.TableClass.TableOption;
-import lombok.Data;
+import lombok.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.util.List;
+
+import static com.example.jariBean.entity.Role.MANAGER;
 
 @Data
 public class ManagerReqDto {
@@ -39,6 +44,32 @@ public class ManagerReqDto {
         private Integer seating;
 
         private List<TableOption> option;
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    public static class ManagerLoginReqDto {
+        @Email
+        @NotEmpty(message = "id는 필수입니다.")
+        private String email;
+
+        @NotEmpty(message = "password는 필수입니다.")
+        private String password;
+
+        @Builder
+        public ManagerLoginReqDto(String email, String password) {
+            this.email = email;
+            this.password = password;
+        }
+
+        public CafeManager toEntity(PasswordEncoder passwordEncoder) {
+            return CafeManager.builder()
+                    .email(email)
+                    .password(passwordEncoder.encode(password))
+                    .role(MANAGER)
+                    .build();
+        }
     }
 
 }
