@@ -2,7 +2,6 @@ package com.example.jariBean.dto.user;
 
 import com.example.jariBean.entity.User;
 import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -70,15 +69,6 @@ public class UserReqDto {
             this.userName = userName;
             this.firebaseToken = firebaseToken;
         }
-    }
-
-    @Data
-    public static class UserRegisterReqDto {
-        @NotEmpty(message = "필수: id")
-        private String id;
-
-        @NotEmpty(message = "필수: nickaname")
-        private String nickname;
     }
 
 }

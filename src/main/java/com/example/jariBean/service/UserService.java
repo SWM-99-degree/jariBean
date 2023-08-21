@@ -3,7 +3,6 @@ package com.example.jariBean.service;
 import com.example.jariBean.dto.profile.ProfileReqDto;
 import com.example.jariBean.dto.profile.ProfileResDto.ProfileSummaryResDto;
 import com.example.jariBean.dto.user.UserReqDto.UserJoinReqDto;
-import com.example.jariBean.dto.user.UserReqDto.UserRegisterReqDto;
 import com.example.jariBean.dto.user.UserResDto.UserInfoRespDto;
 import com.example.jariBean.dto.user.UserResDto.UserJoinRespDto;
 import com.example.jariBean.entity.User;
@@ -79,12 +78,15 @@ public class UserService {
                 .build();
     }
 
-    public UserInfoRespDto register(UserRegisterReqDto userReqDto) {
-        User user = userRepository.findByIdAndNickname(userReqDto.getId(), userReqDto.getNickname())
-                .orElseThrow(() -> new CustomDBException("no user exists for the given id and nickname"));
+    public UserInfoRespDto register(String userId) {
+        // find user by id
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomDBException("no user exists for the given id"));
 
+        // update user role
         user.register();
 
+        // return user info
         return UserInfoRespDto.builder()
                 .id(user.getId())
                 .nickname(user.getNickname())
