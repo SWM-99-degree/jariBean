@@ -6,6 +6,7 @@ import com.example.jariBean.config.jwt.jwtdto.JwtDto;
 import com.example.jariBean.entity.CafeManager;
 import com.example.jariBean.entity.Role;
 import com.example.jariBean.entity.User;
+import com.example.jariBean.handler.ex.CustomApiException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -47,16 +48,20 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
     public UserDetails createUserDetails(JwtDto jwtDto) {
 
-        if(jwtDto.getRole().equals(Role.CUSTOMER.getRole()) || jwtDto.getRole().equals(Role.UNREGISTERED.getRole())) {
+        if(jwtDto.getRole().equals(Role.CUSTOMER.toString()) || jwtDto.getRole().equals(Role.UNREGISTERED.toString())) {
             User user = User.builder().id(jwtDto.getId()).role(Role.valueOf(jwtDto.getRole())).build();
             return new LoginUser(user);
         }
 
-        if(jwtDto.getRole().equals(Role.MANAGER.getRole())) {
+        if(jwtDto.getRole().equals(Role.MANAGER.toString())) {
             CafeManager cafeManager = CafeManager.builder().id(jwtDto.getId()).role(Role.valueOf(jwtDto.getRole())).build();
             return new LoginCafe(cafeManager);
         }
 
-        return null;
+        if(jwtDto.getRole().equals(Role.UNREGISTERED.toString())) {
+            throw new CustomApiException("회원가입을 진행하세요.");
+        }
+
+        throw new CustomApiException("해당하는 Role은 존재하지 않습니다.");
     }
 }
