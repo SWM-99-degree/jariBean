@@ -1,6 +1,5 @@
 package com.example.jariBean.entity;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,7 +16,7 @@ import javax.persistence.Id;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static com.example.jariBean.entity.User.UserRole.CUSTOMER;
+import static com.example.jariBean.entity.Role.CUSTOMER;
 import static javax.persistence.EnumType.STRING;
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -46,7 +45,7 @@ public class User {
 
     @Enumerated(STRING)
     @Column(nullable = false)
-    private UserRole role;
+    private Role role;
 
     private boolean alarm;
 
@@ -79,15 +78,8 @@ public class User {
 
     // TODO userRole, UserType
 
-    @Getter
-    @AllArgsConstructor
-    public enum UserRole {
-        ADMIN("관리자"), CUSTOMER("고객"), MANAGER("매니저"), UNREGISTERED("미등록");
-        private String role;
-    }
-
     @Builder
-    public User(String id, String nickname, String socialId, String password, String image, UserRole role) {
+    public User(String id, String nickname, String socialId, String password, String image, Role role) {
         this.id = id;
         this.nickname = nickname;
         this.socialId = socialId;

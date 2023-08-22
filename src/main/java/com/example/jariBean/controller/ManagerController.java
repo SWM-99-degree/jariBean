@@ -1,8 +1,12 @@
 package com.example.jariBean.controller;
 
 import com.example.jariBean.dto.ResponseDto;
-import com.example.jariBean.dto.manager.ManagerReqDto.*;
-import com.example.jariBean.dto.manager.ManagerResDto.*;
+import com.example.jariBean.dto.manager.ManagerReqDto.ManagerLoginReqDto;
+import com.example.jariBean.dto.manager.ManagerReqDto.ManagerTableClassReqDto;
+import com.example.jariBean.dto.manager.ManagerReqDto.ManagerTableReqDto;
+import com.example.jariBean.dto.manager.ManagerResDto.ManagerLoginResDto;
+import com.example.jariBean.dto.manager.ManagerResDto.ManagerReserveResDto;
+import com.example.jariBean.dto.manager.ManagerResDto.ManagerTableResDto;
 import com.example.jariBean.service.ManagerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +23,12 @@ import static org.springframework.http.HttpStatus.OK;
 public class ManagerController {
 
     private final ManagerService managerService;
+
+    @PostMapping("/join")
+    public ResponseEntity join(@RequestBody ManagerLoginReqDto managerLoginReqDto) {
+        ManagerLoginResDto managerLoginResDto = managerService.join(managerLoginReqDto);
+        return new ResponseEntity<>(new ResponseDto<>(1, "회원가입 완료", managerLoginResDto), CREATED);
+    }
 
     @PutMapping("/matching/{cafeId}")
     public ResponseEntity matching(@PathVariable("cafeId") String cafeId) {

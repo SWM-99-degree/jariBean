@@ -1,7 +1,7 @@
 package com.example.jariBean.dto.user;
 
+import com.example.jariBean.entity.Role;
 import com.example.jariBean.entity.User;
-import com.example.jariBean.entity.User.UserRole;
 import com.example.jariBean.util.CustomDateUtil;
 import lombok.*;
 
@@ -39,10 +39,10 @@ public class UserResDto {
         private String nickname;
         private String imageUrl;
         private String description;
-        private UserRole role;
+        private Role role;
 
         @Builder
-        public UserInfoRespDto(String id, String nickname, String imageUrl, String description, UserRole role) {
+        public UserInfoRespDto(String id, String nickname, String imageUrl, String description, Role role) {
             this.id = id;
             this.nickname = nickname;
             this.imageUrl = imageUrl;
