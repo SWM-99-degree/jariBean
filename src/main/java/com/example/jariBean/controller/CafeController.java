@@ -9,6 +9,7 @@ import com.example.jariBean.entity.TableClass;
 import com.example.jariBean.service.CafeService;
 import com.example.jariBean.service.SearchService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -39,32 +40,24 @@ public class CafeController {
 
     // 핫플레이스 경로 카페 상세 확인
     @GetMapping("/{cafeId}")
-    public ResponseEntity moreInfo(@PathVariable("cafeId") String cafeId) {
-        CafeDetailReserveDto cafeDetailReserveDto = cafeService.getCafeWithTodayReserved(cafeId);
+    public ResponseEntity moreInfo(@PathVariable("cafeId") String cafeId, Pageable pageable) {
+        CafeDetailReserveDto cafeDetailReserveDto = cafeService.getCafeWithTodayReserved(cafeId, pageable);
 
         return new ResponseEntity<>(new ResponseDto<>(1, "정보를 성공적으로 가져왔습니다", cafeDetailReserveDto), CREATED);
     }
 
     // 검색 이후 카페 상세 확인
     @GetMapping("/{cafeId}/aftersearch")
-    public ResponseEntity moreInfoWithSearch(@PathVariable("cafeid") String cafeId, @RequestParam("starttime") LocalDateTime startTime, @RequestParam("endtime") LocalDateTime endTime, @RequestParam("tableoptions") List<TableClass.TableOption> tableOptions, @RequestParam Integer peopleNumber){
+    public ResponseEntity moreInfoWithSearch(@PathVariable("cafeid") String cafeId, @RequestParam("starttime") LocalDateTime startTime, @RequestParam("endtime") LocalDateTime endTime, @RequestParam("tableoptions") List<TableClass.TableOption> tableOptions, @RequestParam Integer peopleNumber, Pageable pageable){
 
-        CafeDetailReserveDto cafeDetailReserveDto = cafeService.getCafeWithSearchingReserved(cafeId, startTime, endTime, peopleNumber, tableOptions);
+        CafeDetailReserveDto cafeDetailReserveDto = cafeService.getCafeWithSearchingReserved(cafeId, startTime, endTime, peopleNumber, tableOptions, pageable);
 
         return new ResponseEntity<>(new ResponseDto<>(1, "정보를 성공적으로 가져왔습니다", cafeDetailReserveDto), CREATED);
     }
 
     @PostMapping
-    public ResponseEntity cafes(@RequestBody CafeSearchReqDto cafeSearchReqDto) {
-        List<Cafe> cafes = searchService.findByText(
-                cafeSearchReqDto.getSearchingWord(),
-                cafeSearchReqDto.getLocation().getLatitude(),
-                cafeSearchReqDto.getLocation().getLongitude(),
-                cafeSearchReqDto.getReserveStartTime(),
-                cafeSearchReqDto.getReserveEndTime(),
-                cafeSearchReqDto.getPeopleNumber(),
-                cafeSearchReqDto.getTableOptionList()
-        );
+    public ResponseEntity cafes(@RequestBody CafeSearchReqDto cafeSearchReqDto, Pageable pageable) {
+        List<Cafe> cafes = searchService.findByText(cafeSearchReqDto, pageable);
 
         List<CafeSummaryDto> cafeSummaryDtos = new ArrayList<>();
         cafes.forEach(cafe -> cafeSummaryDtos.add(new CafeSummaryDto(cafe)));

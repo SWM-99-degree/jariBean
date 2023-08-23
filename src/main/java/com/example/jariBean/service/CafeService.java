@@ -17,15 +17,13 @@ import com.example.jariBean.repository.matching.MatchingRepository;
 import com.example.jariBean.repository.reserved.ReservedRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -53,7 +51,8 @@ public class CafeService {
 
     }
 
-    public CafeDetailReserveDto getCafeWithSearchingReserved(String cafeId, LocalDateTime reserveStartTime, LocalDateTime reserveEndTime, Integer peopleNumber, List<TableClass.TableOption> tableOptions) {
+    public CafeDetailReserveDto getCafeWithSearchingReserved(String cafeId, LocalDateTime reserveStartTime, LocalDateTime reserveEndTime, Integer peopleNumber, List<TableClass.TableOption> tableOptions,
+                                                             Pageable pageable) {
 
         CafeDetailReserveDto cafeDetailReserveDto = new CafeDetailReserveDto();
         try {
@@ -61,17 +60,24 @@ public class CafeService {
             CafeOperatingTime cafeOperatingTime = cafeOperatingTimeRepository.findById(cafeId).orElseThrow();
             cafeDetailReserveDto.setCafeDetailDto(new CafeDetailDto(cafe, cafeOperatingTime));
 
-            Map<String, List<Reserved>> reservedListByTabldId = new HashMap<>();
+            Map<String, List<Reserved>> reservedListByTabldIdWithPagination = new LinkedHashMap<>();
             reservedRepository.findReservedByConditions(cafeId, reserveStartTime, reserveEndTime, peopleNumber, tableOptions).forEach(reserved ->
                     {
-                        if (!reservedListByTabldId.containsKey(reserved.getTable().getId())){
-                            reservedListByTabldId.put(reserved.getTable().getId(), new ArrayList<>());
+                        if (!reservedListByTabldIdWithPagination.containsKey(reserved.getTable().getId())){
+                            reservedListByTabldIdWithPagination.put(reserved.getTable().getId(), new ArrayList<>());
                         }
-                        reservedListByTabldId.get(reserved.getTable().getId()).add(reserved);
+                        reservedListByTabldIdWithPagination.get(reserved.getTable().getId()).add(reserved);
                     }
             );
 
-            for (Map.Entry<String, List<Reserved>> reservedList :reservedListByTabldId.entrySet()){
+            List<Map.Entry<String, List<Reserved>>> reservedListByTabldId = reservedListByTabldIdWithPagination
+                    .entrySet()
+                    .stream()
+                    .skip(pageable.getOffset())
+                    .limit(pageable.getPageSize())
+                    .toList();
+
+            for (Map.Entry<String, List<Reserved>> reservedList :reservedListByTabldId){
                 TableReserveResDto tableReserveResDto = new TableReserveResDto();
                 TableDetailDto tableDetailDto = new TableDetailDto(reservedList.getValue().get(0).getTable());
                 tableReserveResDto.setTableDetailDto(tableDetailDto);
@@ -101,7 +107,7 @@ public class CafeService {
     }
 
 
-    public CafeDetailReserveDto getCafeWithTodayReserved(String cafeId){
+    public CafeDetailReserveDto getCafeWithTodayReserved(String cafeId, Pageable pageable){
 
         CafeDetailReserveDto cafeDetailReserveDto = new CafeDetailReserveDto();
         LocalDateTime now = LocalDateTime.now();
@@ -111,17 +117,25 @@ public class CafeService {
             cafeDetailReserveDto.setCafeDetailDto(new CafeDetailDto(cafe, cafeOperatingTime));
 
 
-            Map<String, List<Reserved>> reservedListByTabldId = new HashMap<>();
+            Map<String, List<Reserved>> reservedListByTabldIdWithPagination = new LinkedHashMap<>();
             reservedRepository.findTodayReservedById(cafeId).forEach(reserved ->
                     {
-                        if (!reservedListByTabldId.containsKey(reserved.getTable().getId())){
-                            reservedListByTabldId.put(reserved.getTable().getId(), new ArrayList<>());
+                        if (!reservedListByTabldIdWithPagination.containsKey(reserved.getTable().getId())){
+                            reservedListByTabldIdWithPagination.put(reserved.getTable().getId(), new ArrayList<>());
                         }
-                        reservedListByTabldId.get(reserved.getTable().getId()).add(reserved);
+                        reservedListByTabldIdWithPagination.get(reserved.getTable().getId()).add(reserved);
                     }
             );
 
-            for (Map.Entry<String, List<Reserved>> reservedList :reservedListByTabldId.entrySet()){
+            List<Map.Entry<String, List<Reserved>>> reservedListByTabldId = reservedListByTabldIdWithPagination
+                    .entrySet()
+                    .stream()
+                    .skip(pageable.getOffset())
+                    .limit(pageable.getPageSize())
+                    .toList();
+
+            for (Map.Entry<String, List<Reserved>> reservedList :reservedListByTabldId){
+
                 TableReserveResDto tableReserveResDto = new TableReserveResDto();
                 TableDetailDto tableDetailDto = new TableDetailDto(reservedList.getValue().get(0).getTable());
                 tableReserveResDto.setTableDetailDto(tableDetailDto);

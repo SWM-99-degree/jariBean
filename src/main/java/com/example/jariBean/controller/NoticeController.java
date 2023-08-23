@@ -6,6 +6,7 @@ import com.example.jariBean.dto.ResponseDto;
 import com.example.jariBean.dto.notice.NoticeResDto;
 import com.example.jariBean.service.NoticeService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,8 +25,9 @@ public class NoticeController {
     private NoticeService noticeService;
 
     @GetMapping
-    public ResponseEntity updateAlarmStatus(@AuthenticationPrincipal LoginUser loginUser) {
-        List<NoticeResDto.NoticeSummaryResDto> noticeList = noticeService.findNoticeList();
+    public ResponseEntity getNoticeList(@AuthenticationPrincipal LoginUser loginUser, Pageable pageable) {
+        List<NoticeResDto.NoticeSummaryResDto> noticeList = noticeService.findNoticeList(pageable);
         return new ResponseEntity<>(new ResponseDto<>(1, "회원가입 성공", noticeList), CREATED);
     }
+
 }

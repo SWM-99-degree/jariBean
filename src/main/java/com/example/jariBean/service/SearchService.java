@@ -1,6 +1,8 @@
 package com.example.jariBean.service;
 
+import com.example.jariBean.dto.cafe.CafeReqDto;
 import com.example.jariBean.entity.Cafe;
+import com.example.jariBean.entity.Table;
 import com.example.jariBean.entity.TableClass;
 import com.example.jariBean.handler.ex.CustomNoContentException;
 import com.example.jariBean.repository.cafe.CafeRepository;
@@ -10,7 +12,9 @@ import kr.co.shineware.nlp.komoran.core.Komoran;
 import kr.co.shineware.nlp.komoran.model.KomoranResult;
 import kr.co.shineware.nlp.komoran.model.Token;
 import lombok.RequiredArgsConstructor;
+import net.bytebuddy.asm.Advice;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,16 +55,27 @@ public class SearchService {
     }
 
     @Transactional
-    public List<Cafe> findByText(String text, double latitude, double longitude, LocalDateTime startTime, LocalDateTime endTime, Integer seating ,List<TableClass.TableOption> tableOptionsList){
+    public List<Cafe> findByText(CafeReqDto.CafeSearchReqDto cafeSearchReqDto, Pageable pageable){
         try {
+            String text = cafeSearchReqDto.getSearchingWord();
+            Double latitude = cafeSearchReqDto.getLocation().getLatitude();
+            Double longitude = cafeSearchReqDto.getLocation().getLongitude();
+            LocalDateTime startTime = cafeSearchReqDto.getReserveStartTime();
+            LocalDateTime endTime = cafeSearchReqDto.getReserveEndTime();
+            Integer seating = cafeSearchReqDto.getPeopleNumber();
+            List<TableClass.TableOption> tableOptionList = cafeSearchReqDto.getTableOptionList();
+
             Set<String> wordSet = new HashSet<>();
 
             List<String> searchingWords = dividedWord(text);
             GeoJsonPoint point = new GeoJsonPoint(latitude, longitude);
             // TODO
             List<String> wordFilterdCafes = cafeRepository.findByWordAndCoordinateNear(searchingWords, point);
-            List<String> optionsFilterdCafes = reservedRepository.findCafeByReserved(wordFilterdCafes, startTime, endTime, seating, tableOptionsList);
-            List<Cafe> cafes = cafeRepository.findByIds(optionsFilterdCafes);
+            List<String> optionsFilterdCafes = reservedRepository.findCafeByReserved(wordFilterdCafes, startTime, endTime, seating, tableOptionList);
+            List<Cafe> cafes = cafeRepository.findByIds(optionsFilterdCafes).stream()
+                    .skip(pageable.getOffset())
+                    .limit(pageable.getPageSize())
+                    .toList();
 
             return cafes;
         } catch (Exception e) {
