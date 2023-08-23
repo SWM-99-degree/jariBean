@@ -78,6 +78,7 @@ public class UserService {
                 .build();
     }
 
+    @Transactional
     public UserInfoRespDto register(String userId) {
         // find user by id
         User user = userRepository.findById(userId)
@@ -85,6 +86,7 @@ public class UserService {
 
         // update user role
         user.register();
+        userRepository.save(user);
 
         // return user info
         return UserInfoRespDto.builder()
