@@ -6,6 +6,7 @@ import com.example.jariBean.repository.notice.NoticeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,10 +22,10 @@ public class NoticeService {
     @Autowired
     private NoticeRepository noticeRepository;
 
-    public List<NoticeSummaryResDto> findNoticeList() {
+    public List<NoticeSummaryResDto> findNoticeList(Pageable pageable) {
         List<NoticeSummaryResDto> noticeList = new ArrayList<>();
         try {
-            noticeRepository.findAllByOrderByCreatedAtDesc().orElseThrow().forEach(notice -> noticeList.add(new NoticeSummaryResDto(notice)));
+            noticeRepository.findAllByOrderByCreatedAtDesc(pageable).orElseThrow().forEach(notice -> noticeList.add(new NoticeSummaryResDto(notice)));
             return noticeList;
         } catch (Exception e) {
             throw new CustomDBException("공지 DB에 오류가 있습니다.");

@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
@@ -27,7 +28,7 @@ public class NoticeServiceTest {
         noticeRepository.save(notice);
 
         // when
-        NoticeResDto.NoticeSummaryResDto noticeSummaryResDtos = noticeService.findNoticeList().get(0);
+        NoticeResDto.NoticeSummaryResDto noticeSummaryResDtos = noticeService.findNoticeList(Pageable.unpaged()).get(0);
 
         //then
         Assertions.assertEquals(noticeSummaryResDtos.getTitle(), "제목");
