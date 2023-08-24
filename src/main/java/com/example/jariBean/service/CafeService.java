@@ -36,7 +36,6 @@ public class CafeService {
 
     private final ReservedRepository reservedRepository;
 
-    private final CafeOperatingTimeRepository cafeOperatingTimeRepository;
 
 
     public List<CafeSummaryDto> getCafeByMatchingCount(Pageable pageable){
@@ -57,8 +56,7 @@ public class CafeService {
         CafeDetailReserveDto cafeDetailReserveDto = new CafeDetailReserveDto();
         try {
             Cafe cafe = cafeRepository.findById(cafeId).orElseThrow();
-            CafeOperatingTime cafeOperatingTime = cafeOperatingTimeRepository.findById(cafeId).orElseThrow();
-            cafeDetailReserveDto.setCafeDetailDto(new CafeDetailDto(cafe, cafeOperatingTime));
+            cafeDetailReserveDto.setCafeDetailDto(new CafeDetailDto(cafe));
 
             Map<String, List<Reserved>> reservedListByTabldIdWithPagination = new LinkedHashMap<>();
             reservedRepository.findReservedByConditions(cafeId, reserveStartTime, reserveEndTime, peopleNumber, tableOptions).forEach(reserved ->
@@ -113,8 +111,7 @@ public class CafeService {
         LocalDateTime now = LocalDateTime.now();
         try {
             Cafe cafe = cafeRepository.findById(cafeId).orElseThrow();
-            CafeOperatingTime cafeOperatingTime = cafeOperatingTimeRepository.findById(cafeId).orElseThrow();
-            cafeDetailReserveDto.setCafeDetailDto(new CafeDetailDto(cafe, cafeOperatingTime));
+            cafeDetailReserveDto.setCafeDetailDto(new CafeDetailDto(cafe));
 
 
             Map<String, List<Reserved>> reservedListByTabldIdWithPagination = new LinkedHashMap<>();
@@ -141,8 +138,8 @@ public class CafeService {
                 tableReserveResDto.setTableDetailDto(tableDetailDto);
 
                 List<availableTime> times = new ArrayList<>();
-                LocalDateTime startTime = cafeOperatingTime.getOpenTime().withDayOfMonth(now.getDayOfMonth()).withMonth(now.getMonthValue()).withYear(now.getYear());
-                LocalDateTime endTime = cafeOperatingTime.getCloseTime().withDayOfMonth(now.getDayOfMonth()).withMonth(now.getMonthValue()).withYear(now.getYear());
+                LocalDateTime startTime = cafe.getStartTime().withDayOfMonth(now.getDayOfMonth()).withMonth(now.getMonthValue()).withYear(now.getYear());
+                LocalDateTime endTime = cafe.getEndTime().withDayOfMonth(now.getDayOfMonth()).withMonth(now.getMonthValue()).withYear(now.getYear());
                 for (Reserved reserved : reservedList.getValue()) {
                     if (!startTime.isEqual(reserved.getStartTime())){
                         times.add(new availableTime(startTime, reserved.getStartTime()));

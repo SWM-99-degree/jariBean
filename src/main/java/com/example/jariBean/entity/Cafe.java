@@ -2,6 +2,7 @@ package com.example.jariBean.entity;
 
 
 import lombok.*;
+import net.bytebuddy.asm.Advice;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
@@ -42,6 +43,14 @@ public class Cafe {
 
     @Column(nullable = false)
     private boolean matching;
+
+    @Column(nullable = false)
+    private LocalDateTime startTime;
+
+    @Column(nullable = false)
+    private LocalDateTime endTime;
+
+
 
     @CreatedDate
     @Column(updatable = false) // 생성일자(createdDate)에 대한 정보는 생성시에만 할당 가능, 갱신 불가

@@ -1,6 +1,5 @@
 package com.example.jariBean.repository.cafe;
 
-import com.example.jariBean.dto.dbconnect.CafeJoinOperatingTimeDto;
 import com.example.jariBean.entity.Cafe;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 
