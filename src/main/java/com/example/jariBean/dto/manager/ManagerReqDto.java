@@ -46,10 +46,9 @@ public class ManagerReqDto {
         private List<TableOption> option;
     }
 
-    @Getter
-    @Setter
+    @Data
     @NoArgsConstructor
-    public static class ManagerLoginReqDto {
+    public static class ManagerJoinReqDto {
         @Email
         @NotEmpty(message = "id는 필수입니다.")
         private String email;
@@ -60,7 +59,7 @@ public class ManagerReqDto {
         private String cafeId;
 
         @Builder
-        public ManagerLoginReqDto(String email, String password, String cafeId) {
+        public ManagerJoinReqDto(String email, String password, String cafeId) {
             this.email = email;
             this.password = password;
             this.cafeId = cafeId;
@@ -73,6 +72,24 @@ public class ManagerReqDto {
                     .cafeId(cafeId)
                     .role(MANAGER)
                     .build();
+        }
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    public static class ManagerLoginReqDto {
+        @Email
+        @NotEmpty(message = "id는 필수입니다.")
+        private String email;
+
+        @NotEmpty(message = "password는 필수입니다.")
+        private String password;
+
+        @Builder
+        public ManagerLoginReqDto(String email, String password) {
+            this.email = email;
+            this.password = password;
         }
     }
 

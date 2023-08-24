@@ -2,7 +2,7 @@ package com.example.jariBean.config.jwt;
 
 import com.example.jariBean.config.auth.LoginCafe;
 import com.example.jariBean.dto.manager.ManagerReqDto.ManagerLoginReqDto;
-import com.example.jariBean.dto.manager.ManagerResDto.ManagerLoginResDto;
+import com.example.jariBean.dto.oauth.LoginResDto.LoginSuccessResDto;
 import com.example.jariBean.entity.Token;
 import com.example.jariBean.repository.TokenRepository;
 import com.example.jariBean.util.CustomResponseUtil;
@@ -102,13 +102,12 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         response.addHeader(JwtVO.ACCESS_HEADER, accessToken);
         response.addHeader(JwtVO.REFRESH_HEADER, refreshToken);
 
-        ManagerLoginResDto managerLoginResDto = ManagerLoginResDto.builder()
-                .id(loginCafe.getCafeManager().getCafeId())
-                .email(managerLoginReqDto.getEmail())
-                .role(loginCafe.getCafeManager().getRole().toString())
+        LoginSuccessResDto loginSuccessResDto = LoginSuccessResDto.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
                 .build();
 
-        CustomResponseUtil.success(response, managerLoginResDto);
+        CustomResponseUtil.success(response, loginSuccessResDto);
     }
 
 }
