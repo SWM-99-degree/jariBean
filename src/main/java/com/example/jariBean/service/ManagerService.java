@@ -1,6 +1,6 @@
 package com.example.jariBean.service;
 
-import com.example.jariBean.dto.manager.ManagerReqDto.ManagerLoginReqDto;
+import com.example.jariBean.dto.manager.ManagerReqDto.ManagerJoinReqDto;
 import com.example.jariBean.dto.manager.ManagerReqDto.ManagerTableClassReqDto;
 import com.example.jariBean.dto.manager.ManagerResDto.ManagerLoginResDto;
 import com.example.jariBean.dto.manager.ManagerResDto.ManagerReserveResDto;
@@ -130,13 +130,13 @@ public class ManagerService {
         tableClassRepository.save(tableClass);
     }
 
-    public ManagerLoginResDto join(ManagerLoginReqDto managerLoginReqDto) {
+    public ManagerLoginResDto join(ManagerJoinReqDto managerJoinReqDto) {
 
-        if(cafeManagerRepository.existsByEmail(managerLoginReqDto.getEmail())) {
+        if(cafeManagerRepository.existsByEmail(managerJoinReqDto.getEmail())) {
             throw new CustomDBException("email에 해당하는 cafeManager가 이미 존재합니다.");
         }
 
-        CafeManager cafeManager = managerLoginReqDto.toEntity(passwordEncoder);
+        CafeManager cafeManager = managerJoinReqDto.toEntity(passwordEncoder);
         CafeManager savedManager = cafeManagerRepository.save(cafeManager);
         return ManagerLoginResDto.builder()
                 .id(savedManager.getId())
