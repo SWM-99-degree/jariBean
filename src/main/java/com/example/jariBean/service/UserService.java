@@ -74,6 +74,7 @@ public class UserService {
                 .nickname(user.getNickname())
                 .imageUrl(user.getImage())
                 .description(user.getDescription())
+                .socialId(extractProvider(user.getSocialId()))
                 .role(user.getRole())
                 .build();
     }
@@ -96,5 +97,21 @@ public class UserService {
                 .description(user.getDescription())
                 .role(user.getRole())
                 .build();
+    }
+
+    public String extractProvider(String socialId) {
+        // socialId의 값이 null인 경우
+        if (socialId == null) {
+            throw new CustomApiException("사용자의 socialID의 값이 존재하지 않습니다.");
+        }
+
+        int underscoreIndex = socialId.indexOf('_');
+
+        // socialId의 형식이 잘못 된 경우
+        if (underscoreIndex == -1 || underscoreIndex >= socialId.length() - 1) {
+            throw new CustomApiException("잘못된 socialId 형식입니다.");
+        }
+
+        return socialId.substring(0, underscoreIndex);
     }
 }
