@@ -1,15 +1,19 @@
 package com.example.jariBean.controller;
 
 import com.example.jariBean.dto.ResponseDto;
+import com.example.jariBean.dto.s3.S3ResDto.S3ImageResDto;
 import com.example.jariBean.service.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
-import static org.springframework.http.HttpStatus.CREATED;
+import java.io.IOException;
+
+import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,10 +22,10 @@ public class S3Controller {
 
     private final S3Service s3Service;
 
-    @GetMapping("/upload")
-    public ResponseEntity generatePreSignedUrl(@RequestParam("fileName") String fileName) {
-        String preSignedUrl = s3Service.generatePreSignedUrl(fileName);
-        return new ResponseEntity<>(new ResponseDto<>(1, "S3 pre-signed url 발급에 성공하였습니다.", preSignedUrl), CREATED);
+    @PostMapping("/upload")
+    public ResponseEntity imageUpload(@RequestPart MultipartFile imageFile) throws IOException {
+        S3ImageResDto imageResDto = s3Service.upload(imageFile);
+        return new ResponseEntity<>(new ResponseDto<>(1, "이미지 업로드에 성공하였습니다.", imageResDto), OK);
     }
 
 }
