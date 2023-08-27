@@ -4,6 +4,7 @@ import com.example.jariBean.dto.ResponseDto;
 import com.example.jariBean.handler.ex.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.MethodNotSupportedException;
+import org.apache.tomcat.util.http.fileupload.impl.SizeLimitExceededException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.MethodNotAllowedException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
+import java.io.UnsupportedEncodingException;
 import java.net.ConnectException;
 
 @RestControllerAdvice
@@ -89,6 +91,18 @@ public class CustomExceptionHandler {
     public ResponseEntity<?> apiException(NoHandlerFoundException e) {
         log.error(e.getMessage());
         return new ResponseEntity<>(new ResponseDto<>(-1, e.getMessage(), "URL에 해당하는 Controller가 없습니다."), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(SizeLimitExceededException.class)
+    public ResponseEntity sizeLimitExceededException(SizeLimitExceededException e) {
+        log.error(e.getMessage());
+        return new ResponseEntity<>(new ResponseDto<>(-1, e.getMessage(), "업로드가 가능한 파일의 용량은 최대 10MB입니다."), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(UnsupportedEncodingException.class)
+    public ResponseEntity unsupportedEncodingException(UnsupportedEncodingException e) {
+        log.error(e.getMessage());
+        return new ResponseEntity<>(new ResponseDto<>(-1, e.getMessage(), "filename의 URL encode에 문제가 발생하였습니다. "), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 
