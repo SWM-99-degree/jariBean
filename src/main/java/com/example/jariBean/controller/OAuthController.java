@@ -7,6 +7,9 @@ import com.example.jariBean.service.oauth.OAuthKakaoService.SocialUserInfo;
 import com.example.jariBean.service.oauth.OAuthService;
 import com.example.jariBean.service.oauth.OAuthServiceFactory;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -29,22 +32,22 @@ public class OAuthController {
     }
 
     @Operation(summary = "social login", description = "api for social login")
+    @ApiResponse(
+            responseCode = "200",
+            description = "로그인 성공",
+            content = @Content(schema = @Schema(implementation = LoginSuccessResDto.class))
+    )
     @PostMapping("/login/{registrationId}")
     public ResponseEntity login(@PathVariable("registrationId") String registrationId,
                                         @RequestBody LoginCode loginCode) {
-
         // assign an oauthService corresponding to the registrationId
         oAuthService = authServiceFactory.get(registrationId);
-
         // get accessToken using code
         String accessToken = oAuthService.getAccessToken(loginCode.getCode());
-
         // get user information using accessToken
         SocialUserInfo socialUserInfo = oAuthService.getUserInfo(accessToken);
-
         // save or update oauth information
         LoginSuccessResDto loginSuccessResDto = oAuthService.saveOrUpdate(socialUserInfo, registrationId);
-
         return new ResponseEntity<>(new ResponseDto<>(1, "로그인 성공", loginSuccessResDto), OK);
     }
 
