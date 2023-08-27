@@ -1,6 +1,7 @@
 package com.example.jariBean.config.auth;
 
 import com.example.jariBean.entity.CafeManager;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -11,6 +12,7 @@ import java.util.Collection;
 
 @Getter
 @RequiredArgsConstructor
+@Hidden
 public class LoginCafe implements UserDetails {
 
     private final CafeManager cafeManager;
