@@ -1,0 +1,6 @@
+springdoc:
+  packages-to-scan:
+    - com.example.jariBean.controller # 스캔할 패키지 목록
+
+  cache:
+    disabled: true # 계산된 OpenAPI의 springdoc-openapi 캐시를 비활성화합니다.
