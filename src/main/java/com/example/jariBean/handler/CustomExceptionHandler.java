@@ -3,11 +3,18 @@ package com.example.jariBean.handler;
 import com.example.jariBean.dto.ResponseDto;
 import com.example.jariBean.handler.ex.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.MethodNotSupportedException;
+import org.apache.tomcat.util.http.fileupload.impl.SizeLimitExceededException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.server.MethodNotAllowedException;
+import org.springframework.web.servlet.NoHandlerFoundException;
+
+import java.io.UnsupportedEncodingException;
+import java.net.ConnectException;
 
 @RestControllerAdvice
 @Slf4j
@@ -56,4 +63,47 @@ public class CustomExceptionHandler {
 
         return new ResponseEntity<>(httpHeaders, HttpStatus.PERMANENT_REDIRECT);
     }
+
+    // handling exceptions for no DB connect
+    @ExceptionHandler(ConnectException.class)
+    public ResponseEntity<?> apiException(ConnectException e) {
+        log.error(e.getMessage());
+        return new ResponseEntity<>(new ResponseDto<>(-1, e.getMessage(), "DB 연결에 오류가 발생하였습니다."), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    // handling exceptions for disallowed methods
+    @ExceptionHandler(MethodNotAllowedException.class)
+    public ResponseEntity<?> apiException(MethodNotAllowedException e) {
+        log.error(e.getMessage());
+        return new ResponseEntity<>(new ResponseDto<>(-1, e.getMessage(), "해당 Method는 허용되지 않습니다."), HttpStatus.METHOD_NOT_ALLOWED);
+    }
+
+
+    // handling exceptions for not allowed
+    @ExceptionHandler(MethodNotSupportedException.class)
+    public ResponseEntity<?> apiException(MethodNotSupportedException e) {
+        log.error(e.getMessage());
+        return new ResponseEntity<>(new ResponseDto<>(-1, e.getMessage(), "URL과 Method가 일치하지 않습니다."), HttpStatus.METHOD_NOT_ALLOWED);
+    }
+
+    // handling exceptions for not found
+    @ExceptionHandler(NoHandlerFoundException.class)
+    public ResponseEntity<?> apiException(NoHandlerFoundException e) {
+        log.error(e.getMessage());
+        return new ResponseEntity<>(new ResponseDto<>(-1, e.getMessage(), "URL에 해당하는 Controller가 없습니다."), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(SizeLimitExceededException.class)
+    public ResponseEntity sizeLimitExceededException(SizeLimitExceededException e) {
+        log.error(e.getMessage());
+        return new ResponseEntity<>(new ResponseDto<>(-1, e.getMessage(), "업로드가 가능한 파일의 용량은 최대 10MB입니다."), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(UnsupportedEncodingException.class)
+    public ResponseEntity unsupportedEncodingException(UnsupportedEncodingException e) {
+        log.error(e.getMessage());
+        return new ResponseEntity<>(new ResponseDto<>(-1, e.getMessage(), "filename의 URL encode에 문제가 발생하였습니다. "), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+
 }

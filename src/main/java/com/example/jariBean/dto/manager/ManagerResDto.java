@@ -5,6 +5,7 @@ import com.example.jariBean.entity.Table;
 import com.example.jariBean.entity.TableClass;
 import com.example.jariBean.entity.TableClass.TableOption;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Builder;
 import lombok.Data;
 import lombok.ToString;
 
@@ -110,6 +111,20 @@ public class ManagerResDto {
             this.username = reserved.getUserId();
             this.startTime = reserved.getStartTime();
             this.endTime = reserved.getEndTime();
+        }
+    }
+
+    @Data
+    public static class ManagerLoginResDto {
+        private String id;
+        private String email;
+        private String role;
+
+        @Builder
+        public ManagerLoginResDto(String id, String email, String role) {
+            this.id = id;
+            this.email = email;
+            this.role = role;
         }
     }
 

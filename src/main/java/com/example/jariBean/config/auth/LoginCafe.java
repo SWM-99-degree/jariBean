@@ -1,6 +1,6 @@
 package com.example.jariBean.config.auth;
 
-import com.example.jariBean.entity.User;
+import com.example.jariBean.entity.CafeManager;
 import io.swagger.v3.oas.annotations.Hidden;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -13,33 +13,29 @@ import java.util.Collection;
 @Getter
 @RequiredArgsConstructor
 @Hidden
-public class LoginUser implements UserDetails {
+public class LoginCafe implements UserDetails {
 
-    private final User user;
+    private final CafeManager cafeManager;
 
-    public User getUser() {
-        return user;
+    public CafeManager getCafeManager() {
+        return this.cafeManager;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         ArrayList<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(() -> user.getRole().toString());
+        authorities.add(() -> cafeManager.getRole().toString());
         return authorities;
     }
 
     @Override
     public String getPassword() {
-        return user.getPassword();
+        return cafeManager.getPassword();
     }
 
     @Override
     public String getUsername() {
-        /**
-         * username → password
-         * password를 idnentifier로 사용한다.
-         */
-        return user.getSocialId();
+        return cafeManager.getEmail();
     }
 
     @Override

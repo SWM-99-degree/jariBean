@@ -4,7 +4,6 @@ import com.example.jariBean.config.jwt.JwtProcess;
 import com.example.jariBean.dto.oauth.LoginResDto.LoginSuccessResDto;
 import com.example.jariBean.entity.Token;
 import com.example.jariBean.entity.User;
-import com.example.jariBean.handler.ex.CustomApiException;
 import com.example.jariBean.repository.TokenRepository;
 import com.example.jariBean.repository.user.UserRepository;
 import com.example.jariBean.service.oauth.OAuthKakaoService.SocialUserInfo;
@@ -13,7 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import static com.example.jariBean.entity.User.UserRole.UNREGISTERED;
+import static com.example.jariBean.config.jwt.JwtProcess.TokenType.ACCESS;
+import static com.example.jariBean.config.jwt.JwtProcess.TokenType.REFRESH;
+import static com.example.jariBean.entity.Role.UNREGISTERED;
 
 @Service
 @RequiredArgsConstructor
@@ -47,8 +48,8 @@ public abstract class OAuthService {
         User savedUser = userRepository.save(user);
 
         //create JWT
-        String accessToken = jwtProcess.createAccessToken(savedUser);
-        String refreshToken = jwtProcess.createRefreshToken(savedUser);
+        String accessToken = jwtProcess.createJWT(savedUser.getId(), savedUser.getRole().toString(), ACCESS);
+        String refreshToken = jwtProcess.createJWT(savedUser.getId(), savedUser.getRole().toString(), REFRESH);
 
         // storing jwt in redis
         Token token = Token.builder()
@@ -57,12 +58,7 @@ public abstract class OAuthService {
                 .refreshToken(refreshToken)
                 .build();
 
-        // exception for connect redis
-        try {
-            tokenRepository.save(token);
-        } catch (Exception e) {
-            throw new CustomApiException("JWT를 REDIS에 저장하는 과정에서 오류가 발생했습니다.");
-        }
+        tokenRepository.save(token);
 
         return LoginSuccessResDto.builder()
                 .accessToken(accessToken)

@@ -18,7 +18,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import static com.example.jariBean.entity.User.UserRole.ADMIN;
+import static com.example.jariBean.entity.Role.ADMIN;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 @Configuration
@@ -39,7 +39,7 @@ public class SecurityConfig{
         public void configure(HttpSecurity builder) throws Exception {
             // 필터 생성!
             AuthenticationManager authenticationManager = builder.getSharedObject(AuthenticationManager.class);
-            builder.addFilter(new JwtAuthenticationFilter(authenticationManager, tokenRepository));
+            builder.addFilter(new JwtAuthenticationFilter(authenticationManager, tokenRepository, jwtProcess));
             builder.addFilter(new JwtAuthorizationFilter(authenticationManager, jwtProcess));
             super.configure(builder);
         }
@@ -75,12 +75,12 @@ public class SecurityConfig{
         }));
 
         http.authorizeRequests()
-                // 유저 회원가입, 유저 로그인 모두 허용
-                .antMatchers("/join").permitAll()
                 // swagger 모두 허용
-                .antMatchers("/swagger-ui/**", "/swagger-resources/**", "/v3/api-docs/**").permitAll()
+                .antMatchers("/swagger-ui/**", "/swagger-resources/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
                 // oauth2 모두 허용
                 .antMatchers("/login/**").permitAll()
+                // cafe manager join and login
+                .antMatchers("/api/manager/join", "/api/manager/login").permitAll()
                 .antMatchers("/api/admin/**").hasRole(ADMIN.toString())
                 .anyRequest().authenticated();
 

@@ -1,7 +1,6 @@
 package com.example.jariBean.dto.user;
 
 import com.example.jariBean.entity.User;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +10,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-import static com.example.jariBean.entity.User.UserRole.CUSTOMER;
+import static com.example.jariBean.entity.Role.CUSTOMER;
 
 @Slf4j
 public class UserReqDto {
@@ -48,26 +47,6 @@ public class UserReqDto {
                     .socialId(socialId)
                     .role(CUSTOMER)
                     .build();
-        }
-    }
-
-    @Getter
-    @Setter
-    public static class UserLoginReqDto {
-        @NotEmpty(message = "필수: userId")
-        private String userId;
-
-        @NotEmpty(message = "필수: userName")
-        private String userName;
-
-        @NotEmpty(message = "필수: firebaseToken")
-        private String firebaseToken;
-
-        @Builder
-        public UserLoginReqDto(String userId, String userName, String firebaseToken) {
-            this.userId = userId;
-            this.userName = userName;
-            this.firebaseToken = firebaseToken;
         }
     }
 

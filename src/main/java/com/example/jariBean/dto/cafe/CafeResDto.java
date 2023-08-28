@@ -2,7 +2,6 @@ package com.example.jariBean.dto.cafe;
 
 import com.example.jariBean.dto.reserved.ReservedResDto.TableReserveResDto;
 import com.example.jariBean.entity.Cafe;
-import com.example.jariBean.entity.CafeOperatingTime;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -38,10 +37,10 @@ public class CafeResDto {
         private String instagram;
         private String image;
 
-        public CafeDetailDto(Cafe cafe, CafeOperatingTime cafeOperatingTime) {
+        public CafeDetailDto(Cafe cafe) {
             this.cafeSummaryDto = new CafeSummaryDto(cafe);
-            this.openingHour = cafeOperatingTime.getOpenTime();
-            this.closingHour = cafeOperatingTime.getCloseTime();
+            this.openingHour = cafe.getStartTime();
+            this.closingHour = cafe.getEndTime();
             this.phoneNumber = cafe.getPhoneNumber();
             this.description = cafe.getDescription();
             this.instagram = cafe.getInstagram();
