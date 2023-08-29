@@ -2,6 +2,7 @@ package com.example.jariBean.repository.reserved;
 
 import com.example.jariBean.entity.Reserved;
 import com.example.jariBean.entity.TableClass;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -191,13 +192,11 @@ public class ReservedRepositoryImpl implements ReservedRepositoryTemplate{
     public List<Reserved> findTodayReservedById(String cafeId) {
         LocalDateTime today = LocalDateTime.now();
 
-        MatchOperation matchToday = Aggregation.match(Criteria.where("startTime").gte(today.with(LocalTime.MIN)).lt(today.with(LocalTime.MAX)));
+        MatchOperation matchToday = Aggregation.match(Criteria.where("startTime").gte(today.with(LocalTime.MIN)).lte(today.with(LocalTime.MAX)));
 
-        MatchOperation matchCafdId = Aggregation.match(Criteria.where("cafeId").is(cafeId));
+        MatchOperation matchCafedId = Aggregation.match(Criteria.where("cafe._id").is(new ObjectId(cafeId)));
 
-        SortOperation sortByTable = Aggregation.sort(Sort.Direction.ASC, "table._id").and(Sort.Direction.ASC, "startTime");
-
-        Aggregation aggregation = Aggregation.newAggregation(matchToday, matchCafdId, sortByTable);
+        Aggregation aggregation = Aggregation.newAggregation(matchToday);
 
         return mongoTemplate.aggregate(aggregation, "reserved", Reserved.class).getMappedResults();
     }

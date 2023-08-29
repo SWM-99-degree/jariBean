@@ -15,11 +15,9 @@ public class MatchingRepositoryImpl implements MatchingRepositoryTemplate {
 
     @Override
     public List<String> findCafeIdSortedByCount(Pageable pageable) {
-        GroupOperation groupOperation = Aggregation.group("cafeId").count().as("matchingCount");
+        GroupOperation groupOperation = Aggregation.group("cafeId").count().as("count");
         SortOperation sortByCountDesc = Aggregation.sort(Sort.Direction.DESC, "count");
-        SkipOperation skipOperation = Aggregation.skip(pageable.getOffset());
-        LimitOperation limitOperation = Aggregation.limit(pageable.getPageSize());
-        Aggregation aggregation = Aggregation.newAggregation(groupOperation, sortByCountDesc, skipOperation, limitOperation);
+        Aggregation aggregation = Aggregation.newAggregation(groupOperation, sortByCountDesc);
 
         AggregationResults<CafeCount> results = mongoTemplate.aggregate(aggregation, "matching", CafeCount.class);
 

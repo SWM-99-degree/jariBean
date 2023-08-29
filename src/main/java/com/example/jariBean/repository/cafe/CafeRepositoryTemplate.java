@@ -1,6 +1,7 @@
 package com.example.jariBean.repository.cafe;
 
 import com.example.jariBean.entity.Cafe;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 
 import java.util.List;
@@ -12,7 +13,7 @@ public interface CafeRepositoryTemplate {
 
     List<Cafe> findByCoordinateNear(GeoJsonPoint point, Double distance);
 
-    List<Cafe> findByIds(List<String> cafes);
+    List<Cafe> findByIds(List<String> cafes, Pageable pageable);
 
     Cafe findByIdwithOperatingTime(String cafeId);
 
