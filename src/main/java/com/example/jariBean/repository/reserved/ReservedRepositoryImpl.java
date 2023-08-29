@@ -34,29 +34,10 @@ public class ReservedRepositoryImpl implements ReservedRepositoryTemplate{
     @Override
     public List<Reserved> findReservedByConditions(String cafeId, LocalDateTime startTime, LocalDateTime endTime, Integer seating, List<TableClass.TableOption> tableOptionList) {
 
-        Criteria mainCriteria = new Criteria("cafe._id").is(cafeId);
 
-        // 겹치는 카페 예약
-        if (startTime != null) {
-            LocalDateTime newStartTime = startTime.plusMinutes(30);
-            LocalDateTime newEndTime = endTime.minusMinutes(30);
-            Criteria reservedCriteria = new Criteria();
-            Criteria case1Criteria = Criteria.where("startTime").gte(newStartTime).lt(newEndTime);
-            Criteria case2Criteria = Criteria.where("endTime").gt(newStartTime).lte(newEndTime);
-            Criteria case3Criteria = Criteria.where("startTime").lt(newStartTime).and("endTime").gt(newEndTime);
+        Criteria mainCriteria = new Criteria("cafe._id").is(new ObjectId(cafeId));
 
-            reservedCriteria.orOperator(
-                    case1Criteria, case2Criteria, case3Criteria
-            );
-            Set<String> tableIdList = new HashSet<>();
-            Query query = new Query(reservedCriteria);
-            mongoTemplate.find(query, Reserved.class).forEach(reserved -> tableIdList.add(reserved.getTable().getId()));
-            mainCriteria.and("table.tableId").in(tableIdList.stream().toList());
-            mainCriteria.and("startTime").gte(startTime.with(LocalTime.MIN)).lt(startTime.with(LocalTime.MAX));
-        } else {
-            LocalDateTime today = LocalDateTime.now();
-            mainCriteria.and("startTime").gte(today.with(LocalTime.MIN)).lt(today.with(LocalTime.MAX));
-        }
+        mainCriteria.and("startTime").gte(startTime.with(LocalTime.MIN)).lte(endTime.with(LocalTime.MAX));
 
         if (tableOptionList != null) {
             mainCriteria.and("table.tableOptionList").all(tableOptionList);
@@ -65,13 +46,13 @@ public class ReservedRepositoryImpl implements ReservedRepositoryTemplate{
             mainCriteria.and("table.seating").gte(seating);
         }
 
-        SortOperation sortByTable = Aggregation.sort(Sort.Direction.ASC, "table._id").and(Sort.Direction.ASC, "startTime");
+        MatchOperation matchTable = Aggregation.match(mainCriteria);
 
-        MatchOperation matchOperation = Aggregation.match(mainCriteria);
-
-        Aggregation aggregation = Aggregation.newAggregation(matchOperation, sortByTable);
+        Aggregation aggregation = Aggregation.newAggregation(matchTable);
 
         return mongoTemplate.aggregate(aggregation, "reserved", Reserved.class).getMappedResults();
+
+
     }
 
     @Override
@@ -192,9 +173,11 @@ public class ReservedRepositoryImpl implements ReservedRepositoryTemplate{
     public List<Reserved> findTodayReservedById(String cafeId) {
         LocalDateTime today = LocalDateTime.now();
 
-        MatchOperation matchToday = Aggregation.match(Criteria.where("startTime").gte(today.with(LocalTime.MIN)).lte(today.with(LocalTime.MAX)));
+        Criteria criteria = new Criteria("startTime").gte(today.with(LocalTime.MIN)).lte(today.with(LocalTime.MAX));
 
-        MatchOperation matchCafedId = Aggregation.match(Criteria.where("cafe._id").is(new ObjectId(cafeId)));
+        criteria.and("cafe._id").is(new ObjectId(cafeId));
+
+        MatchOperation matchToday = Aggregation.match(criteria);
 
         Aggregation aggregation = Aggregation.newAggregation(matchToday);
 

@@ -50,7 +50,7 @@ public class CafeService {
 
     }
 
-    public CafeDetailReserveDto getCafeWithSearchingReserved(String cafeId, LocalDateTime reserveStartTime, LocalDateTime reserveEndTime, Integer peopleNumber, List<TableClass.TableOption> tableOptions,
+    public CafeDetailReserveDto getCafeWithSearchingReserved(String cafeId, LocalDateTime reserveStartTime, LocalDateTime reserveEndTime, Integer seating, List<TableClass.TableOption> tableOptions,
                                                              Pageable pageable) {
 
         CafeDetailReserveDto cafeDetailReserveDto = new CafeDetailReserveDto();
@@ -58,8 +58,11 @@ public class CafeService {
             Cafe cafe = cafeRepository.findById(cafeId).orElseThrow();
             cafeDetailReserveDto.setCafeDetailDto(new CafeDetailDto(cafe));
 
+            List<Table> tables = tableRepository.findByConditions(cafeId, seating, tableOptions);
+
+
             Map<String, List<Reserved>> reservedListByTabldIdWithPagination = new LinkedHashMap<>();
-            reservedRepository.findReservedByConditions(cafeId, reserveStartTime, reserveEndTime, peopleNumber, tableOptions).forEach(reserved ->
+            reservedRepository.findReservedByConditions(cafeId, reserveStartTime, reserveEndTime, seating, tableOptions).forEach(reserved ->
                     {
                         if (!reservedListByTabldIdWithPagination.containsKey(reserved.getTable().getId())){
                             reservedListByTabldIdWithPagination.put(reserved.getTable().getId(), new ArrayList<>());
@@ -68,22 +71,29 @@ public class CafeService {
                     }
             );
 
-            List<Map.Entry<String, List<Reserved>>> reservedListByTabldId = reservedListByTabldIdWithPagination
-                    .entrySet()
-                    .stream()
-                    .skip(pageable.getOffset())
-                    .limit(pageable.getPageSize())
-                    .toList();
+            Integer size = pageable.getPageSize();
+            Long offset = pageable.getOffset();
+            if (offset.intValue() + size > tables.size()) {
+                size = tables.size() - offset.intValue();
+            }
 
-            for (Map.Entry<String, List<Reserved>> reservedList :reservedListByTabldId){
+
+            for (Table table : tables.subList(offset.intValue(), size)) {
                 TableReserveResDto tableReserveResDto = new TableReserveResDto();
-                TableDetailDto tableDetailDto = new TableDetailDto(reservedList.getValue().get(0).getTable());
+                TableDetailDto tableDetailDto = new TableDetailDto(table);
                 tableReserveResDto.setTableDetailDto(tableDetailDto);
-
                 List<availableTime> times = new ArrayList<>();
-                LocalDateTime startTime = reserveStartTime;
-                LocalDateTime endTime = reserveEndTime;
-                for (Reserved reserved : reservedList.getValue()) {
+                LocalDateTime startTime = cafe.getStartTime().withDayOfMonth(reserveStartTime.getDayOfMonth()).withMonth(reserveEndTime.getMonthValue()).withYear(reserveStartTime.getYear());
+                LocalDateTime endTime = cafe.getEndTime().withDayOfMonth(reserveStartTime.getDayOfMonth()).withMonth(reserveStartTime.getMonthValue()).withYear(reserveEndTime.getYear());
+
+                if (reservedListByTabldIdWithPagination.get(table.getId()) == null ) {
+                    times.add(new availableTime(startTime, endTime));
+                    tableReserveResDto.setAvailableTimeList(times);
+                    cafeDetailReserveDto.addTable(tableReserveResDto);
+                    continue;
+                }
+
+                for (Reserved reserved : reservedListByTabldIdWithPagination.get(table.getId())) {
                     if (!startTime.isEqual(reserved.getStartTime())){
                         times.add(new availableTime(startTime, reserved.getStartTime()));
                     }
