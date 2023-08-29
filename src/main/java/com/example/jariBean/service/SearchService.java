@@ -72,7 +72,7 @@ public class SearchService {
             // TODO
             List<String> wordFilterdCafes = cafeRepository.findByWordAndCoordinateNear(searchingWords, point);
             List<String> optionsFilterdCafes = reservedRepository.findCafeByReserved(wordFilterdCafes, startTime, endTime, seating, tableOptionList);
-            List<Cafe> cafes = cafeRepository.findByIds(optionsFilterdCafes).stream()
+            List<Cafe> cafes = cafeRepository.findByIds(optionsFilterdCafes, pageable).stream()
                     .skip(pageable.getOffset())
                     .limit(pageable.getPageSize())
                     .toList();
