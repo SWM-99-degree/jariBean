@@ -19,6 +19,13 @@ public class MatchingRepositoryImpl implements MatchingRepositoryTemplate {
         SortOperation sortByCountDesc = Aggregation.sort(Sort.Direction.DESC, "count");
         Aggregation aggregation = Aggregation.newAggregation(groupOperation, sortByCountDesc);
 
+        Aggregation pageAggregation = Aggregation.newAggregation(
+                groupOperation,
+                sortByCountDesc,
+                Aggregation.skip(pageable.getOffset()),
+                Aggregation.limit(pageable.getPageSize())
+        );
+
         AggregationResults<CafeCount> results = mongoTemplate.aggregate(aggregation, "matching", CafeCount.class);
 
         List<String> cafeList = new ArrayList<>();

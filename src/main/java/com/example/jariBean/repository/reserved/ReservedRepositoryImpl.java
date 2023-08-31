@@ -31,29 +31,6 @@ public class ReservedRepositoryImpl implements ReservedRepositoryTemplate{
         }
     }
 
-    @Override
-    public List<Reserved> findReservedByConditions(String cafeId, LocalDateTime startTime, LocalDateTime endTime, Integer seating, List<TableClass.TableOption> tableOptionList) {
-
-
-        Criteria mainCriteria = new Criteria("cafe._id").is(new ObjectId(cafeId));
-
-        mainCriteria.and("startTime").gte(startTime.with(LocalTime.MIN)).lte(endTime.with(LocalTime.MAX));
-
-        if (tableOptionList != null) {
-            mainCriteria.and("table.tableOptionList").all(tableOptionList);
-        }
-        if (seating != null) {
-            mainCriteria.and("table.seating").gte(seating);
-        }
-
-        MatchOperation matchTable = Aggregation.match(mainCriteria);
-
-        Aggregation aggregation = Aggregation.newAggregation(matchTable);
-
-        return mongoTemplate.aggregate(aggregation, "reserved", Reserved.class).getMappedResults();
-
-
-    }
 
     @Override
     public List<String> findCafeByReserved(List<String> cafes, LocalDateTime startTime, LocalDateTime endTime, Integer seating, List<TableClass.TableOption> tableOptionList) {
@@ -64,7 +41,7 @@ public class ReservedRepositoryImpl implements ReservedRepositoryTemplate{
         if (cafes != null) {
             mainCriteria.and("cafeId").in(cafes);
         }
-        if (tableOptionList != null) {
+        if (!tableOptionList.isEmpty()) {
             mainCriteria.and("table.tableOptionList").all(tableOptionList);
         }
         if (seating != null) {
@@ -168,12 +145,33 @@ public class ReservedRepositoryImpl implements ReservedRepositoryTemplate{
         return mongoTemplate.aggregate(aggregation, Reserved.class, Reserved.class).getMappedResults();
     }
 
+    @Override
+    public List<Reserved> findReservedByConditions(String cafeId, LocalDateTime startTime, Integer seating, List<TableClass.TableOption> tableOptionList) {
+
+
+        Criteria mainCriteria = new Criteria("cafe._id").is(new ObjectId(cafeId));
+
+        mainCriteria.and("startTime").gte(startTime.with(LocalTime.MIN)).lte(startTime.with(LocalTime.MAX));
+
+        if (!tableOptionList.isEmpty()) {
+            mainCriteria.and("table.tableOptionList").all(tableOptionList);
+        }
+        if (seating != null) {
+            mainCriteria.and("table.seating").gte(seating);
+        }
+
+        MatchOperation matchTable = Aggregation.match(mainCriteria);
+
+        Aggregation aggregation = Aggregation.newAggregation(matchTable);
+
+        return mongoTemplate.aggregate(aggregation, "reserved", Reserved.class).getMappedResults();
+    }
+
 
     @Override
-    public List<Reserved> findTodayReservedById(String cafeId) {
-        LocalDateTime today = LocalDateTime.now();
+    public List<Reserved> findTodayReservedById(String cafeId, LocalDateTime time) {
 
-        Criteria criteria = new Criteria("startTime").gte(today.with(LocalTime.MIN)).lte(today.with(LocalTime.MAX));
+        Criteria criteria = new Criteria("startTime").gte(time.with(LocalTime.MIN)).lte(time.with(LocalTime.MAX));
 
         criteria.and("cafe._id").is(new ObjectId(cafeId));
 

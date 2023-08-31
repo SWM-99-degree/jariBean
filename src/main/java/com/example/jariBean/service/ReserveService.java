@@ -11,6 +11,8 @@ import com.example.jariBean.repository.cafe.CafeRepository;
 import com.example.jariBean.repository.reserved.ReservedRepository;
 import com.example.jariBean.repository.table.TableRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -26,23 +28,25 @@ import static com.example.jariBean.dto.reserved.ReserveReqDto.ReserveSaveReqDto;
 @RequiredArgsConstructor
 public class ReserveService {
 
+    @Autowired
+    private ReservedRepository reservedRepository;
 
-    private final ReservedRepository reservedRepository;
-    private final CafeRepository cafeRepository;
-    private final TableRepository tableRepository;
+    @Autowired
+    private CafeRepository cafeRepository;
 
-    // 손님 앱
+    @Autowired
+    private TableRepository tableRepository;
 
-    // 지금까지 한 예약 가져오기
-    public List<ReserveSummaryResDto> getMyReserved(String userId, Pageable pageable) {
-        List<ReserveSummaryResDto> reserveSummaryResDtoList = new ArrayList<>();
-        try {
-            List<Reserved> reservedList = reservedRepository.findByUserIdOrderByStartTimeDesc(userId, pageable);
-            reservedList.forEach(reserved -> reserveSummaryResDtoList.add(new ReserveSummaryResDto(reserved)));
-        } catch (Exception e) {
-            throw new CustomDBException("예약 관련 데이터에 문제가 있습니다.");
+    public Page<ReserveSummaryResDto> getMyReserved(String userId, Pageable pageable) {
+
+        Page<Reserved> reservedList = reservedRepository.findByUserIdOrderByStartTimeAsc(userId, pageable);
+        Page<ReserveSummaryResDto> reserveSummaryResDtoList = reservedList.map(reserved -> new ReserveSummaryResDto(reserved));
+
+        for (ReserveSummaryResDto reserveSummaryResDto : reserveSummaryResDtoList) {
+            System.out.println(reserveSummaryResDto.getReserveStartTime());
         }
-        return  reserveSummaryResDtoList;
+
+        return reserveSummaryResDtoList;
     }
 
     // 예약 삭제하기
@@ -58,73 +62,36 @@ public class ReserveService {
     // 가장 가까운 예약
     public ReserveSummaryResDto getNearestReserved(String userId) {
         LocalDateTime userNow = LocalDateTime.now();
-        Reserved reserved = null;
-        try {
-            // 예약정보
-            reserved = reservedRepository.findNearestReserved(userId, userNow);
-            // 정보가 없다면 null 값으로 반환하며, 예외처리로 204를 보냄
-        } catch (Exception e) {
-            throw new CustomDBException("예약 DB에 문제가 있습니다.");
-        } finally {
-            if (reserved == null) {
-                throw new CustomNoContentException("예약이 존재하지 않습니다.");
-            }
-            // 예약 정보 넣기
-            ReserveSummaryResDto reserveSummaryResDto = new ReserveSummaryResDto(reserved);
-            return reserveSummaryResDto;
+        Reserved reserved = reservedRepository.findNearestReserved(userId, userNow);
+
+        // 정보가 없다면 null 값으로 반환하며, 예외처리로 204를 보냄
+        if (reserved == null) {
+            throw new CustomNoContentException("예약이 존재하지 않습니다.");
         }
+
+        // 예약 정보 넣기
+        ReserveSummaryResDto reserveSummaryResDto = new ReserveSummaryResDto(reserved);
+        return reserveSummaryResDto;
     }
-    /**
-     * 예약하기 로직
-     * @param saveReservedReqDto
-     */
+
+
     // 예약 신청
     @Transactional
     public void saveReserved(String userId, ReserveSaveReqDto saveReservedReqDto) {
         // 검증해야 할 테이블의 예약되어 있는 것들 중, 당일에 있는 것을 가져옴
+        // 만약에 있으면 삭제
         boolean isExist = reservedRepository.isReservedByTableIdBetweenTime(saveReservedReqDto.getTableId(), saveReservedReqDto.getReservedStartTime(), saveReservedReqDto.getReservedEndTime());
         if (isExist){
             throw new CustomDBException("데이터가 중복됩니다.");
-        } else {
-            try {
-                Cafe cafe = cafeRepository.findById(saveReservedReqDto.getCafeId()).orElse(null);
-                Table table = tableRepository.findById(saveReservedReqDto.getTableId()).orElse(null);
-                Reserved reserved = saveReservedReqDto.toEntity(userId, table, cafe);
-                reservedRepository.save(reserved);
-            } catch (Exception e) {
-                e.printStackTrace();
-                throw new CustomDBException("카페와 테이블 데이터에 문제가 존재합니다.");
-            }
         }
-    }
 
-    // 점주 앱
+        // 예약에 대한 처리
+        Cafe cafe = cafeRepository.findById(saveReservedReqDto.getCafeId()).orElse(null);
 
-    // Table class 가져오기
-    public Object getTableInformation() {
-        // class와 table의 정보를 한꺼번에
-        return null;
-    }
+        Table table = tableRepository.findById(saveReservedReqDto.getTableId()).orElse(null);
 
-    // Table 예약 가져오기
-    // 날짜를 가져오는 대신, 점주의 "요약" 에서는 당일로 날짜 고정
-
-    /**
-     *
-     * @param CafeId
-     * @param date
-     * @param tableClassId
-     * @return {
-     *
-     *   "tableClass" : "테이블 클래스"
-     *   "table" : [(table 번호, table class, [사용시간])]
-     *
-     *   "reservedList" : [(시간, 인구), ...]
-     * }
-     */
-    public Object getReserved(String CafeId, String date, String tableClassId) {
-        // class와 table 정보 가져오기
-        return null;
+        Reserved reserved = saveReservedReqDto.toEntity(userId, table, cafe);
+        reservedRepository.save(reserved);
     }
 
 }

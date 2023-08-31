@@ -37,145 +37,105 @@ public class CafeService {
     private final TableRepository tableRepository;
 
 
+    public Page<CafeSummaryDto> getCafeByMatchingCount(Pageable pageable){
+        // searching by matching
+        List<String> cafeList = matchingRepository.findCafeIdSortedByCount(pageable);
+        Page<Cafe> coundtedCafes = cafeRepository.findByIds(cafeList, pageable);
+        Page<CafeSummaryDto> cafeSummaryDtos = coundtedCafes.map(cafe -> new CafeSummaryDto(cafe));
 
-    public List<CafeSummaryDto> getCafeByMatchingCount(Pageable pageable){
-        try {
-            List<String> cafeList = matchingRepository.findCafeIdSortedByCount(pageable);
-            List<CafeSummaryDto> cafeSummaryDtos = new ArrayList<>();
-            cafeRepository.findByIds(cafeList, pageable).forEach(cafe -> cafeSummaryDtos.add(new CafeSummaryDto(cafe)));
-            return cafeSummaryDtos;
-        } catch (Exception e) {
-            throw new CustomDBException("DB에 조회하신 정보가 없습니다.");
-        }
-
+        return cafeSummaryDtos;
     }
+
 
     public CafeDetailReserveDto getCafeWithSearchingReserved(String cafeId, LocalDateTime reserveStartTime, LocalDateTime reserveEndTime, Integer seating, List<TableClass.TableOption> tableOptions,
                                                              Pageable pageable) {
-
+        // select cafe
         CafeDetailReserveDto cafeDetailReserveDto = new CafeDetailReserveDto();
-        try {
-            Cafe cafe = cafeRepository.findById(cafeId).orElseThrow();
-            cafeDetailReserveDto.setCafeDetailDto(new CafeDetailDto(cafe));
+        Cafe cafe = cafeRepository.findById(cafeId).orElseThrow();
+        cafeDetailReserveDto.setCafeDetailDto(new CafeDetailDto(cafe));
+        System.out.println(cafeId);
 
-            List<Table> tables = tableRepository.findByConditions(cafeId, seating, tableOptions);
-
-
-            Map<String, List<Reserved>> reservedListByTabldIdWithPagination = new LinkedHashMap<>();
-            reservedRepository.findReservedByConditions(cafeId, reserveStartTime, reserveEndTime, seating, tableOptions).forEach(reserved ->
-                    {
-                        if (!reservedListByTabldIdWithPagination.containsKey(reserved.getTable().getId())){
-                            reservedListByTabldIdWithPagination.put(reserved.getTable().getId(), new ArrayList<>());
-                        }
-                        reservedListByTabldIdWithPagination.get(reserved.getTable().getId()).add(reserved);
-                    }
-            );
-
-            Integer size = pageable.getPageSize();
-            Long offset = pageable.getOffset();
-            if (offset.intValue() + size > tables.size()) {
-                size = tables.size() - offset.intValue();
-            }
-
-
-            for (Table table : tables.subList(offset.intValue(), size)) {
-                TableReserveResDto tableReserveResDto = new TableReserveResDto();
-                TableDetailDto tableDetailDto = new TableDetailDto(table);
-                tableReserveResDto.setTableDetailDto(tableDetailDto);
-                List<availableTime> times = new ArrayList<>();
-                LocalDateTime startTime = cafe.getStartTime().withDayOfMonth(reserveStartTime.getDayOfMonth()).withMonth(reserveEndTime.getMonthValue()).withYear(reserveStartTime.getYear());
-                LocalDateTime endTime = cafe.getEndTime().withDayOfMonth(reserveStartTime.getDayOfMonth()).withMonth(reserveStartTime.getMonthValue()).withYear(reserveEndTime.getYear());
-
-                if (reservedListByTabldIdWithPagination.get(table.getId()) == null ) {
-                    times.add(new availableTime(startTime, endTime));
-                    tableReserveResDto.setAvailableTimeList(times);
-                    cafeDetailReserveDto.addTable(tableReserveResDto);
-                    continue;
-                }
-
-                for (Reserved reserved : reservedListByTabldIdWithPagination.get(table.getId())) {
-                    if (!startTime.isEqual(reserved.getStartTime())){
-                        times.add(new availableTime(startTime, reserved.getStartTime()));
-                    }
-                    startTime = reserved.getEndTime();
-                }
-                if (!startTime.isEqual(endTime)){
-                    times.add(new availableTime(startTime, endTime));
-                }
-
-                tableReserveResDto.setAvailableTimeList(times);
-                cafeDetailReserveDto.addTable(tableReserveResDto);
-            }
-
-            return cafeDetailReserveDto;
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new CustomDBException("해당 되는 카페가 없습니다.");
+        // select tables
+        List<Table> tables = tableRepository.findByConditions(cafeId, seating, tableOptions);
+        for (Table table : tables) {
+            System.out.println(table.getId());
         }
 
+        // sort by reserved with tableId
+        Map<String, List<Reserved>> reservedListByTable = new LinkedHashMap<>();
+        reservedRepository.findReservedByConditions(cafeId, reserveStartTime, seating, tableOptions).forEach(reserved -> {
+            if (!reservedListByTable.containsKey(reserved.getTable().getId())){
+                reservedListByTable.put(reserved.getTable().getId(), new ArrayList<>());
+            }
+            reservedListByTable.get(reserved.getTable().getId()).add(reserved);
+        });
+        return fillReservedOnDto(cafe, cafeDetailReserveDto, reservedListByTable, tables, reserveStartTime, pageable);
     }
 
 
     public CafeDetailReserveDto getCafeWithTodayReserved(String cafeId, Pageable pageable){
+        // select cafe
         CafeDetailReserveDto cafeDetailReserveDto = new CafeDetailReserveDto();
         LocalDateTime now = LocalDateTime.now();
-        try {
-            Cafe cafe = cafeRepository.findById(cafeId).orElseThrow();
-            cafeDetailReserveDto.setCafeDetailDto(new CafeDetailDto(cafe));
-            cafeDetailReserveDto.setTableReserveResDtoList(new ArrayList<>());
-            List<Table> tables = tableRepository.findByCafeId(cafeId);
+        Cafe cafe = cafeRepository.findById(cafeId).orElseThrow();
+        cafeDetailReserveDto.setCafeDetailDto(new CafeDetailDto(cafe));
+        cafeDetailReserveDto.setTableReserveResDtoList(new ArrayList<>());
 
-            Map<String, List<Reserved>> reservedListByTabldIdWithPagination = new LinkedHashMap<>();
-            reservedRepository.findTodayReservedById(cafeId).forEach(reserved ->
-                    {
-                        if (!reservedListByTabldIdWithPagination.containsKey(reserved.getTable().getId())){
-                            reservedListByTabldIdWithPagination.put(reserved.getTable().getId(), new ArrayList<>());
-                        }
-                        reservedListByTabldIdWithPagination.get(reserved.getTable().getId()).add(reserved);
-                    }
-            );
+        // select table with condition
+        List<Table> tables = tableRepository.findByCafeId(cafeId);
 
-            Integer size = pageable.getPageSize();
-            Long offset = pageable.getOffset();
-            if (offset.intValue() + size > tables.size()) {
-                size = tables.size() - offset.intValue();
+        // sort by reserved with tableId
+        Map<String, List<Reserved>> reservedListByTable = new LinkedHashMap<>();
+        reservedRepository.findTodayReservedById(cafeId, LocalDateTime.now()).forEach(reserved -> {
+            if (!reservedListByTable.containsKey(reserved.getTable().getId())){
+                reservedListByTable.put(reserved.getTable().getId(), new ArrayList<>());
             }
+            reservedListByTable.get(reserved.getTable().getId()).add(reserved);
+        });
+        return fillReservedOnDto(cafe, cafeDetailReserveDto, reservedListByTable, tables, now, pageable);
+    }
 
+    public CafeDetailReserveDto fillReservedOnDto(Cafe cafe, CafeDetailReserveDto cafeDetailReserveDto, Map<String, List<Reserved>> reservedListByTable, List<Table> tables, LocalDateTime localDateTime, Pageable pageable){
 
-            for (Table table : tables.subList(offset.intValue(), size)) {
-                TableReserveResDto tableReserveResDto = new TableReserveResDto();
-                TableDetailDto tableDetailDto = new TableDetailDto(table);
-                tableReserveResDto.setTableDetailDto(tableDetailDto);
-                List<availableTime> times = new ArrayList<>();
-                LocalDateTime startTime = cafe.getStartTime().withDayOfMonth(now.getDayOfMonth()).withMonth(now.getMonthValue()).withYear(now.getYear());
-                LocalDateTime endTime = cafe.getEndTime().withDayOfMonth(now.getDayOfMonth()).withMonth(now.getMonthValue()).withYear(now.getYear());
+        // pagination
+        Integer size = pageable.getPageSize();
+        Long offset = pageable.getOffset();
+        if (offset.intValue() + size > tables.size()) {
+            size = tables.size() - offset.intValue();
+        }
 
-                if (reservedListByTabldIdWithPagination.get(table.getId()) == null ) {
-                    times.add(new availableTime(startTime, endTime));
-                    tableReserveResDto.setAvailableTimeList(times);
-                    cafeDetailReserveDto.addTable(tableReserveResDto);
-                    continue;
-                }
+        // reserved to Dto
+        for (Table table : tables.subList(offset.intValue(), size)) {
+            TableReserveResDto tableReserveResDto = new TableReserveResDto();
+            TableDetailDto tableDetailDto = new TableDetailDto(table);
+            tableReserveResDto.setTableDetailDto(tableDetailDto);
+            List<availableTime> times = new ArrayList<>();
+            LocalDateTime startTime = cafe.getStartTime().withDayOfMonth(localDateTime.getDayOfMonth()).withMonth(localDateTime.getMonthValue()).withYear(localDateTime.getYear());
+            LocalDateTime endTime = cafe.getEndTime().withDayOfMonth(localDateTime.getDayOfMonth()).withMonth(localDateTime.getMonthValue()).withYear(localDateTime.getYear());
 
-                for (Reserved reserved : reservedListByTabldIdWithPagination.get(table.getId())) {
-                    if (!startTime.isEqual(reserved.getStartTime())){
-                        times.add(new availableTime(startTime, reserved.getStartTime()));
-                    }
-                    startTime = reserved.getEndTime();
-                }
-                if (!startTime.isEqual(endTime)){
-                    times.add(new availableTime(startTime, endTime));
-                }
-
+            // if not reserved
+            if (reservedListByTable.get(table.getId()) == null ) {
+                times.add(new availableTime(startTime, endTime));
                 tableReserveResDto.setAvailableTimeList(times);
                 cafeDetailReserveDto.addTable(tableReserveResDto);
+                continue;
             }
 
-            return cafeDetailReserveDto;
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new CustomDBException("해당 되는 카페가 없습니다.");
+            // if reserved
+            for (Reserved reserved : reservedListByTable.get(table.getId())) {
+                if (!startTime.isEqual(reserved.getStartTime())){
+                    times.add(new availableTime(startTime, reserved.getStartTime()));
+                }
+                startTime = reserved.getEndTime();
+            }
+            if (!startTime.isEqual(endTime)){
+                times.add(new availableTime(startTime, endTime));
+            }
+
+            tableReserveResDto.setAvailableTimeList(times);
+            cafeDetailReserveDto.addTable(tableReserveResDto);
         }
+        return cafeDetailReserveDto;
 
     }
 

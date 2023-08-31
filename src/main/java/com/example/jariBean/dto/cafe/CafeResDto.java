@@ -54,7 +54,7 @@ public class CafeResDto {
     @Getter
     public static class CafeDetailReserveDto {
         private CafeDetailDto cafeDetailDto;
-        private List<TableReserveResDto> tableReserveResDtoList;
+        private List<TableReserveResDto> tableReserveResDtoList = new ArrayList<>();
 
 
         public void addTable(TableReserveResDto tableReserveResDto){

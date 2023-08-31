@@ -19,8 +19,9 @@ public class TableRepositoryImpl implements TableRepositoryTemplate{
     @Override
     public List<Table> findByConditions(String cafeId, Integer seating, List<TableClass.TableOption> tableOptionList) {
         Criteria criteria = Criteria.where("cafeId").is(cafeId);
+        System.out.println(tableOptionList);
 
-        if (tableOptionList != null) {
+        if (!tableOptionList.isEmpty()) {
             criteria.and("tableOptionList").all(tableOptionList);
         }
         if (seating != null) {

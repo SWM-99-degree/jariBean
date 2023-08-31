@@ -4,8 +4,7 @@ import com.example.jariBean.dto.profile.ProfileReqDto;
 import com.example.jariBean.dto.profile.ProfileResDto;
 import com.example.jariBean.entity.User;
 import com.example.jariBean.repository.user.UserRepository;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -15,6 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @ActiveProfiles("test")
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ProfileServiceTest {
 
     @Autowired
@@ -23,10 +23,10 @@ public class ProfileServiceTest {
     @Autowired
     private UserRepository userRepository;
 
-    @Test
+    @BeforeAll
     public void saveUser() throws Exception {
         // given
-        String socialId = "kakao_1234";
+        String socialId = "kakao_12345";
         String nickname = "기무르따리";
 
         User user = User.builder()
@@ -44,10 +44,19 @@ public class ProfileServiceTest {
         assertThat(user.getRole()).isEqualTo(savedUser.getRole());
     }
 
+    @AfterAll
+    public void deleteUser() throws Exception {
+        //given
+        User user = userRepository.findBySocialId("kakao_12345").orElseThrow();
+
+        //then
+        userRepository.delete(user);
+    }
+
     @Test
     public void findProfileTest(){
         // given
-        String userId = userRepository.findBySocialId("kakao_1234").orElseThrow().getId();
+        String userId = userRepository.findBySocialId("kakao_12345").orElseThrow().getId();
 
         // when
         ProfileResDto.ProfileSummaryResDto profileSummaryResDto = userService.findProfile(userId);
@@ -61,7 +70,7 @@ public class ProfileServiceTest {
         // given
         ProfileReqDto.ProfileUpdateReqDto profileUpdateReqDto = new ProfileReqDto.ProfileUpdateReqDto();
         profileUpdateReqDto.setDescription("자고싶다");
-        String userId = userRepository.findBySocialId("kakao_1234").orElseThrow().getId();
+        String userId = userRepository.findBySocialId("kakao_12345").orElseThrow().getId();
 
 
         // when
@@ -74,7 +83,7 @@ public class ProfileServiceTest {
     @Test
     public void updateAlarmStatusTest(){
         // given
-        User user = userRepository.findBySocialId("kakao_1234").orElseThrow();
+        User user = userRepository.findBySocialId("kakao_12345").orElseThrow();
         boolean bool = user.isAlarm();
 
         // when

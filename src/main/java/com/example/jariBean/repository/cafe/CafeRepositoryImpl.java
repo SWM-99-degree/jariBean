@@ -3,6 +3,8 @@ package com.example.jariBean.repository.cafe;
 import com.example.jariBean.entity.Cafe;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
@@ -38,7 +40,7 @@ public class CafeRepositoryImpl implements CafeRepositoryTemplate{
     }
 
     @Override
-    public List<Cafe> findByIds(List<String> cafes, Pageable pageable) {
+    public Page<Cafe> findByIds(List<String> cafes, Pageable pageable) {
         Criteria criteria = Criteria.where("cafeId").in(cafes);
         MatchOperation matchOperation = Aggregation.match(criteria);
 
@@ -48,24 +50,33 @@ public class CafeRepositoryImpl implements CafeRepositoryTemplate{
                 Aggregation.limit(pageable.getPageSize())
         );
 
-        return mongoTemplate.aggregate(aggregation, Cafe.class, Cafe.class).getMappedResults();
+        List<Cafe> cafesResult = mongoTemplate.aggregate(aggregation, Cafe.class, Cafe.class).getMappedResults();
+
+        return new PageImpl<>(cafesResult, pageable, cafesResult.size());
     }
 
     @Override
     public List<String> findByWordAndCoordinateNear(List<String> searchingWords, GeoJsonPoint point) {
-        Criteria geoCriteria = new Criteria("coordinate").near(point).maxDistance(5000D);
-
-        Criteria wordCriteria = new Criteria();
-        List<Criteria> orCriterias = new ArrayList<>();
-
-        for (String searchingWord : searchingWords) {
-            Criteria regexCriteria = new Criteria("name").regex(".*" + searchingWord + ".*");
-            orCriterias.add(regexCriteria);
+        // for geo
+        Criteria criteria = new Criteria();
+        if (point != null) {
+            criteria.and("coordinate").near(point).maxDistance(5000D);
         }
-        wordCriteria.orOperator(orCriterias.toArray(new Criteria[0]));
-        geoCriteria.andOperator(wordCriteria);
 
-        Query query = new Query(geoCriteria);
+        // for word
+        Criteria wordCriteria = new Criteria();
+        List<Criteria> regexCriterias = new ArrayList<>();
+        if (!searchingWords.isEmpty()) {
+            for (String searchingWord : searchingWords) {
+                Criteria regexCriteria = new Criteria("name").regex(".*" + searchingWord + ".*");
+                regexCriterias.add(regexCriteria);
+            }
+            wordCriteria.orOperator(regexCriterias.toArray(new Criteria[0]));
+        }
+
+        criteria.andOperator(wordCriteria);
+
+        Query query = new Query(criteria);
 
         List<String> cafeIds = new ArrayList<>();
         mongoTemplate.find(query, Cafe.class).forEach(cafe -> cafeIds.add(cafe.getId()));

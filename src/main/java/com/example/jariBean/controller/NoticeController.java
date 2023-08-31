@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -27,7 +28,7 @@ import static org.springframework.http.HttpStatus.OK;
 @RequestMapping("/api/notification")
 public class NoticeController {
 
-    private NoticeService noticeService;
+    private final NoticeService noticeService;
 
     @Operation(summary = "find notice list", description = "api for find notice list")
     @ApiResponse(
@@ -37,8 +38,8 @@ public class NoticeController {
     )
     @GetMapping
     public ResponseEntity getNoticeList(@AuthenticationPrincipal LoginUser loginUser, Pageable pageable) {
-        List<NoticeSummaryResDto> noticeList = noticeService.findNoticeList(pageable);
-        return new ResponseEntity<>(new ResponseDto<>(1, "회원가입 성공", noticeList), OK);
+        Page<NoticeSummaryResDto> noticeList = noticeService.findNoticeList(pageable);
+        return new ResponseEntity<>(new ResponseDto<>(1, "Noice를 불러왔습니다.", noticeList), OK);
     }
 
 }

@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -55,7 +56,7 @@ public class HomeController {
     )
     @GetMapping("/best")
     public ResponseEntity homeBest(Pageable pageable) {
-        List<CafeSummaryDto> cafeSummaryDtos = cafeService.getCafeByMatchingCount(pageable);
+        Page<CafeSummaryDto> cafeSummaryDtos = cafeService.getCafeByMatchingCount(pageable);
         return new ResponseEntity<>(new ResponseDto<>(1, "정보를 성공적으로 가져왔습니다.", cafeSummaryDtos), OK);
     }
 }

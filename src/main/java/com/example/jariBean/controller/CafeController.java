@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -44,7 +45,7 @@ public class CafeController {
     )
     @GetMapping("/best")
     public ResponseEntity bestCafe(Pageable pageable) {
-        List<CafeSummaryDto> cafeSummaryDtos = cafeService.getCafeByMatchingCount(pageable);
+        Page<CafeSummaryDto> cafeSummaryDtos = cafeService.getCafeByMatchingCount(pageable);
 
         return new ResponseEntity<>(new ResponseDto<>(1, "정보를 성공적으로 가져왔습니다.", cafeSummaryDtos), OK);
     }
@@ -87,9 +88,9 @@ public class CafeController {
     )
     @PostMapping
     public ResponseEntity cafes(@RequestBody CafeSearchReqDto cafeSearchReqDto, Pageable pageable) {
-        List<Cafe> cafes = searchService.findByText(cafeSearchReqDto, pageable);
-        List<CafeSummaryDto> cafeSummaryDtos = new ArrayList<>();
-        cafes.forEach(cafe -> cafeSummaryDtos.add(new CafeSummaryDto(cafe)));
+        Page<Cafe> cafes = searchService.findByText(cafeSearchReqDto, pageable);
+        Page<CafeSummaryDto> cafeSummaryDtos = cafes.map(cafe -> new CafeSummaryDto(cafe));
+
         return new ResponseEntity<>(new ResponseDto<>(1, "정보를 성공적으로 가져왔습니다", cafeSummaryDtos), CREATED);
     }
 

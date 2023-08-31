@@ -5,6 +5,7 @@ import com.example.jariBean.config.auth.LoginUser;
 import com.example.jariBean.dto.ResponseDto;
 import com.example.jariBean.dto.profile.ProfileReqDto.ProfileUpdateReqDto;
 import com.example.jariBean.dto.profile.ProfileResDto.ProfileSummaryResDto;
+import com.example.jariBean.entity.User;
 import com.example.jariBean.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -27,7 +28,7 @@ import static org.springframework.http.HttpStatus.*;
 @RequestMapping("/api/profiles")
 public class ProfileController {
 
-    private UserService userService;
+    private final UserService userService;
 
     @Operation(summary = "change alarm status", description = "api for change alarm status")
     @ApiResponse(
@@ -69,7 +70,7 @@ public class ProfileController {
             return new ResponseEntity<>(new ResponseDto<>(-1, "유효성 검사 실패", errorMap), BAD_REQUEST);
         }
         userService.updateUserInfo(loginUser.getUser().getId(), profileUpdateReqDto);
-        return new ResponseEntity<>(new ResponseDto<>(1, "회원가입 성공", null), OK);
+        return new ResponseEntity<>(new ResponseDto<>(1, "회원 정보 변경 성공", null), OK);
     }
 
 
