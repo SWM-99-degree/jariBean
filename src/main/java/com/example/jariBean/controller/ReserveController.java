@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -29,7 +30,7 @@ import static org.springframework.http.HttpStatus.*;
 @RequestMapping("/api/reserve")
 public class ReserveController {
 
-    private ReserveService reserveService;
+    private final ReserveService reserveService;
 
     @Operation(summary = "find reserve list", description = "api for find reserve list")
     @ApiResponse(
@@ -39,7 +40,7 @@ public class ReserveController {
     )
     @GetMapping
     public ResponseEntity reserveList(@AuthenticationPrincipal LoginUser loginUser, Pageable pageable) {
-        List<ReserveSummaryResDto> reserveSummaryResDtoList = reserveService.getMyReserved(loginUser.getUser().getId(), pageable);
+        Page<ReserveSummaryResDto> reserveSummaryResDtoList = reserveService.getMyReserved(loginUser.getUser().getId(), pageable);
         return new ResponseEntity<>(new ResponseDto<>(1, "정보를 성공적으로 가져왔습니다", reserveSummaryResDtoList), OK);
     }
 

@@ -52,10 +52,8 @@ public class ReserveReqDto {
         @NotEmpty(message = "tableId는 필수입니다")
         private String tableId;
 
-        @NotEmpty(message = "예약의 시작 시간은 필수입니다.")
         private LocalDateTime reservedStartTime;
 
-        @NotEmpty(message = "예약의 끝 시간은 필수입니다.")
         private LocalDateTime reservedEndTime;
 
         public Reserved toEntity(String userId, Table table, Cafe cafe) {
