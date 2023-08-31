@@ -42,8 +42,6 @@ jobs:
         key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
         restore-keys: |
           ${{ runner.os }}-gradle-
-    - name: Checkout
-      uses: actions/checkout@v2
       
     - name: Setup docker buildx
       id: buildx
@@ -62,7 +60,7 @@ jobs:
       run: chmod +x gradlew
     - name: Build with Gradle
       run: |
-        ./gradlew build -x test
+        ./gradlew build 
     - uses: actions/upload-artifact@v3
       with:
         name: Package
