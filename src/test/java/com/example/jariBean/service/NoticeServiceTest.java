@@ -14,7 +14,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 
-@SpringBootTest
+@DataMongoTest
 @ActiveProfiles("test")
 public class NoticeServiceTest {
 
