@@ -10,8 +10,6 @@ name: Java CI with Gradle
 on:
   push:
     branches: [ "main" , "CICD"]
-  pull_request:
-    branches: [ "main" , "CICD"]
 
 env:
   DOCKER_IMAGE: chlrltjd5263/jaribean
@@ -60,7 +58,7 @@ jobs:
       run: chmod +x gradlew
     - name: Build with Gradle
       run: |
-        ./gradlew test -i
+        ./gradlew test
         ./gradlew build
     - uses: actions/upload-artifact@v3
       with:
