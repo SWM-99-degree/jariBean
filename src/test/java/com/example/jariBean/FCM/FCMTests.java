@@ -5,12 +5,15 @@ import com.example.jariBean.service.FCMNotificationService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.io.InputStream;
 
-@SpringBootTest
+@DataMongoTest
+@ActiveProfiles("test")
 public class FCMTests {
 
     @Autowired
