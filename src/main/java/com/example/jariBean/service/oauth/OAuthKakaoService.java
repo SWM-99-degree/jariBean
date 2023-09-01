@@ -15,6 +15,8 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
 
 @Service
@@ -34,6 +36,8 @@ public class OAuthKakaoService extends OAuthService{
 
     @Override
     public String getAccessToken(String code) {
+
+        AtomicReference<KakaoOAuthInfo> responseReference = new AtomicReference<>();
 
         MultiValueMap<String, String> bodyValue = new LinkedMultiValueMap<>();
         bodyValue.add("grant_type", "authorization_code");

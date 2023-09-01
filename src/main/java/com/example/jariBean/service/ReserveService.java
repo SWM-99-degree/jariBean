@@ -62,6 +62,7 @@ public class ReserveService {
     // 가장 가까운 예약
     public ReserveSummaryResDto getNearestReserved(String userId) {
         LocalDateTime userNow = LocalDateTime.now();
+
         Reserved reserved = reservedRepository.findNearestReserved(userId, userNow);
 
         // 정보가 없다면 null 값으로 반환하며, 예외처리로 204를 보냄

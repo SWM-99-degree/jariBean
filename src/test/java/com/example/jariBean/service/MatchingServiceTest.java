@@ -1,5 +1,6 @@
 package com.example.jariBean.service;
 
+import com.example.jariBean.dto.cafe.CafeResDto;
 import com.example.jariBean.dto.matching.MatchingResDto;
 import com.example.jariBean.entity.Cafe;
 import com.example.jariBean.entity.Matching;
@@ -24,6 +25,9 @@ public class MatchingServiceTest {
 
     @Autowired private MatchingService matchingService;
 
+    @Autowired
+    private CafeService cafeService;
+
 
 
     @Test
@@ -45,5 +49,11 @@ public class MatchingServiceTest {
             break;
         }
 
+    }
+
+    @Test
+    public void bestCafesTest() {
+        // when
+        List<CafeResDto.CafeSummaryDto> matchingSummaryResDtoList = cafeService.getCafeByMatchingCount(Pageable.ofSize(1));
     }
 }

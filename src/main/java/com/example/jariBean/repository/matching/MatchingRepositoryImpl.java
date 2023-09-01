@@ -39,7 +39,6 @@ public class MatchingRepositoryImpl implements MatchingRepositoryTemplate {
     class CafeCount {
         private String cafeId;
         private int count;
-
         // Constructors, getters, and setters
     }
 }
