@@ -37,19 +37,16 @@ public class CafeService {
     private final TableRepository tableRepository;
 
 
-    public List<CafeSummaryDto> getCafeByMatchingCount(Pageable pageable){
+    public Page<CafeSummaryDto> getCafeByMatchingCount(Pageable pageable){
         try {
             List<String> cafeList = matchingRepository.findCafeIdSortedByCount(pageable);
-            List<CafeSummaryDto> cafeSummaryDtos = new ArrayList<>();
-            cafeRepository.findByIds(cafeList).forEach(cafe -> cafeSummaryDtos.add(new CafeSummaryDto(cafe)));
+            Page<Cafe> pagedCafes = cafeRepository.findByIds(cafeList, pageable);
+            Page<CafeSummaryDto> cafeSummaryDtos = pagedCafes.map(cafe -> new CafeSummaryDto(cafe));
             return cafeSummaryDtos;
         } catch (Exception e) {
             e.printStackTrace();
             throw new CustomDBException("DB에 조회하신 정보가 없습니다.");
         }
-
-
-        return cafeSummaryDtos;
     }
 
 

@@ -54,6 +54,6 @@ public class MatchingServiceTest {
     @Test
     public void bestCafesTest() {
         // when
-        List<CafeResDto.CafeSummaryDto> matchingSummaryResDtoList = cafeService.getCafeByMatchingCount(Pageable.ofSize(1));
+        Page<CafeResDto.CafeSummaryDto> matchingSummaryResDtoList = cafeService.getCafeByMatchingCount(Pageable.ofSize(1));
     }
 }
