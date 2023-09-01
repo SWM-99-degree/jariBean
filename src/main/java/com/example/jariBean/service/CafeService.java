@@ -56,7 +56,6 @@ public class CafeService {
         CafeDetailReserveDto cafeDetailReserveDto = new CafeDetailReserveDto();
         Cafe cafe = cafeRepository.findById(cafeId).orElseThrow();
         cafeDetailReserveDto.setCafeDetailDto(new CafeDetailDto(cafe));
-        System.out.println(cafeId);
 
         // select tables
         List<Table> tables = tableRepository.findByConditions(cafeId, seating, tableOptions);

@@ -33,13 +33,15 @@ public class MatchingServiceTest {
     @Test
     public void matchingTest() {
         // given
+        cafeRepository.deleteAll();
+        matchingRepository.deleteAll();
         String userId = "64d1082828032028b33c4450";
         Cafe cafe = cafeRepository.save(new Cafe());
         Integer number = 2;
         Matching matching = new Matching(userId, cafe, number);
+        matchingRepository.save(matching);
 
         // when
-        matchingRepository.save(matching);
         Page<MatchingResDto.MatchingSummaryResDto> matchingSummaryResDtopList = matchingService.findMatchingByUserId("64d1082828032028b33c4450", Pageable.ofSize(1));
 
         // then
