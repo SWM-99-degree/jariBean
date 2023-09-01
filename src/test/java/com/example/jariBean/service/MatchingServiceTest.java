@@ -10,21 +10,20 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-
-import java.util.List;
+import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
+@ActiveProfiles("test")
 public class MatchingServiceTest {
 
     @Autowired
     private CafeRepository cafeRepository;
 
-    @Autowired
-    private MatchingRepository matchingRepository;
+    @Autowired private MatchingRepository matchingRepository;
 
-    @Autowired
-    private MatchingService matchingService;
+    @Autowired private MatchingService matchingService;
 
     @Autowired
     private CafeService cafeService;
@@ -41,7 +40,7 @@ public class MatchingServiceTest {
 
         // when
         matchingRepository.save(matching);
-        List<MatchingResDto.MatchingSummaryResDto> matchingSummaryResDtopList = matchingService.findMatchingByUserId("64d1082828032028b33c4450", Pageable.ofSize(1));
+        Page<MatchingResDto.MatchingSummaryResDto> matchingSummaryResDtopList = matchingService.findMatchingByUserId("64d1082828032028b33c4450", Pageable.ofSize(1));
 
         // then
         for (MatchingResDto.MatchingSummaryResDto matchingSummaryResDto:matchingSummaryResDtopList){

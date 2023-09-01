@@ -30,4 +30,8 @@ public class Token {
         this.firebaseToken = firebaseToken;
     }
 
+    public void renewJWT(String accessToken, String refreshToken) {
+        this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
+    }
 }

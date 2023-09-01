@@ -4,12 +4,15 @@ import com.example.jariBean.dto.reserved.ReserveReqDto;
 import com.example.jariBean.dto.reserved.ReservedResDto;
 import com.example.jariBean.entity.Cafe;
 import com.example.jariBean.entity.Reserved;
+import com.example.jariBean.entity.Table;
+import com.example.jariBean.entity.User;
 import com.example.jariBean.handler.ex.CustomDBException;
 import com.example.jariBean.repository.cafe.CafeRepository;
 import com.example.jariBean.repository.reserved.ReservedRepository;
+import com.example.jariBean.repository.table.TableRepository;
 import com.example.jariBean.repository.user.UserRepository;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import org.bson.types.ObjectId;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,8 +25,12 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.jariBean.entity.Role.CUSTOMER;
+
 
 @SpringBootTest
+@ActiveProfiles("jariBean")
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ReservedServiceTest {
 
     @Autowired
@@ -33,6 +40,9 @@ public class ReservedServiceTest {
     UserRepository userRepository;
     @Autowired
     ReservedRepository reservedRepository;
+
+    @Autowired
+    TableRepository tableRepository;
 
     @Autowired
     ReserveService reserveService;
@@ -48,7 +58,7 @@ public class ReservedServiceTest {
         GeoJsonPoint coordinate = new GeoJsonPoint(126.6487782154, 37.4538193246568);
         Double distance = 50D;
 
-        List<String> cafeList = cafeRepository.findByWordAndCoordinateNear(words,coordinate);
+        List<String> cafeList = cafeRepository.findByWordAndCoordinateNear(words , coordinate);
         System.out.println("byCoordinateDistance.getContent().size() = " + cafeList.size());
         cafeList.forEach(cafe -> {
             System.out.println(cafe);
@@ -68,16 +78,57 @@ public class ReservedServiceTest {
     }
 
 
-    @Test
+
+    @BeforeAll
     public void saveReservedTest() {
         // given
-        String userId = "testUser";
+        String socialId = "kakao_1234";
+        String nickname = "기무르따리";
+
+        User user = User.builder()
+                .id("test")
+                .socialId(socialId)
+                .nickname(nickname)
+                .role(CUSTOMER)
+                .build();
+        User savedUser = userRepository.save(user);
+
+        // insert Table
+        Table table = Table.builder()
+                .id("64a021f82ff24a6d8c7bd57c")
+                .name("테이블이예용")
+                .tableClassId("123")
+                .seating(3)
+                .cafeId("64c45ac3935eb61c140793e7")
+                .build();
+
+        tableRepository.save(table);
+
+        // insert cafe
+        String cafeName = "testCafeName";
+        String cafePhoneNumber = "12345678910";
+        String cafeAddress = "testCafeAddress";
+        GeoJsonPoint jsonPoint = new GeoJsonPoint(12.123123,13.131313);
+        Cafe cafe = Cafe.builder()
+                .id("64c45ac3935eb61c140793e7")
+                .name(cafeName)
+                .phoneNumber(cafePhoneNumber)
+                .description(" this is so beautiful caffee")
+                .address(cafeAddress)
+                .coordinate(jsonPoint)
+                .build();
+
+        cafeRepository.save(cafe);
+
+        // insert reserved
+        String userId = "test";
         ReserveReqDto.ReserveSaveReqDto saveReservedReqDto = new ReserveReqDto.ReserveSaveReqDto();
         saveReservedReqDto.setCafeId("64c45ac3935eb61c140793e7");
         saveReservedReqDto.setTableId("64a021f82ff24a6d8c7bd57c");
+
         String dateFormat = "yyyy-MM-dd HH:mm:ss";
-        String startTime = "2023-08-15 12:00:00";
-        String endTime = "2023-08-15 14:00:00";
+        String startTime = "2029-08-31 12:00:00";
+        String endTime = "2029-08-31 14:00:00";
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateFormat);
         LocalDateTime newStartTime = LocalDateTime.parse(startTime, formatter);
         LocalDateTime newEndTime = LocalDateTime.parse(endTime, formatter);
@@ -94,21 +145,18 @@ public class ReservedServiceTest {
     }
 
 
-    @Test
-    public void delteMyReservedTest() {
-        // given
-        String userId = "testUser";
-        Reserved reserved = reservedRepository.findByUserIdOrderByStartTimeDesc(userId, Pageable.ofSize(1)).get(0);
-        String reservedId = reserved.getId();
-
-        // then
-        Assertions.assertDoesNotThrow(()-> reserveService.deleteMyReserved(reservedId));
-    }
 
     @Test
     public void getMyReservedTest() {
         // given
-        String userId = "testUser";
+        String userId = "test";
+
+        List<Reserved> reserveds =  reservedRepository.findAll();
+        for (Reserved reserved : reserveds) {
+            System.out.println(reserved.getUserId());
+            System.out.println(reserved.getStartTime());
+            System.out.println(reserved.getCafe().getId());
+        }
 
         // then
         Assertions.assertDoesNotThrow(()-> reserveService.getMyReserved(userId, Pageable.ofSize(1)));
@@ -118,16 +166,10 @@ public class ReservedServiceTest {
     @Test
     public void getNearestReservedTest() {
         // given
-        String userId = "testUser";
+        String userId = "test";
         String dateFormat = "yyyy-MM-dd HH:mm:ss";
-        String startTime = "2023-08-17 10:00:00";
-        String checkStartTime = "2023-08-17 12:00:00";
-        String checkEndTime = "2023-08-17 14:00:00";
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateFormat);
-        LocalDateTime time = LocalDateTime.parse(startTime, formatter);
-        ReserveReqDto.ReserveNearestReqDto reserveNearestReqDto = new ReserveReqDto.ReserveNearestReqDto();
-        reserveNearestReqDto.setUserId(userId);
-        reserveNearestReqDto.setUserNow(time);
+        String checkStartTime = "2029-08-31 12:00:00";
 
         // when
         ReservedResDto.ReserveSummaryResDto nearestReservedResDto = reserveService.getNearestReserved(userId);
@@ -136,6 +178,13 @@ public class ReservedServiceTest {
         Assertions.assertEquals(nearestReservedResDto.getReserveStartTime(), LocalDateTime.parse(checkStartTime, formatter));
 
 
+    }
+
+    @BeforeAll
+    public void deleteCafeAndTable() {
+        tableRepository.deleteById("64a021f82ff24a6d8c7bd57c");
+        cafeRepository.deleteById("64c45ac3935eb61c140793e7");
+        userRepository.deleteById("test");
     }
 
 

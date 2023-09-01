@@ -33,6 +33,10 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
         String jwt = request.getHeader(JwtVO.ACCESS_HEADER);
 
+        if(jwt == null) {
+            jwt = request.getHeader(JwtVO.REFRESH_HEADER);
+        }
+
         if(jwt != null) {
             JwtDto jwtDto = jwtProcess.verify(jwt);
 

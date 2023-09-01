@@ -22,11 +22,13 @@ public class ReservedResDto {
     public static class ReserveSummaryResDto {
         private String reserveId;
         private LocalDateTime reserveStartTime;
+        private LocalDateTime reserveEndTime;
         private Integer matchingSeating;
         private CafeSummaryDto cafeSummaryDto;
 
         public ReserveSummaryResDto(Reserved reserved){
             this.reserveId = reserved.getId();
+            this.reserveEndTime = reserved.getEndTime();
             this.reserveStartTime = reserved.getStartTime();
             this.matchingSeating = reserved.getTable().getSeating();
             this.cafeSummaryDto = new CafeSummaryDto(reserved.getCafe());

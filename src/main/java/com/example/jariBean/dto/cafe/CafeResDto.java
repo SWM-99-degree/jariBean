@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class CafeResDto {
@@ -53,7 +54,8 @@ public class CafeResDto {
     @Getter
     public static class CafeDetailReserveDto {
         private CafeDetailDto cafeDetailDto;
-        private List<TableReserveResDto> tableReserveResDtoList;
+        private List<TableReserveResDto> tableReserveResDtoList = new ArrayList<>();
+
 
         public void addTable(TableReserveResDto tableReserveResDto){
             this.tableReserveResDtoList.add(tableReserveResDto);

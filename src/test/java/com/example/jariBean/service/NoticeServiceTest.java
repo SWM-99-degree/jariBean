@@ -15,10 +15,12 @@ import org.springframework.test.context.ActiveProfiles;
 import java.util.List;
 
 @SpringBootTest
+@ActiveProfiles("test")
 public class NoticeServiceTest {
 
     @Autowired
     private NoticeService noticeService;
+
     @Autowired
     private NoticeRepository noticeRepository;
     @Test
@@ -28,7 +30,7 @@ public class NoticeServiceTest {
         noticeRepository.save(notice);
 
         // when
-        NoticeResDto.NoticeSummaryResDto noticeSummaryResDtos = noticeService.findNoticeList(Pageable.unpaged()).get(0);
+        NoticeResDto.NoticeSummaryResDto noticeSummaryResDtos = noticeService.findNoticeList(Pageable.unpaged()).toList().get(0);
 
         //then
         Assertions.assertEquals(noticeSummaryResDtos.getTitle(), "제목");

@@ -1,6 +1,7 @@
 package com.example.jariBean.dto.table;
 
 import com.example.jariBean.entity.Table;
+import lombok.Getter;
 
 import java.util.List;
 
@@ -8,6 +9,7 @@ import static com.example.jariBean.entity.TableClass.TableOption;
 
 public class TableResDto {
 
+    @Getter
     public static class TableDetailDto {
         private String id;
         private String description;

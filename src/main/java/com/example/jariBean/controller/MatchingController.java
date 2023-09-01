@@ -10,7 +10,9 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -28,8 +30,8 @@ import static org.springframework.http.HttpStatus.OK;
 public class MatchingController {
 
 
-    @Autowired
-    private MatchingService matchingService;
+    private final MatchingService matchingService;
+
 
     @Operation(summary = "find matching list", description = "api for find matching list")
     @ApiResponse(
@@ -40,7 +42,7 @@ public class MatchingController {
     @GetMapping
     public ResponseEntity matchingList(@AuthenticationPrincipal LoginUser loginUser, Pageable pageable) {
         String userId = loginUser.getUser().getId();
-        List<MatchingSummaryResDto> matchingSummaryResDtoList = matchingService.findMatchingByUserId(userId, pageable);
+        Page<MatchingSummaryResDto> matchingSummaryResDtoList = matchingService.findMatchingByUserId(userId, pageable);
         return new ResponseEntity<>(new ResponseDto<>(1, "정보를 성공적으로 가져왔습니다", matchingSummaryResDtoList), OK);
     }
 }
