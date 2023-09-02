@@ -13,7 +13,7 @@ import org.springframework.test.context.ActiveProfiles;
 import static com.example.jariBean.entity.Role.CUSTOMER;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DataMongoTest
+@SpringBootTest
 @ActiveProfiles("test")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ProfileServiceTest {

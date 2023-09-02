@@ -54,7 +54,7 @@ dependencies {
 	implementation 'com.google.firebase:firebase-admin:9.1.1'
 
 	// elasticsearch
-	implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
+//	implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
 
 	// komoran
 	implementation 'com.github.shin285:KOMORAN:3.3.9'

@@ -4,13 +4,14 @@ import com.example.jariBean.entity.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import static com.example.jariBean.entity.Role.CUSTOMER;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@SpringBootTest
 @ActiveProfiles("test")
-@DataMongoTest
 class UserRepositoryTest {
 
     @Autowired private UserRepository userRepository;

@@ -12,7 +12,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.io.InputStream;
 
-@DataMongoTest
+@SpringBootTest
 @ActiveProfiles("test")
 public class FCMTests {
 
@@ -23,8 +23,6 @@ public class FCMTests {
     private String FIREBASE_CLASS_PATH;
     @Test
     public void FCMTest() throws Exception{
-
-
 
         fcmNotificationService.sendNotificationByTokentest("eiMZvMU4TvCk4BNeUEHBoz:APA91bG6uf_mg9I70YslVe4E6nOvrP6pvFkZ8BVIF-8YDnfqYM0tLNQYtMG6pVFdaHCBWWwEbsRBZg5GJ4MHp6RBTgufDOrXovJYxz53xGPWTXpLAEbfTtTmTXV7dtKR8PDENqpOPF74");
 

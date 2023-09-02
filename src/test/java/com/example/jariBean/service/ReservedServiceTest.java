@@ -28,7 +28,7 @@ import java.util.List;
 import static com.example.jariBean.entity.Role.CUSTOMER;
 
 
-@DataMongoTest
+@SpringBootTest
 @ActiveProfiles("test")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ReservedServiceTest {
