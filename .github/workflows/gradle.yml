@@ -76,8 +76,7 @@ jobs:
       run: chmod +x gradlew
     - name: Build with Gradle
       run: |
-        ./gradlew build -x test
-        ./gradlew --info test
+        ./gradlew build
     - uses: actions/upload-artifact@v3
       with:
         name: Package
