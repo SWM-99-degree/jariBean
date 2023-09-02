@@ -24,9 +24,7 @@ permissions:
 
 jobs:
 
-
   build:
-
     runs-on: ubuntu-latest
 
     services:
@@ -95,8 +93,10 @@ jobs:
         docker build -t ${{ env.DOCKER_IMAGE }}:latest .
         docker push ${{ env.DOCKER_IMAGE }}:latest
 
+
         
   deploy:
+    if: ${{ github.ref == 'refs/heads/CICD' }}
     needs: build
     name: Deploy
     runs-on: [ self-hosted, label-jaribean ]
@@ -117,3 +117,29 @@ jobs:
           docker create -p 8080:8080 --name ${{ env.NAME }} ${{ env.DOCKER_IMAGE }}:latest
           docker cp ~/spring_env/.env ${{ env.NAME }}:/
           docker start ${{ env.NAME }}
+          
+  deploy_test:
+    if: ${{ github.ref == 'refs/heads/test_server' }}
+    needs: build
+    name: Deploy_test
+    runs-on: [ self-hosted, label-jaribean ]
+    # label-jaribean 라는 이름으로 AWS EC2 가 Runner 를 작동시킬 때 사용했던 그 label
+    steps:
+      - name: Login to ghcr
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GH_TOKEN }}
+      - name: Docker run
+        run: |
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASS }}
+          docker stop ${{ env.NAME }} && docker rm ${{ env.NAME }} && docker rmi ${{ env.DOCKER_IMAGE }}:latest
+          aws s3 cp s3://jaribean-env/spring/.env ~/spring_env/
+          docker pull ${{ env.DOCKER_IMAGE }}:latest
+          docker create -p 8081:8080 --name ${{ env.NAME }} ${{ env.DOCKER_IMAGE }}:latest
+          docker cp ~/spring_env/.env ${{ env.NAME }}:/
+          docker start ${{ env.NAME }}
+    
+    
+  
