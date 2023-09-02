@@ -169,7 +169,7 @@ public class ReservedServiceTest {
         String userId = "test";
         String dateFormat = "yyyy-MM-dd HH:mm:ss";
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateFormat);
-        String checkStartTime = "2029-08-31 12:00:00";
+        String checkStartTime = "2029-08-10 12:00:00";
 
         // when
         ReservedResDto.ReserveSummaryResDto nearestReservedResDto = reserveService.getNearestReserved(userId);
