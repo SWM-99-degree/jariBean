@@ -15,7 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 
-@DataMongoTest
+@SpringBootTest
 @ActiveProfiles("test")
 public class MatchingServiceTest {
 

@@ -25,7 +25,7 @@ import java.util.List;
 import static com.example.jariBean.entity.TableClass.TableOption.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DataMongoTest
+@SpringBootTest
 @ActiveProfiles("test")
 class ManagerServiceTest {
 
