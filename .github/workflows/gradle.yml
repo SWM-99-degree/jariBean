@@ -20,12 +20,18 @@ permissions:
   contents: read
 
 jobs:
+  container-job:
+    runs-on: ubuntu-latest
+    container: node:16-bullseye
+    services:
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
+
   build:
 
     runs-on: ubuntu-latest
-
-    env:
-      MONGODB_URI: ${{secrets.MONGO_URL}}
 
     steps:
     - uses: actions/checkout@v3
@@ -56,7 +62,11 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-buildx-
         
-    
+    - name: Create .env file
+      run: |
+        echo "$SECRETS_CONTEXT" >> .env
+      env:
+        SECRETS_CONTEXT: ${{secrets.SECRETS_CONTEXT}}
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Build with Gradle
