@@ -7,18 +7,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
 class JariBeanApplicationTests {
-
-	@Autowired
-	DefaultListableBeanFactory df;
+	
 
 	@Test
 	void contextLoads() {
-		int i =0;
-		for (String name : df.getBeanDefinitionNames()){
-			System.out.println(i);
-			i++;
-			System.out.println(df.getBean(name).getClass().getName());
-		}
 
 	}
 
