@@ -62,7 +62,7 @@ jobs:
     - name: Build with Gradle
       run: |
         ./gradlew build -x test
-        ./gradlew test
+        ./gradlew --info test
     - uses: actions/upload-artifact@v3
       with:
         name: Package
