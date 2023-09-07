@@ -6,10 +6,12 @@ import com.example.jariBean.dto.cafe.CafeResDto.CafeSummaryDto;
 import com.example.jariBean.dto.reserved.ReservedResDto.TableReserveResDto;
 import com.example.jariBean.dto.reserved.ReservedResDto.availableTime;
 import com.example.jariBean.dto.table.TableResDto.TableDetailDto;
-import com.example.jariBean.entity.*;
+import com.example.jariBean.entity.Cafe;
+import com.example.jariBean.entity.Reserved;
+import com.example.jariBean.entity.Table;
+import com.example.jariBean.entity.TableClass;
 import com.example.jariBean.handler.ex.CustomDBException;
 import com.example.jariBean.repository.cafe.CafeRepository;
-import com.example.jariBean.repository.cafeOperatingTime.CafeOperatingTimeRepository;
 import com.example.jariBean.repository.matching.MatchingRepository;
 import com.example.jariBean.repository.reserved.ReservedRepository;
 import com.example.jariBean.repository.table.TableRepository;
@@ -21,7 +23,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -37,19 +42,16 @@ public class CafeService {
     private final TableRepository tableRepository;
 
 
-    public List<CafeSummaryDto> getCafeByMatchingCount(Pageable pageable){
+    public Page<CafeSummaryDto> getCafeByMatchingCount(Pageable pageable){
         try {
             List<String> cafeList = matchingRepository.findCafeIdSortedByCount(pageable);
-            List<CafeSummaryDto> cafeSummaryDtos = new ArrayList<>();
-            cafeRepository.findByIds(cafeList).forEach(cafe -> cafeSummaryDtos.add(new CafeSummaryDto(cafe)));
+            Page<Cafe> pagedCafes = cafeRepository.findByIds(cafeList, pageable);
+            Page<CafeSummaryDto> cafeSummaryDtos = pagedCafes.map(cafe -> new CafeSummaryDto(cafe));
             return cafeSummaryDtos;
         } catch (Exception e) {
             e.printStackTrace();
             throw new CustomDBException("DB에 조회하신 정보가 없습니다.");
         }
-
-
-        return cafeSummaryDtos;
     }
 
 
@@ -57,9 +59,8 @@ public class CafeService {
                                                              Pageable pageable) {
         // select cafe
         CafeDetailReserveDto cafeDetailReserveDto = new CafeDetailReserveDto();
-        Cafe cafe = cafeRepository.findById(cafeId).orElseThrow();
+        Cafe cafe = cafeRepository.findById(cafeId).orElseThrow(() -> new CustomDBException("id에 해당하는 Cafe가 존재하지 않습니다."));
         cafeDetailReserveDto.setCafeDetailDto(new CafeDetailDto(cafe));
-        System.out.println(cafeId);
 
         // select tables
         List<Table> tables = tableRepository.findByConditions(cafeId, seating, tableOptions);
@@ -83,7 +84,7 @@ public class CafeService {
         // select cafe
         CafeDetailReserveDto cafeDetailReserveDto = new CafeDetailReserveDto();
         LocalDateTime now = LocalDateTime.now();
-        Cafe cafe = cafeRepository.findById(cafeId).orElseThrow();
+        Cafe cafe = cafeRepository.findById(cafeId).orElseThrow(() -> new CustomDBException("id에 해당하는 Cafe가 존재하지 않습니다."));
         cafeDetailReserveDto.setCafeDetailDto(new CafeDetailDto(cafe));
         cafeDetailReserveDto.setTableReserveResDtoList(new ArrayList<>());
 
