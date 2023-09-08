@@ -69,8 +69,9 @@ public class SearchService {
 
         // mongoDB search
         List<String> wordFilterdCafes = cafeRepository.findByWordAndCoordinateNear(searchingWords, point);
-        List<String> optionsFilterdCafes = reservedRepository.findCafeByReserved(wordFilterdCafes, startTime, endTime, seating, tableOptionList);
-        Page<Cafe> cafes = cafeRepository.findByIds(optionsFilterdCafes, pageable);
+        System.out.println(wordFilterdCafes);
+        //List<String> optionsFilterdCafes = reservedRepository.findCafeByReserved(wordFilterdCafes, startTime, endTime, seating, tableOptionList);
+        Page<Cafe> cafes = cafeRepository.findByIds(wordFilterdCafes, pageable);
 
         return cafes;
 

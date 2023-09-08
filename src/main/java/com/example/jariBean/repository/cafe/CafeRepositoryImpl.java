@@ -10,6 +10,8 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.MatchOperation;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
+import org.springframework.data.mongodb.core.index.Index;
+import org.springframework.data.mongodb.core.index.TextIndexed;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.NearQuery;
 import org.springframework.data.mongodb.core.query.Query;
@@ -63,12 +65,15 @@ public class CafeRepositoryImpl implements CafeRepositoryTemplate{
             criteria.and("coordinate").near(point).maxDistance(5000D);
         }
 
+//        mongoTemplate.indexOps(Cafe.class).ensureIndex(new Index().on("name", Text.class));
+//
+
         // for word
         Criteria wordCriteria = new Criteria();
         List<Criteria> regexCriterias = new ArrayList<>();
         if (!searchingWords.isEmpty()) {
             for (String searchingWord : searchingWords) {
-                Criteria regexCriteria = new Criteria("name").regex(".*" + searchingWord + ".*");
+                Criteria regexCriteria = new Criteria("name").regex("/" + searchingWord + "/");
                 regexCriterias.add(regexCriteria);
             }
             wordCriteria.orOperator(regexCriterias.toArray(new Criteria[0]));
