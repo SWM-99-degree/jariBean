@@ -10,6 +10,7 @@ import com.example.jariBean.entity.Cafe;
 import com.example.jariBean.entity.Reserved;
 import com.example.jariBean.entity.Table;
 import com.example.jariBean.entity.TableClass;
+import com.example.jariBean.handler.ex.CustomApiException;
 import com.example.jariBean.handler.ex.CustomDBException;
 import com.example.jariBean.repository.cafe.CafeRepository;
 import com.example.jariBean.repository.matching.MatchingRepository;
@@ -146,4 +147,9 @@ public class CafeService {
 
     }
 
+    public CafeSummaryDto getSummaryByCafeId(String cafeId) {
+        Cafe fCafe = cafeRepository.findById(cafeId)
+                .orElseThrow(() -> new CustomApiException("cafeId에 해당하는 Cafe가 존재하지 않습니다."));
+        return new CafeSummaryDto(fCafe);
+    }
 }

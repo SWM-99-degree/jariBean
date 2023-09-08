@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.CREATED;
@@ -92,6 +91,18 @@ public class CafeController {
         Page<CafeSummaryDto> cafeSummaryDtos = cafes.map(cafe -> new CafeSummaryDto(cafe));
 
         return new ResponseEntity<>(new ResponseDto<>(1, "정보를 성공적으로 가져왔습니다", cafeSummaryDtos), CREATED);
+    }
+
+    @Operation(summary = "cafe summary information", description = "api for search cafe list")
+    @ApiResponse(
+            responseCode = "200",
+            description = "카페 간략 정보 조회 성공",
+            content = @Content(schema = @Schema(implementation = CafeSummaryDto.class))
+    )
+    @GetMapping("/{cafeId}/summary")
+    public ResponseEntity cafeSummaryInfo(@PathVariable("cafeId") String cafeId) {
+        CafeSummaryDto cafeSummaryDto = cafeService.getSummaryByCafeId(cafeId);
+        return new ResponseEntity<>(new ResponseDto<>(1, "정보를 성공적으로 가져왔습니다", cafeSummaryDto), OK);
     }
 
 }
