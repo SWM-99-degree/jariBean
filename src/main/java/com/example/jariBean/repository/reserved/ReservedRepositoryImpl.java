@@ -7,21 +7,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.aggregation.Aggregation;
-import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
-import org.springframework.data.mongodb.core.aggregation.MatchOperation;
-import org.springframework.data.mongodb.core.aggregation.SortOperation;
+import org.springframework.data.mongodb.core.aggregation.*;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
-public class ReservedRepositoryImpl implements ReservedRepositoryTemplate{
-    @Autowired private MongoTemplate mongoTemplate;
+public class ReservedRepositoryImpl implements ReservedRepositoryTemplate {
+    @Autowired
+    private MongoTemplate mongoTemplate;
 
-    public static class Tuple<cafeId, tableId>{
+    public static class Tuple<cafeId, tableId> {
         private final String cafeId;
         private final String tableId;
 
@@ -50,19 +49,19 @@ public class ReservedRepositoryImpl implements ReservedRepositoryTemplate{
 
         Query queryByWordsandOptions = new Query(mainCriteria);
         mongoTemplate.find(queryByWordsandOptions, Reserved.class).forEach(reserved ->
-                {
-                    if (filterCafes.containsKey(reserved.getCafe().getId())) {
-                        filterCafes.get(reserved.getCafe().getId()).add(reserved.getTable().getId());
-                    } else {
-                        Set<String> tableSet = new HashSet<>();
-                        tableSet.add(reserved.getTable().getId());
-                        filterCafes.put(reserved.getCafe().getId(), tableSet);
-                    }
-                });
+        {
+            if (filterCafes.containsKey(reserved.getCafe().getId())) {
+                filterCafes.get(reserved.getCafe().getId()).add(reserved.getTable().getId());
+            } else {
+                Set<String> tableSet = new HashSet<>();
+                tableSet.add(reserved.getTable().getId());
+                filterCafes.put(reserved.getCafe().getId(), tableSet);
+            }
+        });
 
         Criteria reservedCriteria = new Criteria();
 
-        if (startTime != null){
+        if (startTime != null) {
             // 겹치는 카페 예약
             Criteria case1Criteria = Criteria.where("startTime").gte(startTime).lt(endTime);
             Criteria case2Criteria = Criteria.where("endTime").gt(startTime).lte(endTime);
@@ -74,13 +73,18 @@ public class ReservedRepositoryImpl implements ReservedRepositoryTemplate{
 
             Query queryByTime = new Query(reservedCriteria);
             mongoTemplate.find(queryByTime, Reserved.class).forEach(reserved -> {
-                if (filterCafes.containsKey(reserved.getCafe().getId())) {filterCafes.get(reserved.getCafe().getId()).remove(reserved.getTable().getId());}
+                if (filterCafes.containsKey(reserved.getCafe().getId())) {
+                    filterCafes.get(reserved.getCafe().getId()).remove(reserved.getTable().getId());
+                }
             });
         }
 
         List<String> canReserveCafes = new ArrayList<>();
         for (Map.Entry<String, Set> cafe : filterCafes.entrySet()) {
-            if (!cafe.getValue().isEmpty()) {canReserveCafes.add(cafe.getKey());}}
+            if (!cafe.getValue().isEmpty()) {
+                canReserveCafes.add(cafe.getKey());
+            }
+        }
 
         return canReserveCafes;
     }
@@ -99,7 +103,7 @@ public class ReservedRepositoryImpl implements ReservedRepositoryTemplate{
                 limit
         );
 
-        Reserved reserved = mongoTemplate.aggregate(aggregation, Reserved.class,Reserved.class).getUniqueMappedResult();
+        Reserved reserved = mongoTemplate.aggregate(aggregation, Reserved.class, Reserved.class).getUniqueMappedResult();
         return reserved;
     }
 
@@ -148,7 +152,6 @@ public class ReservedRepositoryImpl implements ReservedRepositoryTemplate{
     @Override
     public List<Reserved> findReservedByConditions(String cafeId, LocalDateTime startTime, Integer seating, List<TableClass.TableOption> tableOptionList) {
 
-
         Criteria mainCriteria = new Criteria("cafe._id").is(new ObjectId(cafeId));
 
         mainCriteria.and("startTime").gte(startTime.with(LocalTime.MIN)).lte(startTime.with(LocalTime.MAX));
@@ -180,5 +183,31 @@ public class ReservedRepositoryImpl implements ReservedRepositoryTemplate{
         Aggregation aggregation = Aggregation.newAggregation(matchToday);
 
         return mongoTemplate.aggregate(aggregation, "reserved", Reserved.class).getMappedResults();
+    }
+
+
+
+    @Override
+    public List<String> findReserveInNextDay(LocalDateTime time) {
+        Criteria criteria = new Criteria("startTime").gte(time.with(LocalTime.MIN)).lte(time.with(LocalTime.MAX));
+        Aggregation aggregation = Aggregation.newAggregation(
+                Aggregation.match(criteria),
+                Aggregation.group("userId").addToSet("userId").as("userIdList")
+        );
+
+        AggregationResults<DistinctUserIdResult> results = mongoTemplate.aggregate(aggregation, "reserved", DistinctUserIdResult.class);
+
+        return results.getMappedResults().stream().map(DistinctUserIdResult::getUserId).toList();
+    }
+
+    class DistinctUserIdResult {
+        private String userId;
+
+        public String getUserId() {
+            return userId;
+        }
+        public void setUserId(String userId) {
+            this.userId = userId;
+        }
     }
 }

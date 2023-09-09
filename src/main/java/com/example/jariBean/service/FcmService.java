@@ -13,6 +13,7 @@ public class FcmService {
 
     private final TokenRepository tokenRepository;
 
+
     public void updateFirebaseToken(String userId, FCMTokenReqDto fcmTokenReqDto) {
         // find token by userId
         Token token = tokenRepository.findById(userId)

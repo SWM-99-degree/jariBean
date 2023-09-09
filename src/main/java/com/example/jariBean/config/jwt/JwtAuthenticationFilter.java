@@ -32,6 +32,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     private ThreadLocal<ManagerLoginReqDto> requestBodyHolder = new ThreadLocal<>();
 
 
+
     public JwtAuthenticationFilter(AuthenticationManager authenticationManager, TokenRepository tokenRepository, JwtProcess jwtProcess) {
         super(authenticationManager);
         setFilterProcessesUrl("/api/manager/login"); // 고객 로그인 URL 지정
