@@ -8,6 +8,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.aggregation.MatchOperation;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.index.Index;
@@ -46,15 +47,20 @@ public class CafeRepositoryImpl implements CafeRepositoryTemplate{
         Criteria criteria = Criteria.where("cafeId").in(cafes);
         MatchOperation matchOperation = Aggregation.match(criteria);
 
+        // 전체 size를 알기 위한 쿼리
+        Aggregation countAggregation = Aggregation.newAggregation(matchOperation);
+        AggregationResults<Cafe> countResults = mongoTemplate.aggregate(countAggregation, Cafe.class, Cafe.class);
+        int totalCount = countResults.getMappedResults().size();
+
+        // pagination size를 알기 위한 쿼리
         Aggregation aggregation = Aggregation.newAggregation(
                 matchOperation,
                 Aggregation.skip(pageable.getOffset()),
                 Aggregation.limit(pageable.getPageSize())
         );
-
         List<Cafe> cafesResult = mongoTemplate.aggregate(aggregation, Cafe.class, Cafe.class).getMappedResults();
 
-        return new PageImpl<>(cafesResult, pageable, cafesResult.size());
+        return new PageImpl<>(cafesResult, pageable, totalCount);
     }
 
     @Override
