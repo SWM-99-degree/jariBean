@@ -73,7 +73,6 @@ public class FCMNotificationService {
             MulticastMessage sendMessage = MulticastMessage.builder()
                     .setNotification(notification)
                     .setAndroidConfig(androidConfig)
-                    .putData("url", "")
                     .putData("type", "reservationInfo")
                     .addAllTokens(tokenList)
                     .build();

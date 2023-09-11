@@ -71,7 +71,7 @@ public class ManagerController {
             description = "테이블 내역 조회 성공",
             content = @Content(array = @ArraySchema(schema = @Schema(implementation = ManagerTableResDto.class)))
     )
-    @GetMapping("/table{cafeId}")
+    @GetMapping("/table/{cafeId}")
     public ResponseEntity tablePage(@PathVariable("cafeId") String cafeId) {
         List<ManagerTableResDto> tablePage = managerService.getTablePage(cafeId);
         return new ResponseEntity<>(new ResponseDto<>(1, "좌석 page 결과", tablePage), OK);
