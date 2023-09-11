@@ -72,6 +72,7 @@ public class ManagerController {
             description = "테이블 데이터 조회",
             content = @Content(schema = @Schema(implementation = TableDto.class))
     )
+
     @GetMapping("/table/{tableClassId}")
     public ResponseEntity findTable(@PathVariable("tableClassId") String tableClassId) {
         List<TableDto> tableList = managerService.getTableList(tableClassId);
