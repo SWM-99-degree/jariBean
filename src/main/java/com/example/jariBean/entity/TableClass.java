@@ -35,6 +35,8 @@ public class TableClass {
     @Column(nullable = false)
     private List<TableOption> tableOptionList;
 
+    private String image;
+
     @DBRef
     private Cafe cafe;
 

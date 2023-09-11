@@ -21,8 +21,7 @@ public class ManagerResDto {
         private List<TableReserveDto> tableReserveDtoList = new ArrayList<>();
 
         public void addTableClassSummaryDto(TableClass tableClass) {
-            TableClassSummaryDto tableClassSummaryDto = new TableClassSummaryDto();
-            tableClassSummaryDto.setTableClass(tableClass);
+            TableClassSummaryDto tableClassSummaryDto = new TableClassSummaryDto(tableClass);
             tableClassSummaryDtoList.add(tableClassSummaryDto);
         }
 
@@ -60,17 +59,20 @@ public class ManagerResDto {
 
 
     @Data
+    @JsonInclude(JsonInclude.Include.NON_NULL) // Null 값인 필드 제외
     public static class TableClassSummaryDto {
         private String id;
         private String name;
         private Integer seating;
+        private String image;
         private List<TableOption> option;
         private List<TableSummaryDto> tableSummaryDtoList;
 
-        public void setTableClass(TableClass tableClass) {
+        public TableClassSummaryDto(TableClass tableClass) {
             this.id = tableClass.getId();
             this.name = tableClass.getName();
             this.seating = tableClass.getSeating();
+            this.image = tableClass.getImage();
             this.option = tableClass.getTableOptionList();
         }
     }
@@ -125,6 +127,58 @@ public class ManagerResDto {
             this.id = id;
             this.email = email;
             this.role = role;
+        }
+    }
+
+    @Data
+    @JsonInclude(JsonInclude.Include.NON_NULL) // Null 값인 필드 제외
+    public static class TableClassDto {
+        private String id;
+        private String name;
+        private String image;
+        private int seating;
+        private List<TableOption> tableOptionList;
+
+        public TableClassDto(TableClass tableClass) {
+            this.id = tableClass.getId();
+            this.name = tableClass.getName();
+            this.image = tableClass.getImage();
+            this.seating = tableClass.getSeating();
+            this.tableOptionList = tableClass.getTableOptionList();
+        }
+    }
+
+    @Data
+    @JsonInclude(JsonInclude.Include.NON_NULL) // Null 값인 필드 제외
+    public static class TableDto {
+        private String id;
+        private String name;
+        private String image;
+        private String description;
+
+        public TableDto(Table table) {
+            this.id = table.getId();
+            this.name = table.getName();
+            this.image = table.getImage();
+            this.description = table.getDescription();
+        }
+    }
+
+    @Data
+    @JsonInclude(JsonInclude.Include.NON_NULL) // Null 값인 필드 제외
+    public static class ReserveDto {
+        private String id;
+        private String userId;
+        private String tableId;
+        private LocalDateTime startTime;
+        private LocalDateTime endTime;
+
+        public ReserveDto(Reserved reserved) {
+            this.id = reserved.getId();
+            this.userId = reserved.getUserId();
+            this.tableId = reserved.getTable().getId();
+            this.startTime = reserved.getStartTime();
+            this.endTime = reserved.getEndTime();
         }
     }
 
