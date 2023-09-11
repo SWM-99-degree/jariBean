@@ -1,7 +1,5 @@
 package com.example.jariBean.service;
 
-import com.example.jariBean.dto.manager.ManagerResDto.ManagerReserveResDto;
-import com.example.jariBean.dto.manager.ManagerResDto.ManagerTableResDto;
 import com.example.jariBean.entity.Cafe;
 import com.example.jariBean.entity.Reserved;
 import com.example.jariBean.entity.Table;
@@ -15,7 +13,6 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -108,55 +105,6 @@ class ManagerServiceTest {
     }
 
     @Test
-    public void getTablePageTest() throws Exception {
-        // given
-        String cafeId = globalCafe.getId();
-
-        // when
-        List<ManagerTableResDto> tablePage = managerService.getTablePage(cafeId);
-
-        // then
-        tablePage.forEach(managerTableResDto -> {
-            System.out.println("managerTableResDto.getName() = " + managerTableResDto.getName());
-            managerTableResDto.getTableSummaryDtoList().forEach(tableSummaryDto -> {
-                System.out.println("tableSummaryDto.getName() = " + tableSummaryDto.getName());
-            });
-        });
-
-        Assertions.assertThat(tablePage.size()).isEqualTo(3);
-        for (ManagerTableResDto managerTableResDto : tablePage) {
-            Assertions.assertThat(managerTableResDto.getTableSummaryDtoList().size()).isEqualTo(3);
-        }
-    }
-
-    @Test
-    public void getReservePageTest() throws Exception {
-        // given
-        String cafeId = globalCafe.getId();
-
-        // when
-        ManagerReserveResDto managerReserveResDto = managerService.getReservePage(cafeId);
-
-        // then
-        managerReserveResDto.getTableClassSummaryDtoList().forEach(tableClassSummaryDto -> {
-            System.out.println("tableClassSummaryDto.getName() = " + tableClassSummaryDto.getName());
-        });
-
-        managerReserveResDto.getTableReserveDtoList().forEach(tableReserveDto -> {
-            System.out.println("tableReserveDto.getTableName() = " + tableReserveDto.getTableName());
-            tableReserveDto.getReservePeriodDtoList().forEach(reservePeriodDto -> {
-                System.out.println("reservePeriodDto.getUsername() = " + reservePeriodDto.getUsername());
-                System.out.println("reservePeriodDto.getStartTime() = " + reservePeriodDto.getStartTime());
-                System.out.println("reservePeriodDto.getEndTime() = " + reservePeriodDto.getEndTime());
-            });
-        });
-
-        Assertions.assertThat(managerReserveResDto.getTableClassSummaryDtoList().size()).isEqualTo(3);
-        Assertions.assertThat(managerReserveResDto.getTableReserveDtoList().size()).isEqualTo(9);
-
-    }
-
-    @Test
     public void updateTableTest() throws Exception {
         // given
         Table table = Table.builder().build();
@@ -237,5 +185,4 @@ class ManagerServiceTest {
         Assertions.assertThat(savedTableClass.getTableOptionList()).isEqualTo(option);
 
     }
-
 }

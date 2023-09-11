@@ -3,11 +3,10 @@ package com.example.jariBean.service;
 import com.example.jariBean.dto.manager.ManagerReqDto.ManagerJoinReqDto;
 import com.example.jariBean.dto.manager.ManagerReqDto.ManagerTableClassReqDto;
 import com.example.jariBean.dto.manager.ManagerResDto.ManagerLoginResDto;
-import com.example.jariBean.dto.manager.ManagerResDto.ManagerReserveResDto;
-import com.example.jariBean.dto.manager.ManagerResDto.ManagerTableResDto;
-import com.example.jariBean.dto.manager.ManagerResDto.TableReserveDto;
+import com.example.jariBean.dto.manager.ManagerResDto.ReserveDto;
+import com.example.jariBean.dto.manager.ManagerResDto.TableClassDto;
+import com.example.jariBean.dto.manager.ManagerResDto.TableDto;
 import com.example.jariBean.entity.CafeManager;
-import com.example.jariBean.entity.Reserved;
 import com.example.jariBean.entity.Table;
 import com.example.jariBean.entity.TableClass;
 import com.example.jariBean.handler.ex.CustomDBException;
@@ -21,6 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.example.jariBean.dto.manager.ManagerReqDto.ManagerTableReqDto;
@@ -41,52 +41,6 @@ public class ManagerService {
         cafeRepository.findById(id)
                 .orElseThrow(() -> new CustomDBException("id에 해당하는 Cafe가 존재하지 않습니다."))
                         .toggleMatchingStatus();
-    }
-
-    public List<ManagerTableResDto> getTablePage(String cafeId) {
-
-        List<TableClass> tableClassList = tableClassRepository.findByCafeId(cafeId);
-        List<Table> tableList = tableRepository.findByCafeId(cafeId);
-
-        return tableClassList.stream()
-                .map(tableClass -> {
-                    ManagerTableResDto managerTableResDto = new ManagerTableResDto();
-                    managerTableResDto.addTableClassSummaryDto(tableClass);
-                    tableList.stream()
-                            .filter(table -> table.getTableClassId().equals(tableClass.getId()))
-                            .collect(Collectors.toList())
-                            .forEach(table -> {
-                                managerTableResDto.addTableSummaryDto(table);
-                            });
-                    return managerTableResDto;
-                }).collect(Collectors.toList());
-    }
-
-    public ManagerReserveResDto getReservePage(String cafeId) {
-
-        ManagerReserveResDto managerReserveResDto = new ManagerReserveResDto();
-
-        List<TableClass> tableClassList = tableClassRepository.findByCafeId(cafeId);
-        List<Table> tableList = tableRepository.findByCafeId(cafeId);
-        List<String> tableIdList = tableList.stream().map(Table::getId).collect(Collectors.toList());
-        List<Reserved> reservedList = reservedRepository.findByTableIdIn(tableIdList);
-
-        tableClassList.forEach(tableClass -> {
-            managerReserveResDto.addTableClassSummaryDto(tableClass);
-        });
-
-        tableList.forEach(table -> {
-            TableReserveDto tableReserveDto = new TableReserveDto();
-            tableReserveDto.setTable(table);
-            reservedList.stream()
-                    .filter(reserved -> reserved.getTable().getId().equals(table.getId()))
-                    .collect(Collectors.toList())
-                    .forEach(reserved -> {
-                        tableReserveDto.addReservePeriod(reserved);
-                    });
-            managerReserveResDto.addTableReserveDtoList(tableReserveDto);
-        });
-        return managerReserveResDto;
     }
 
     public void updateTable(String tableId, ManagerTableReqDto managerTableReqDto) {
@@ -143,5 +97,29 @@ public class ManagerService {
                 .email(savedManager.getEmail())
                 .role(savedManager.getRole().toString())
                 .build();
+    }
+
+    public List<TableClassDto> getTableClassList(String cafeId) {
+        return tableClassRepository.findByCafeId(cafeId).stream()
+                .map(TableClassDto::new)
+                .collect(Collectors.toList());
+    }
+
+    public List<TableDto> getTableList(String tableClassId) {
+        return tableRepository.findByTableClassId(tableClassId).stream()
+                .map(TableDto::new)
+                .collect(Collectors.toList());
+    }
+
+    public Map<String, List<ReserveDto>> getReserveList(String tableClassId) {
+
+        // tableClassId로 조회한 Reserve 내역
+        List<ReserveDto> findReserveList = reservedRepository.findByTableClassId(tableClassId).stream()
+                .map(ReserveDto::new)
+                .collect(Collectors.toList());
+
+        // tableId를 key 값으로 Map 만들기
+        return findReserveList.stream()
+                .collect(Collectors.groupingBy(ReserveDto::getTableId));
     }
 }

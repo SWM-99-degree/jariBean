@@ -5,11 +5,11 @@ import com.example.jariBean.dto.manager.ManagerReqDto.ManagerJoinReqDto;
 import com.example.jariBean.dto.manager.ManagerReqDto.ManagerTableClassReqDto;
 import com.example.jariBean.dto.manager.ManagerReqDto.ManagerTableReqDto;
 import com.example.jariBean.dto.manager.ManagerResDto.ManagerLoginResDto;
-import com.example.jariBean.dto.manager.ManagerResDto.ManagerReserveResDto;
-import com.example.jariBean.dto.manager.ManagerResDto.ManagerTableResDto;
+import com.example.jariBean.dto.manager.ManagerResDto.ReserveDto;
+import com.example.jariBean.dto.manager.ManagerResDto.TableClassDto;
+import com.example.jariBean.dto.manager.ManagerResDto.TableDto;
 import com.example.jariBean.service.ManagerService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
@@ -53,29 +54,43 @@ public class ManagerController {
         return new ResponseEntity<>(new ResponseDto<>(1, "매칭 상태 변경 완료", null), OK);
     }
 
-    @Operation(summary = "get reserve list", description = "api for get reserve list")
+    @Operation(summary = "find table-class list", description = "api for find table-class list")
     @ApiResponse(
             responseCode = "200",
-            description = "예약 내역 조회 성공",
-            content = @Content(schema = @Schema(implementation = ManagerReserveResDto.class))
+            description = "테이블 클래스 데이터 조회",
+            content = @Content(schema = @Schema(implementation = TableClassDto.class))
     )
-    @GetMapping("/reserve/{cafeId}")
-    public ResponseEntity reservePage(@PathVariable("cafeId") String cafeId) {
-        ManagerReserveResDto reserveResDto = managerService.getReservePage(cafeId);
-        return new ResponseEntity<>(new ResponseDto<>(1, "예약 page 결과", reserveResDto), OK);
+    @GetMapping("/table-class/{cafeId}")
+    public ResponseEntity findTableClass(@PathVariable("cafeId") String cafeId) {
+        List<TableClassDto> tableClassList = managerService.getTableClassList(cafeId);
+        return new ResponseEntity<>(new ResponseDto<>(1, "테이블 클래스 정보 조회 성공", tableClassList), OK);
     }
 
     @Operation(summary = "find table list", description = "api for find table list")
     @ApiResponse(
             responseCode = "200",
-            description = "테이블 내역 조회 성공",
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = ManagerTableResDto.class)))
+            description = "테이블 데이터 조회",
+            content = @Content(schema = @Schema(implementation = TableDto.class))
     )
-    @GetMapping("/table{cafeId}")
-    public ResponseEntity tablePage(@PathVariable("cafeId") String cafeId) {
-        List<ManagerTableResDto> tablePage = managerService.getTablePage(cafeId);
-        return new ResponseEntity<>(new ResponseDto<>(1, "좌석 page 결과", tablePage), OK);
+    @GetMapping("/table/{tableClassId}")
+    public ResponseEntity findTable(@PathVariable("tableClassId") String tableClassId) {
+        List<TableDto> tableList = managerService.getTableList(tableClassId);
+        return new ResponseEntity<>(new ResponseDto<>(1, "테이블 정보 조회 성공", tableList), OK);
     }
+
+    @Operation(summary = "find reserve list", description = "api for find reserve list")
+    @ApiResponse(
+            responseCode = "200",
+            description = "예약 내역 조회",
+            content = @Content(schema = @Schema(implementation = ReserveDto.class))
+    )
+    @GetMapping("/reserve/{tableClassId}")
+    public ResponseEntity findReserveList(@PathVariable("tableClassId") String tableClassId) {
+        Map<String, List<ReserveDto>> reserveList = managerService.getReserveList(tableClassId);
+        return new ResponseEntity<>(new ResponseDto<>(1, "예약 내역 조회 성공", reserveList), OK);
+    }
+
+
 
     @Operation(summary = "update table information", description = "api for update table information")
     @ApiResponse(
