@@ -36,7 +36,7 @@ public class TokenController {
     @PatchMapping("/jwt")
     public ResponseEntity renewJWT(@AuthenticationPrincipal LoginUser loginUser, HttpServletRequest request) {
         String refreshJWT = request.getHeader(REFRESH_HEADER);
-        LoginSuccessResDto loginSuccessResDto = tokenService.renewJWT(loginUser.getUser().getId(), loginUser.getUser().getRole(), refreshJWT);
+        LoginSuccessResDto loginSuccessResDto = tokenService.renewJWT(loginUser.getUser().getId(), loginUser.getUser().getRole(), loginUser.getUser().getNickname(), refreshJWT);
         return new ResponseEntity<>(new ResponseDto<>(1, "JWT 갱신 성공", loginSuccessResDto), OK);
     }
 }

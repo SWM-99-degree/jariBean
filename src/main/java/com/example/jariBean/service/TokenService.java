@@ -19,15 +19,15 @@ public class TokenService {
     private final TokenRepository tokenRepository;
     private final JwtProcess jwtProcess;
 
-    public LoginSuccessResDto renewJWT(String userId, Role role, String refreshJWT) {
+    public LoginSuccessResDto renewJWT(String userId, Role role, String nickname, String refreshJWT) {
 
         // find token set
         Token fToken = tokenRepository.findById(userId)
                 .orElseThrow(() -> new CustomApiException("userId에 해당하는 Token set이 존재하지 않습니다."));
 
         // create JWT
-        String accessToken = jwtProcess.createJWT(userId, role.toString(), ACCESS);
-        String refreshToken = jwtProcess.createJWT(userId, role.toString(), REFRESH);
+        String accessToken = jwtProcess.createJWT(userId, role.toString(), nickname, ACCESS);
+        String refreshToken = jwtProcess.createJWT(userId, role.toString(), nickname, REFRESH);
 
         // renew JWT
         fToken.renewJWT(accessToken, refreshToken);
