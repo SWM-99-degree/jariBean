@@ -48,8 +48,8 @@ public abstract class OAuthService {
         User savedUser = userRepository.save(user);
 
         //create JWT
-        String accessToken = jwtProcess.createJWT(savedUser.getId(), savedUser.getRole().toString(), ACCESS);
-        String refreshToken = jwtProcess.createJWT(savedUser.getId(), savedUser.getRole().toString(), REFRESH);
+        String accessToken = jwtProcess.createJWT(savedUser.getId(), savedUser.getRole().toString(), savedUser.getNickname(), ACCESS);
+        String refreshToken = jwtProcess.createJWT(savedUser.getId(), savedUser.getRole().toString(), savedUser.getNickname(), REFRESH);
 
         // storing jwt in redis
         Token token = Token.builder()

@@ -18,13 +18,14 @@ public class JwtProcess {
     @Value("${JWT_SECRET_KEY}")
     private String JWT_SECRET_KEY;
 
-    public String createJWT(String id, String userRole, TokenType type) {
+    public String createJWT(String id, String userRole, String username, TokenType type) {
         String jwt = JWT.create()
-               .withSubject("jariBean")
-               .withExpiresAt(new Date(System.currentTimeMillis() + type.getTime()))
-               .withClaim("userId", id)
-               .withClaim("userRole", userRole)
-               .sign(Algorithm.HMAC512(JWT_SECRET_KEY));
+                .withSubject("jariBean")
+                .withExpiresAt(new Date(System.currentTimeMillis() + type.getTime()))
+                .withClaim("userId", id)
+                .withClaim("userRole", userRole)
+                .withClaim("username", username)
+                .sign(Algorithm.HMAC512(JWT_SECRET_KEY));
 
         return jwt;
     }
