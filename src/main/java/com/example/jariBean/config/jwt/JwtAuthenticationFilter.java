@@ -82,11 +82,13 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String accessToken = jwtProcess.createJWT(
                 loginCafe.getCafeManager().getCafeId(),
                 loginCafe.getCafeManager().getRole().toString(),
+                loginCafe.getCafeManager().getEmail(),
                 JwtProcess.TokenType.ACCESS);
 
         String refreshToken = jwtProcess.createJWT(
                 loginCafe.getCafeManager().getCafeId(),
                 loginCafe.getCafeManager().getRole().toString(),
+                loginCafe.getCafeManager().getEmail(),
                 JwtProcess.TokenType.REFRESH);
 
         // `Token` 생성
