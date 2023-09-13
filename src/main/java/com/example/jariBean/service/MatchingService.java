@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -30,4 +31,13 @@ public class MatchingService {
 
         return matchingResDtos;
     }
+
+    public List<MatchingResDto.MatchingSummaryResForCafeDto> findMatchingByCafe(String cafeId) {
+        List<Matching> matchingList = matchingRepository.findMatchingProgress(cafeId).orElseThrow(() -> new CustomDBException("Matching DB에 문제가 있습니다."));
+        List<MatchingResDto.MatchingSummaryResForCafeDto> matchingResDtos = matchingList.stream()
+                .map(matching -> new MatchingResDto.MatchingSummaryResForCafeDto(matching))
+                .collect(Collectors.toList());
+        return matchingResDtos;
+    }
+
 }

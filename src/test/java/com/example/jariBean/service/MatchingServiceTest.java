@@ -15,6 +15,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.util.List;
+
 @SpringBootTest
 @ActiveProfiles("test")
 public class MatchingServiceTest {
@@ -39,7 +41,7 @@ public class MatchingServiceTest {
         String userId = "64d1082828032028b33c4450";
         Cafe cafe = cafeRepository.save(new Cafe());
         Integer number = 2;
-        Matching matching = new Matching(userId, cafe, number);
+        Matching matching = new Matching(userId, cafe, number, "기요옹");
         matchingRepository.save(matching);
 
         // when
@@ -52,6 +54,29 @@ public class MatchingServiceTest {
             break;
         }
 
+    }
+
+    @Test
+    public void progressingTest() {
+        // given
+        Cafe cafe = cafeRepository.save(new Cafe());
+
+        Matching matching1 = new Matching("testUser1", cafe, 3, "철수");
+        Matching matching2 = new Matching("testUser2", cafe, 3, "얌얌");
+        Matching matching3 = new Matching("testUser3", cafe, 3, "영희");
+
+        matchingRepository.save(matching1);
+        matchingRepository.save(matching2);
+        matchingRepository.save(matching3);
+
+        // when
+        List<MatchingResDto.MatchingSummaryResForCafeDto> summaryResForCafeDtoList = matchingService.findMatchingByCafe(cafe.getId());
+
+        //then
+        Assertions.assertEquals(summaryResForCafeDtoList.size(), 3);
+
+        cafeRepository.deleteAll();
+        matchingRepository.deleteAll();
     }
 
     @Test

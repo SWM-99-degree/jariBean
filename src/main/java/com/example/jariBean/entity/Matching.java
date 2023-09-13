@@ -25,6 +25,9 @@ public class Matching {
     private String userId;
 
     @Column(nullable = false)
+    private String username;
+
+    @Column(nullable = false)
     private Integer seating;
 
     @Column(nullable = false)
@@ -33,7 +36,7 @@ public class Matching {
     @Column(nullable = false)
     private Status status;
 
-    enum Status {
+    public enum Status {
         CANCEL, PROCESSING, COMPLETE, NOSHOW
     }
 
@@ -54,10 +57,13 @@ public class Matching {
     private Integer version;
 
     @Builder
-    public Matching(String userId, Cafe cafe, Integer seating){
+    public Matching(String userId, Cafe cafe, Integer seating, String username){
         this.userId = userId;
         this.cafe = cafe;
         this.seating = seating;
+        this.username = username;
+        this.status = Status.PROCESSING;
+
     }
 
 }

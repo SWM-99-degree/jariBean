@@ -24,4 +24,20 @@ public class MatchingResDto {
             this.cafeSummaryDto = new CafeResDto.CafeSummaryDto(matching.getCafe());
         }
     }
+
+    @Getter
+    @Setter
+    public static class MatchingSummaryResForCafeDto {
+        private String id;
+        private Integer seating;
+        private String name;
+        private LocalDateTime startTime;
+
+        public MatchingSummaryResForCafeDto(Matching matching){
+            this.id = matching.getId();
+            this.seating = matching.getSeating();
+            this.name = matching.getUsername();
+            this.startTime = matching.getMatchingTime();
+        }
+    }
 }
