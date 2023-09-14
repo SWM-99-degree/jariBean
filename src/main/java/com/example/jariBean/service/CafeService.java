@@ -42,7 +42,6 @@ public class CafeService {
 
     private final TableRepository tableRepository;
 
-
     public Page<CafeSummaryDto> getCafeByMatchingCount(Pageable pageable){
         try {
             List<String> cafeList = matchingRepository.findCafeIdSortedByCount(pageable);

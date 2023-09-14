@@ -1,7 +1,9 @@
 package com.example.jariBean.controller;
 
+import com.example.jariBean.config.auth.LoginCafe;
 import com.example.jariBean.config.auth.LoginUser;
 import com.example.jariBean.dto.ResponseDto;
+import com.example.jariBean.dto.matching.MatchingResDto;
 import com.example.jariBean.dto.matching.MatchingResDto.MatchingSummaryResDto;
 import com.example.jariBean.service.MatchingService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,7 +35,6 @@ public class MatchingController {
 
     private final MatchingService matchingService;
 
-
     @Operation(summary = "find matching list", description = "api for find matching list")
     @ApiResponse(
             responseCode = "200",
@@ -46,4 +47,23 @@ public class MatchingController {
         Page<MatchingSummaryResDto> matchingSummaryResDtoList = matchingService.findMatchingByUserId(userId, pageable);
         return new ResponseEntity<>(new ResponseDto<>(1, "정보를 성공적으로 가져왔습니다", matchingSummaryResDtoList), OK);
     }
+
+
+
+
+    @Operation(summary = "find matching list for cafe", description = "api for find matching list")
+    @ApiResponse(
+            responseCode = "200",
+            description = "매칭 내역 조회 성공",
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = MatchingResDto.MatchingSummaryResForCafeDto.class)))
+    )
+    @GetMapping("/progressing")
+    public ResponseEntity leftMatchingList(@AuthenticationPrincipal LoginCafe loginUser) {
+        String cafeId = loginUser.getCafeManager().getId();
+        List<MatchingResDto.MatchingSummaryResForCafeDto> matchingSummaryResDtoList = matchingService.findMatchingByCafe(cafeId);
+        return new ResponseEntity<>(new ResponseDto<>(1, "정보를 성공적으로 가져왔습니다", matchingSummaryResDtoList), OK);
+    }
+
+
+
 }
