@@ -49,7 +49,7 @@ public class OAuthController {
         // get user information using accessToken
         SocialUserInfo socialUserInfo = oAuthService.getUserInfo(accessToken);
         // save or update oauth information
-        LoginSuccessResDto loginSuccessResDto = oAuthService.saveOrUpdate(socialUserInfo, registrationId);
+        LoginSuccessResDto loginSuccessResDto = oAuthService.saveOrUpdate(socialUserInfo);
         return new ResponseEntity<>(new ResponseDto<>(1, "로그인 성공", loginSuccessResDto), OK);
     }
 

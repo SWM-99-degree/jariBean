@@ -65,7 +65,7 @@ public class OAuthGoogleService extends OAuthService{
         return SocialUserInfo.create(
                 REGISTRATION,
                 userInfo.getId(),
-                userInfo.getName(),
+                userInfo.getName() != null ? userInfo.getName() : "Guest",
                 userInfo.getPicture()
         );
     }
