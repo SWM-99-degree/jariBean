@@ -76,7 +76,7 @@ public class OAuthKakaoService extends OAuthService{
         return SocialUserInfo.create(
                 REGISTRATION,
                 userInfo.getId(),
-                userInfo.getProperties().getNickname(),
+                userInfo.getProperties().getNickname() != null ? userInfo.getProperties().getNickname() : "Guest",
                 userInfo.getProperties().getProfile_image()
         );
     }
