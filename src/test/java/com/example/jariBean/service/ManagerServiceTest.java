@@ -1,9 +1,6 @@
 package com.example.jariBean.service;
 
-import com.example.jariBean.entity.Cafe;
-import com.example.jariBean.entity.Reserved;
-import com.example.jariBean.entity.Table;
-import com.example.jariBean.entity.TableClass;
+import com.example.jariBean.entity.*;
 import com.example.jariBean.entity.TableClass.TableOption;
 import com.example.jariBean.repository.cafe.CafeRepository;
 import com.example.jariBean.repository.reserved.ReservedRepository;
@@ -74,12 +71,12 @@ class ManagerServiceTest {
 
         LocalDateTime now = LocalDateTime.now();
 
-        Reserved r1 = Reserved.builder().table(t1).cafe(cafe).startTime(now).endTime(now.plusMinutes(120)).userId("user-1").build();
-        Reserved r2 = Reserved.builder().table(t1).cafe(cafe).startTime(now).endTime(now.plusMinutes(120)).userId("user-2").build();
-        Reserved r3 = Reserved.builder().table(t1).cafe(cafe).startTime(now).endTime(now.plusMinutes(120)).userId("user-2").build();
-        Reserved r4 = Reserved.builder().table(t2).cafe(cafe).startTime(now).endTime(now.plusMinutes(120)).userId("user-1").build();
-        Reserved r5 = Reserved.builder().table(t2).cafe(cafe).startTime(now).endTime(now.plusMinutes(120)).userId("user-3").build();
-        Reserved r6 = Reserved.builder().table(t3).cafe(cafe).startTime(now).endTime(now.plusMinutes(120)).userId("user-4").build();
+        Reserved r1 = Reserved.builder().table(t1).cafe(cafe).startTime(now).endTime(now.plusMinutes(120)).user(User.builder().id("user-1").build()).build();
+        Reserved r2 = Reserved.builder().table(t1).cafe(cafe).startTime(now).endTime(now.plusMinutes(120)).user(User.builder().id("user-2").build()).build();
+        Reserved r3 = Reserved.builder().table(t1).cafe(cafe).startTime(now).endTime(now.plusMinutes(120)).user(User.builder().id("user-2").build()).build();
+        Reserved r4 = Reserved.builder().table(t2).cafe(cafe).startTime(now).endTime(now.plusMinutes(120)).user(User.builder().id("user-1").build()).build();
+        Reserved r5 = Reserved.builder().table(t2).cafe(cafe).startTime(now).endTime(now.plusMinutes(120)).user(User.builder().id("user-3").build()).build();
+        Reserved r6 = Reserved.builder().table(t3).cafe(cafe).startTime(now).endTime(now.plusMinutes(120)).user(User.builder().id("user-4").build()).build();
 
         reservedRepository.save(r1);
         reservedRepository.save(r2);

@@ -110,7 +110,7 @@ public class ManagerResDto {
         private LocalDateTime endTime;
 
         public void setReservePeriodDto(Reserved reserved) {
-            this.username = reserved.getUserId();
+            this.username = reserved.getUser().getNickname();
             this.startTime = reserved.getStartTime();
             this.endTime = reserved.getEndTime();
         }
@@ -169,14 +169,18 @@ public class ManagerResDto {
     public static class ReserveDto {
         private String id;
         private String userId;
+        private String username;
         private String tableId;
+        private String tableName;
         private LocalDateTime startTime;
         private LocalDateTime endTime;
 
         public ReserveDto(Reserved reserved) {
             this.id = reserved.getId();
-            this.userId = reserved.getUserId();
+            this.userId = reserved.getUser().getId();
+            this.username = reserved.getUser().getNickname();
             this.tableId = reserved.getTable().getId();
+            this.tableName = reserved.getTable().getName();
             this.startTime = reserved.getStartTime();
             this.endTime = reserved.getEndTime();
         }
