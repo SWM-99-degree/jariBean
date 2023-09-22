@@ -25,40 +25,23 @@ public abstract class OAuthService {
     private final JwtProcess jwtProcess;
 
     @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
+    private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public abstract String getAccessToken(String code);
 
     public abstract SocialUserInfo getUserInfo(String accessToken);
 
-    public LoginSuccessResDto saveOrUpdate(SocialUserInfo socialUserInfo, String registrationId) {
-
-        // save or create user
-        User user = userRepository.findBySocialId(socialUserInfo.getSocialId())
-                .orElse(User.builder()
-                        .socialId(socialUserInfo.getSocialId())
-                        .password(passwordEncoder.encode(socialUserInfo.getNickname()))
-                        .role(UNREGISTERED)
-                        .build());
-
-        // update user info
-        user.updateBySocialInfo(socialUserInfo.getNickname(), socialUserInfo.getImageUrl(), passwordEncoder.encode(socialUserInfo.getNickname()));
+    public LoginSuccessResDto saveOrUpdate(SocialUserInfo socialUserInfo) {
 
         // save or update user
-        User savedUser = userRepository.save(user);
+        User savedUser = saveOrUpdateUser(socialUserInfo);
 
         //create JWT
         String accessToken = jwtProcess.createJWT(savedUser.getId(), savedUser.getRole().toString(), savedUser.getNickname(), ACCESS);
         String refreshToken = jwtProcess.createJWT(savedUser.getId(), savedUser.getRole().toString(), savedUser.getNickname(), REFRESH);
 
         // storing jwt in redis
-        Token token = Token.builder()
-                .userId(savedUser.getId())
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .build();
-
-        tokenRepository.save(token);
+        saveToken(savedUser.getId(), accessToken, refreshToken);
 
         return LoginSuccessResDto.builder()
                 .accessToken(accessToken)
@@ -66,7 +49,27 @@ public abstract class OAuthService {
                 .build();
     }
 
-    public boolean isExistUser(String socialId) {
-        return userRepository.existsBySocialId(socialId);
+    private void saveToken(String userId, String accessToken, String refreshToken) {
+        Token token = Token.builder()
+                .userId(userId)
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
+        tokenRepository.save(token);
     }
+
+    private User saveOrUpdateUser(SocialUserInfo socialUserInfo) {
+        // save or create user
+        User user = userRepository.findBySocialId(socialUserInfo.getSocialId())
+                .orElse(User.builder()
+                        .socialId(socialUserInfo.getSocialId())
+                        .nickname(socialUserInfo.getNickname())
+                        .password(passwordEncoder.encode(socialUserInfo.getNickname()))
+                        .role(UNREGISTERED)
+                        .build());
+        // update user info
+        user.updateBySocialInfo(socialUserInfo.getNickname(), socialUserInfo.getImageUrl(), passwordEncoder.encode(socialUserInfo.getNickname()));
+        return userRepository.save(user);
+    }
+
 }

@@ -3,6 +3,7 @@ package com.example.jariBean.dto.reserved;
 import com.example.jariBean.entity.Cafe;
 import com.example.jariBean.entity.Reserved;
 import com.example.jariBean.entity.Table;
+import com.example.jariBean.entity.User;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -56,9 +57,9 @@ public class ReserveReqDto {
 
         private LocalDateTime reservedEndTime;
 
-        public Reserved toEntity(String userId, Table table, Cafe cafe) {
+        public Reserved toEntity(User user, Table table, Cafe cafe) {
             return Reserved.builder()
-                    .userId(userId)
+                    .user(user)
                     .cafe(cafe)
                     .table(table)
                     .startTime(reservedStartTime)
