@@ -1,15 +1,17 @@
 package com.example.jariBean.service;
 
-import com.example.jariBean.dto.reserved.ReservedResDto.NearestReservedResDto;
 import com.example.jariBean.dto.reserved.ReservedResDto.ReserveSummaryResDto;
 import com.example.jariBean.entity.Cafe;
 import com.example.jariBean.entity.Reserved;
 import com.example.jariBean.entity.Table;
+import com.example.jariBean.entity.User;
+import com.example.jariBean.handler.ex.CustomApiException;
 import com.example.jariBean.handler.ex.CustomDBException;
 import com.example.jariBean.handler.ex.CustomNoContentException;
 import com.example.jariBean.repository.cafe.CafeRepository;
 import com.example.jariBean.repository.reserved.ReservedRepository;
 import com.example.jariBean.repository.table.TableRepository;
+import com.example.jariBean.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,24 +20,16 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
-import static com.example.jariBean.dto.reserved.ReserveReqDto.ReserveNearestReqDto;
 import static com.example.jariBean.dto.reserved.ReserveReqDto.ReserveSaveReqDto;
 
 @Service
 @RequiredArgsConstructor
 public class ReserveService {
-
-    @Autowired
-    private ReservedRepository reservedRepository;
-
-    @Autowired
-    private CafeRepository cafeRepository;
-
-    @Autowired
-    private TableRepository tableRepository;
+    @Autowired private ReservedRepository reservedRepository;
+    @Autowired private CafeRepository cafeRepository;
+    @Autowired private TableRepository tableRepository;
+    @Autowired private UserRepository userRepository;
 
     public Page<ReserveSummaryResDto> getMyReserved(String userId, Pageable pageable) {
 
@@ -87,11 +81,16 @@ public class ReserveService {
         }
 
         // 예약에 대한 처리
-        Cafe cafe = cafeRepository.findById(saveReservedReqDto.getCafeId()).orElse(null);
+        Cafe cafe = cafeRepository.findById(saveReservedReqDto.getCafeId())
+                .orElseThrow(() -> new CustomApiException("id에 해당하는 Cafe가 존재하지 않습니다."));
 
-        Table table = tableRepository.findById(saveReservedReqDto.getTableId()).orElse(null);
+        Table table = tableRepository.findById(saveReservedReqDto.getTableId())
+                .orElseThrow(() -> new CustomApiException("id에 해당하는 Table이 존재하지 않습니다."));
 
-        Reserved reserved = saveReservedReqDto.toEntity(userId, table, cafe);
+        User findUser = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomApiException("id에 해당하는 User가 존재하지 않습니다."));
+
+        Reserved reserved = saveReservedReqDto.toEntity(findUser, table, cafe);
         reservedRepository.save(reserved);
     }
 

@@ -1,17 +1,14 @@
 package com.example.jariBean.repository.cafe;
 
 
-import com.example.jariBean.entity.Cafe;
-import com.example.jariBean.entity.Reserved;
-import com.example.jariBean.entity.Table;
-import com.example.jariBean.entity.TableClass;
+import com.example.jariBean.entity.*;
 import com.example.jariBean.repository.reserved.ReservedRepository;
 import com.example.jariBean.repository.table.TableRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.TestInstance.*;
+import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
@@ -20,7 +17,6 @@ import org.springframework.test.context.ActiveProfiles;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -65,7 +61,13 @@ class CafeRepositoryTest {
             LocalDateTime dateTime1 = LocalDateTime.of(2023, 7, 1, 15, 0);
             LocalDateTime dateTime2 = LocalDateTime.of(2023, 7, 1, 17, 0);
 
-            Reserved reserved = new Reserved("123", new Cafe(), table, dateTime1, dateTime2);
+            Reserved reserved = Reserved.builder()
+                    .user(User.builder().id("123").build())
+                    .cafe(new Cafe())
+                    .startTime(dateTime1)
+                    .endTime(dateTime2)
+                    .build();
+
             reservedRepository.save(reserved);
         }
 

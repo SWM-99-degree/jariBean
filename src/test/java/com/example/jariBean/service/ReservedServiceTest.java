@@ -1,7 +1,6 @@
 package com.example.jariBean.service;
 
-import com.example.jariBean.dto.reserved.ReserveReqDto;
-import com.example.jariBean.dto.reserved.ReservedResDto;
+import com.example.jariBean.dto.reserved.ReserveReqDto.ReserveSaveReqDto;
 import com.example.jariBean.entity.Cafe;
 import com.example.jariBean.entity.Reserved;
 import com.example.jariBean.entity.Table;
@@ -11,10 +10,11 @@ import com.example.jariBean.repository.cafe.CafeRepository;
 import com.example.jariBean.repository.reserved.ReservedRepository;
 import com.example.jariBean.repository.table.TableRepository;
 import com.example.jariBean.repository.user.UserRepository;
-import org.bson.types.ObjectId;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
@@ -22,9 +22,9 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.jariBean.entity.Reserved.ReservedStatus.VALID;
 import static com.example.jariBean.entity.Role.CUSTOMER;
 
 
@@ -46,38 +46,6 @@ public class ReservedServiceTest {
 
     @Autowired
     ReserveService reserveService;
-
-    @Test
-    public void findByWordAndCoordinateNearTest() throws Exception {
-        String word1 = "무인";
-        String word2 = "인천";
-        List<String> words = new ArrayList<>();
-        words.add(word1);
-        words.add(word2);
-
-        GeoJsonPoint coordinate = new GeoJsonPoint(126.6487782154, 37.4538193246568);
-        Double distance = 50D;
-
-        List<String> cafeList = cafeRepository.findByWordAndCoordinateNear(words , coordinate);
-        System.out.println("byCoordinateDistance.getContent().size() = " + cafeList.size());
-        cafeList.forEach(cafe -> {
-            System.out.println(cafe);
-        });
-    }
-
-    @Test
-    public void findByCoordinateNearTest() throws Exception {
-        GeoJsonPoint coordinate = new GeoJsonPoint(126.6487782154, 37.4538193246568);
-        Double distance = 5000D;
-
-        List<Cafe> cafeList = cafeRepository.findByCoordinateNear(coordinate, distance);
-        System.out.println("byCoordinateDistance.getContent().size() = " + cafeList.size());
-        cafeList.forEach(cafe -> {
-            System.out.println(cafe.getId());
-        });
-    }
-
-
 
     @BeforeAll
     public void saveReservedTest() {
@@ -122,7 +90,7 @@ public class ReservedServiceTest {
 
         // insert reserved
         String userId = "test";
-        ReserveReqDto.ReserveSaveReqDto saveReservedReqDto = new ReserveReqDto.ReserveSaveReqDto();
+        ReserveSaveReqDto saveReservedReqDto = new ReserveSaveReqDto();
         saveReservedReqDto.setCafeId("64c45ac3935eb61c140793e7");
         saveReservedReqDto.setTableId("64a021f82ff24a6d8c7bd57c");
 
@@ -153,7 +121,7 @@ public class ReservedServiceTest {
 
         List<Reserved> reserveds =  reservedRepository.findAll();
         for (Reserved reserved : reserveds) {
-            System.out.println(reserved.getUserId());
+            System.out.println(reserved.getUser());
             System.out.println(reserved.getStartTime());
             System.out.println(reserved.getCafe().getId());
         }
@@ -170,6 +138,17 @@ public class ReservedServiceTest {
         String dateFormat = "yyyy-MM-dd HH:mm:ss";
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateFormat);
         String checkStartTime = "2029-08-10 12:00:00";
+
+        Reserved reserved = Reserved.builder()
+                .user(User.builder().id(userId).build())
+                .cafe(Cafe.builder().id("cafe-id").name("cafe-name").address("cafe-address").image("cafe-image").build())
+                .table(Table.builder().seating(1).build())
+                .startTime(LocalDateTime.now().plusHours(1))
+                .endTime(LocalDateTime.now().plusHours(2))
+                .status(VALID)
+                .build();
+
+        reservedRepository.save(reserved);
 
         // when
         // then
