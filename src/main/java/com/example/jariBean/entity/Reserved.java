@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.*;
@@ -22,7 +21,7 @@ public class Reserved {
     private String id;
 
     @Column(nullable = false)
-    private String userId;
+    private User user;
 
     @Column(nullable = false)
     private Cafe cafe;
@@ -31,7 +30,7 @@ public class Reserved {
     private Table table;
 
     @Column(nullable = false)
-    private String tableClassId;
+    private TableClass tableClass;
 
     @Column(nullable = false)
     private LocalDateTime startTime;
@@ -41,12 +40,6 @@ public class Reserved {
 
     @Column(nullable = false)
     private ReservedStatus status;
-
-    @DBRef
-    private User user;
-
-    @DBRef
-    private TableClass tableClass;
 
     @CreatedDate
     @Column(updatable = false) // 생성일자(createdDate)에 대한 정보는 생성시에만 할당 가능, 갱신 불가
@@ -64,12 +57,14 @@ public class Reserved {
     }
 
     @Builder
-    public Reserved(String userId, Cafe cafe, Table table, LocalDateTime startTime, LocalDateTime endTime) {
-        this.userId = userId;
+    public Reserved(String id, User user, Cafe cafe, Table table, TableClass tableClass, LocalDateTime startTime, LocalDateTime endTime, ReservedStatus status) {
+        this.id = id;
+        this.user = user;
         this.cafe = cafe;
         this.table = table;
+        this.tableClass = tableClass;
         this.startTime = startTime;
         this.endTime = endTime;
-        this.status = ReservedStatus.VALID;
+        this.status = status;
     }
 }
