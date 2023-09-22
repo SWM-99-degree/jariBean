@@ -20,7 +20,7 @@ spring:
 
   redis:
     port: 6379
-    host: ${REDIS_URI}
+    host: localhost #${REDIS_URI}
 
 logging:
   level:
