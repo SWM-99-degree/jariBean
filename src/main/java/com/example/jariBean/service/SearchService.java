@@ -2,9 +2,11 @@ package com.example.jariBean.service;
 
 import com.example.jariBean.dto.cafe.CafeReqDto;
 import com.example.jariBean.entity.Cafe;
+import com.example.jariBean.entity.Table;
 import com.example.jariBean.entity.TableClass;
 import com.example.jariBean.repository.cafe.CafeRepository;
 import com.example.jariBean.repository.reserved.ReservedRepository;
+import com.example.jariBean.repository.table.TableRepository;
 import kr.co.shineware.nlp.komoran.constant.DEFAULT_MODEL;
 import kr.co.shineware.nlp.komoran.core.Komoran;
 import kr.co.shineware.nlp.komoran.model.KomoranResult;
@@ -21,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +34,9 @@ public class SearchService {
 
     @Autowired
     private ReservedRepository reservedRepository;
+
+    @Autowired
+    private TableRepository tableRepository;
 
     @Autowired
     private CafeRepository cafeRepository;
@@ -52,6 +58,21 @@ public class SearchService {
         return wordList;
     }
 
+    public boolean checkingCafeAbleReserve(String cafeId, LocalDateTime reserveStartTime, LocalDateTime reserveEndTime, Integer seating, List<TableClass.TableOption> tableOptions){
+
+        List<Table> tables = tableRepository.findByConditions(cafeId, seating, tableOptions);
+
+        if ((reserveStartTime == null || reserveEndTime == null) && !tables.isEmpty()) {
+            return true;
+        }
+
+        boolean isAbleReserve = tables
+                .stream()
+                .anyMatch(table -> !reservedRepository.isReservedByTableIdBetweenTime(table.getId(), reserveStartTime, reserveEndTime));
+
+        return isAbleReserve;
+    }
+
     @Transactional
     public Page<Cafe> findByText(CafeReqDto.CafeSearchReqDto cafeSearchReqDto, Pageable pageable){
         // for searching
@@ -68,9 +89,11 @@ public class SearchService {
         GeoJsonPoint point = new GeoJsonPoint(longitude, latitude);
 
         // mongoDB search
-        List<String> wordFilterdCafes = cafeRepository.findByWordAndCoordinateNear(searchingWords, point);
-        System.out.println(wordFilterdCafes);
-        //List<String> optionsFilterdCafes = reservedRepository.findCafeByReserved(wordFilterdCafes, startTime, endTime, seating, tableOptionList);
+        List<String> wordFilterdCafes = cafeRepository.findByWordAndCoordinateNear(searchingWords, point)
+                .stream()
+                .filter(cafe -> checkingCafeAbleReserve(cafe, startTime, endTime, seating, tableOptionList))
+                .collect(Collectors.toList());
+
         Page<Cafe> cafes = cafeRepository.findByIds(wordFilterdCafes, pageable);
 
         return cafes;

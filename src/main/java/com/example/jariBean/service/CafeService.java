@@ -55,6 +55,7 @@ public class CafeService {
     }
 
 
+
     public CafeDetailReserveDto getCafeWithSearchingReserved(String cafeId, LocalDateTime reserveStartTime, LocalDateTime reserveEndTime, Integer seating, List<TableClass.TableOption> tableOptions,
                                                              Pageable pageable) {
         // select cafe
@@ -64,9 +65,6 @@ public class CafeService {
 
         // select tables
         List<Table> tables = tableRepository.findByConditions(cafeId, seating, tableOptions);
-        for (Table table : tables) {
-            System.out.println(table.getId());
-        }
 
         // sort by reserved with tableId
         Map<String, List<Reserved>> reservedListByTable = new LinkedHashMap<>();
