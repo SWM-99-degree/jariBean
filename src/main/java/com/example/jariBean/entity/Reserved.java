@@ -30,9 +30,6 @@ public class Reserved {
     private Table table;
 
     @Column(nullable = false)
-    private TableClass tableClass;
-
-    @Column(nullable = false)
     private LocalDateTime startTime;
 
     @Column(nullable = false)
@@ -62,7 +59,6 @@ public class Reserved {
         this.user = user;
         this.cafe = cafe;
         this.table = table;
-        this.tableClass = tableClass;
         this.startTime = startTime;
         this.endTime = endTime;
         this.status = status;

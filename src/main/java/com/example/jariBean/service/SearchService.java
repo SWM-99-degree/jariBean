@@ -65,6 +65,10 @@ public class SearchService {
         if ((reserveStartTime == null || reserveEndTime == null) && !tables.isEmpty()) {
             return true;
         }
+        System.out.println(cafeId);
+        tables.forEach(table -> {
+            System.out.println(reservedRepository.isReservedByTableIdBetweenTime(table.getId(), reserveStartTime, reserveEndTime));
+        });
 
         boolean isAbleReserve = tables
                 .stream()
@@ -89,12 +93,14 @@ public class SearchService {
         GeoJsonPoint point = new GeoJsonPoint(longitude, latitude);
 
         // mongoDB search
-        List<String> wordFilterdCafes = cafeRepository.findByWordAndCoordinateNear(searchingWords, point)
+        List<String> wordFilteredCafes = cafeRepository.findByWordAndCoordinateNear(searchingWords, point);
+        System.out.println(wordFilteredCafes);
+        List<String> tableFilteredCafes = wordFilteredCafes
                 .stream()
                 .filter(cafe -> checkingCafeAbleReserve(cafe, startTime, endTime, seating, tableOptionList))
                 .collect(Collectors.toList());
-
-        Page<Cafe> cafes = cafeRepository.findByIds(wordFilterdCafes, pageable);
+        System.out.println(tableFilteredCafes);
+        Page<Cafe> cafes = cafeRepository.findByIds(tableFilteredCafes, pageable);
 
         return cafes;
 
