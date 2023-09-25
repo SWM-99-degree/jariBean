@@ -18,5 +18,5 @@ public interface ReservedRepository extends MongoRepository<Reserved, String>, R
 
     List<Reserved> findByTableIdIn(List<String> tableIdList);
 
-    List<Reserved> findByTableClassId(String tableClassId);
+
 }

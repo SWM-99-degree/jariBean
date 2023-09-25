@@ -114,7 +114,7 @@ public class ReservedRepositoryImpl implements ReservedRepositoryTemplate {
         Criteria criteria2 = Criteria.where("endTime").gt(startTime).lte(endTime);
         Criteria criteria3 = Criteria.where("startTime").lt(startTime).and("endTime").gt(endTime);
 
-        return mongoTemplate.exists(new Query(Criteria.where("tableId").is(tableId)
+        return mongoTemplate.exists(new Query(Criteria.where("table._id").is(tableId)
                 .orOperator(criteria1, criteria2, criteria3)), Reserved.class);
     }
 
@@ -200,6 +200,15 @@ public class ReservedRepositoryImpl implements ReservedRepositoryTemplate {
         return results.getMappedResults().stream().map(DistinctUserIdResult::getUserId).toList();
     }
 
+    @Override
+    public List<Reserved> findByTableClassId(String tableClassId) {
+        Criteria criteria = new Criteria("table.tableClassId").is(tableClassId);
+
+        Query query = new Query(criteria);
+
+        return mongoTemplate.find(query, Reserved.class);
+    }
+
     class DistinctUserIdResult {
         private String userId;
 
@@ -210,4 +219,6 @@ public class ReservedRepositoryImpl implements ReservedRepositoryTemplate {
             this.userId = userId;
         }
     }
+
+
 }

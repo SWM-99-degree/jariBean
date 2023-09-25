@@ -22,4 +22,6 @@ public interface ReservedRepositoryTemplate {
     boolean isReservedByTableIdBetweenTime(String tableId, LocalDateTime startTime, LocalDateTime endTime);
 
     List<String> findReserveInNextDay(LocalDateTime time);
+
+    List<Reserved> findByTableClassId(String tableClassId);
 }
