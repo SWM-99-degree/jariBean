@@ -44,7 +44,7 @@ public class CafeRepositoryImpl implements CafeRepositoryTemplate{
 
     @Override
     public Page<Cafe> findByIds(List<String> cafes, Pageable pageable) {
-        Criteria criteria = Criteria.where("cafeId").in(cafes);
+        Criteria criteria = Criteria.where("_id").in(cafes);
         MatchOperation matchOperation = Aggregation.match(criteria);
 
         // 전체 size를 알기 위한 쿼리
@@ -71,15 +71,18 @@ public class CafeRepositoryImpl implements CafeRepositoryTemplate{
             criteria.and("coordinate").near(point).maxDistance(5000D);
         }
 
-//        mongoTemplate.indexOps(Cafe.class).ensureIndex(new Index().on("name", Text.class));
-//
+        Query testquery = new Query(criteria);
+
+        List<String> cafeIdList = new ArrayList<>();
+        mongoTemplate.find(testquery, Cafe.class).forEach(cafe -> cafeIdList.add(cafe.getId()));
+        System.out.println(cafeIdList);
 
         // for word
         Criteria wordCriteria = new Criteria();
         List<Criteria> regexCriterias = new ArrayList<>();
         if (!searchingWords.isEmpty()) {
             for (String searchingWord : searchingWords) {
-                Criteria regexCriteria = new Criteria("name").regex("/" + searchingWord + "/");
+                Criteria regexCriteria = new Criteria("name").regex(searchingWord);
                 regexCriterias.add(regexCriteria);
             }
             wordCriteria.orOperator(regexCriterias.toArray(new Criteria[0]));
