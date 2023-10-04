@@ -1,5 +1,6 @@
 package com.example.jariBean.controller;
 
+import com.example.jariBean.config.auth.LoginUser;
 import com.example.jariBean.dto.ResponseDto;
 import com.example.jariBean.dto.oauth.LoginCode;
 import com.example.jariBean.dto.oauth.LoginResDto.LoginSuccessResDto;
@@ -13,6 +14,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -51,6 +53,19 @@ public class OAuthController {
         // save or update oauth information
         LoginSuccessResDto loginSuccessResDto = oAuthService.saveOrUpdate(socialUserInfo);
         return new ResponseEntity<>(new ResponseDto<>(1, "로그인 성공", loginSuccessResDto), OK);
+    }
+
+    @Operation(summary = "Canceling your account", description = "api for Canceling your account")
+    @ApiResponse(
+            responseCode = "200",
+            description = "계정 탈퇴 성공",
+            content = @Content(schema = @Schema(implementation = Void.class))
+    )
+    @DeleteMapping("/accounts")
+    public ResponseEntity withdraw(@AuthenticationPrincipal LoginUser loginUser) {
+        oAuthService = authServiceFactory.get("default");
+        oAuthService.deleteUser(loginUser.getUser().getId());
+        return new ResponseEntity<>(new ResponseDto<>(1, "계정 탈퇴 성공", null), OK);
     }
 
 }

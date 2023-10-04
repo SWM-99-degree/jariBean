@@ -9,6 +9,7 @@ public class OAuthServiceFactory {
 
     private final OAuthKakaoService oauthKakaoService;
     private final OAuthGoogleService oAuthGoogleService;
+    private final OAuthAppleService oAuthAppleService;
 
     public OAuthService get(String registration) {
         switch (registration) {
@@ -17,9 +18,9 @@ public class OAuthServiceFactory {
             case "google":
                 return oAuthGoogleService;
             case "apple":
-                return null;
+                return oAuthAppleService;
             default:
-                return null;
+                return oauthKakaoService;
         }
     }
 }
