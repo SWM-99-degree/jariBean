@@ -20,7 +20,7 @@ public class OAuthServiceFactory {
             case "apple":
                 return oAuthAppleService;
             default:
-                return null;
+                return oauthKakaoService;
         }
     }
 }

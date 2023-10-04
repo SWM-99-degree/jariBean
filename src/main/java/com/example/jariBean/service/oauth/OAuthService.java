@@ -72,4 +72,8 @@ public abstract class OAuthService {
         return userRepository.save(user);
     }
 
+    public void deleteUser(String id) {
+        userRepository.deleteById(id);
+    }
+
 }
