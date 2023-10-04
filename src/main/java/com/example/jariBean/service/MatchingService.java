@@ -26,7 +26,7 @@ public class MatchingService {
 
     public Page<MatchingSummaryResDto> findMatchingByUserId(String userId, Pageable pageable) {
 
-        Page<Matching> page = matchingRepository.findByUserId(userId, pageable);
+        Page<Matching> page = matchingRepository.findByUserIdOrderByMatchingTime(userId, pageable);
         Page<MatchingSummaryResDto> matchingResDtos = page.map(matching -> new MatchingSummaryResDto(matching));
 
         return matchingResDtos;

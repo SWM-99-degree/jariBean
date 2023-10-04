@@ -10,6 +10,6 @@ import java.util.List;
 
 public interface MatchingRepository extends MongoRepository<Matching, String>, MatchingRepositoryTemplate {
 
-    Page<Matching> findByUserId(String userId, Pageable pageable);
+    Page<Matching> findByUserIdOrderByMatchingTime(String userId, Pageable pageable);
 
 }
