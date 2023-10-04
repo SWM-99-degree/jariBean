@@ -181,4 +181,6 @@ gradle-app.setting
 ### Firebase ###
 src/main/resources/Firebase/jaribean-e3748-firebase-adminsdk-8jhan-a2717cb833.json
 
+src/main/resources/AuthKey.p8
+
 # End of https://www.toptal.com/developers/gitignore/api/macos,intellij+all,gradle,java
