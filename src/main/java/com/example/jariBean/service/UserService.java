@@ -79,13 +79,15 @@ public class UserService {
 
     @Transactional
     public void updateAlarmStatus(String userId){
-        try {
-            User user = userRepository.findById(userId).orElseThrow();
-            user.updateAlarm();
-            userRepository.save(user);
-        } catch (Exception e) {
-            throw new CustomDBException("유저 DB에 오류가 존재합니다.");
-        }
+        // id로 User 조회
+        User user1 = userRepository
+                .findById(userId).orElseThrow(() -> new CustomDBException("유저 DB에 오류가 존재합니다."));
+
+        // User alarm status 변경
+        user1.updateAlarm();
+
+        // alarm status 저장
+        userRepository.save(user1);
     }
 
     public UserInfoRespDto findUserInfo(String id) {
