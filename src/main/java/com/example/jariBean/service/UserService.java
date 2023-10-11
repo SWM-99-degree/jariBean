@@ -11,7 +11,6 @@ import com.example.jariBean.handler.ex.CustomDBException;
 import com.example.jariBean.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,6 +55,26 @@ public class UserService {
         } catch (Exception e) {
             throw new CustomDBException("유저가 존재하지 않습니다.");
         }
+    }
+
+    public UserInfoRespDto updateUserInfo(String id, String username, String description, String image){
+
+        // id에 해당하는 User 조회하기
+        User findUser = userRepository.findById(id)
+                .orElseThrow(() -> new CustomApiException("id에 해당하는 User를 찾을 수 없습니다."));
+
+        // User 정보 갱신
+        findUser.updateInfo(username, image, description);
+
+        // 갱신된 User 정보 데이터 베이스에 저장
+        User savedUser = userRepository.save(findUser);
+
+        return UserInfoRespDto.builder()
+                .nickname(savedUser.getNickname())
+                .imageUrl(savedUser.getImage())
+                .description(savedUser.getDescription())
+                .build();
+
     }
 
     @Transactional
