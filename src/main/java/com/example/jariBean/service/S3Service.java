@@ -39,6 +39,14 @@ public class S3Service {
     private String AWS_CDN_URL;
 
     public S3ImageResDto upload(MultipartFile imageFile) throws IOException {
+
+        // MultipartFile의 값이 null일 경우 예외처리
+        if(imageFile.isEmpty()) {
+            return S3ImageResDto.builder()
+                    .imageUrl(null)
+                    .build();
+        }
+
         // file exception
         checkFileValidation(imageFile);
 
