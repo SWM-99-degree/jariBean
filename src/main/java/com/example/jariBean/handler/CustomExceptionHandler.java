@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
+import org.springframework.web.reactive.function.client.WebClientResponseException.InternalServerError;
 import org.springframework.web.server.MethodNotAllowedException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
@@ -105,5 +107,16 @@ public class CustomExceptionHandler {
         return new ResponseEntity<>(new ResponseDto<>(-1, e.getMessage(), "filename의 URL encode에 문제가 발생하였습니다. "), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    @ExceptionHandler(WebClientResponseException.class)
+    public ResponseEntity webClientResponseException(WebClientResponseException e) {
+        log.error(e.getMessage());
+        return new ResponseEntity<>(new ResponseDto<>(-1, e.getMessage(), "외부 API 요청에서 문제가 발생하였습니다."), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(InternalServerError.class)
+    public ResponseEntity internalServerError(InternalServerError e) {
+        log.error(e.getMessage());
+        return new ResponseEntity<>(new ResponseDto<>(-1, e.getMessage(), "서버 처리 과정에서 문제가 발생하였습니다."), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
 }
