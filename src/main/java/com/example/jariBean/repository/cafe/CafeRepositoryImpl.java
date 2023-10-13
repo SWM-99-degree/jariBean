@@ -71,17 +71,14 @@ public class CafeRepositoryImpl implements CafeRepositoryTemplate{
             criteria.and("coordinate").near(point).maxDistance(5000D);
         }
 
-        Query testquery = new Query(criteria);
-
-        List<String> cafeIdList = new ArrayList<>();
-        mongoTemplate.find(testquery, Cafe.class).forEach(cafe -> cafeIdList.add(cafe.getId()));
-        System.out.println(cafeIdList);
 
         // for word
         Criteria wordCriteria = new Criteria();
         List<Criteria> regexCriterias = new ArrayList<>();
-        if (!searchingWords.isEmpty()) {
+        System.out.println(searchingWords);
+        if (searchingWords != null && !searchingWords.isEmpty()) {
             for (String searchingWord : searchingWords) {
+                System.out.println(searchingWord);
                 Criteria regexCriteria = new Criteria("name").regex(searchingWord);
                 regexCriterias.add(regexCriteria);
             }

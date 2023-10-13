@@ -43,6 +43,10 @@ public class SearchService {
 
     public List<String> dividedWord(String word){
 
+        if (word == null || word == ""){
+            return null;
+        }
+
         Komoran komoran = new Komoran(DEFAULT_MODEL.FULL);
         KomoranResult analyzeResultList = komoran.analyze(word);
 
@@ -65,10 +69,10 @@ public class SearchService {
         if ((reserveStartTime == null || reserveEndTime == null) && !tables.isEmpty()) {
             return true;
         }
-        System.out.println(cafeId);
-        tables.forEach(table -> {
-            System.out.println(reservedRepository.isReservedByTableIdBetweenTime(table.getId(), reserveStartTime, reserveEndTime));
-        });
+//        System.out.println(cafeId);
+//        tables.forEach(table -> {
+//            System.out.println(reservedRepository.isReservedByTableIdBetweenTime(table.getId(), reserveStartTime, reserveEndTime));
+//        });
 
         boolean isAbleReserve = tables
                 .stream()
@@ -81,25 +85,31 @@ public class SearchService {
     public Page<Cafe> findByText(CafeReqDto.CafeSearchReqDto cafeSearchReqDto, Pageable pageable){
         // for searching
         String text = cafeSearchReqDto.getSearchingWord();
-        Double latitude = cafeSearchReqDto.getLocation().getLatitude();
-        Double longitude = cafeSearchReqDto.getLocation().getLongitude();
+        GeoJsonPoint point = null;
+
+        if (cafeSearchReqDto.getLocation() != null) {
+            Double latitude = cafeSearchReqDto.getLocation().getLatitude();
+            Double longitude = cafeSearchReqDto.getLocation().getLongitude();
+            point = new GeoJsonPoint(longitude, latitude);
+        }
+
         LocalDateTime startTime = cafeSearchReqDto.getReserveStartTime();
         LocalDateTime endTime = cafeSearchReqDto.getReserveEndTime();
+
         Integer seating = cafeSearchReqDto.getPeopleNumber();
         List<TableClass.TableOption> tableOptionList = cafeSearchReqDto.getTableOptionList();
 
         // divide searching words
         List<String> searchingWords = dividedWord(text);
-        GeoJsonPoint point = new GeoJsonPoint(longitude, latitude);
 
         // mongoDB search
         List<String> wordFilteredCafes = cafeRepository.findByWordAndCoordinateNear(searchingWords, point);
-        System.out.println(wordFilteredCafes);
+
         List<String> tableFilteredCafes = wordFilteredCafes
                 .stream()
                 .filter(cafe -> checkingCafeAbleReserve(cafe, startTime, endTime, seating, tableOptionList))
                 .collect(Collectors.toList());
-        System.out.println(tableFilteredCafes);
+
         Page<Cafe> cafes = cafeRepository.findByIds(tableFilteredCafes, pageable);
 
         return cafes;
