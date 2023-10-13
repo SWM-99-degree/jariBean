@@ -21,8 +21,7 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class NoticeService {
 
-    @Autowired
-    private NoticeRepository noticeRepository;
+    private final NoticeRepository noticeRepository;
 
     public Page<NoticeSummaryResDto> findNoticeList(Pageable pageable) {
         Page<Notice> noticeList = noticeRepository.findAllByOrderByCreatedAtDesc(pageable);

@@ -7,13 +7,14 @@ import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface ReservedRepositoryTemplate {
 
     List<Reserved> findReservedByConditions(String userId, LocalDateTime startTime, Integer seating, List<TableClass.TableOption> tableOptionList);
 
     List<String> findCafeByReserved(List<String> cafes, LocalDateTime startTime, LocalDateTime endTime, Integer seating, List<TableClass.TableOption> tableOptionList);
-    Reserved findNearestReserved(String userId, LocalDateTime time);
+    Optional<Reserved> findNearestReserved(String userId, LocalDateTime time);
 
     List<Reserved> findReservedByIdBetweenTime(String cafeId, LocalDateTime startTime, LocalDateTime endTime);
 

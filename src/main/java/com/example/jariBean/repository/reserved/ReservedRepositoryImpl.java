@@ -90,7 +90,7 @@ public class ReservedRepositoryImpl implements ReservedRepositoryTemplate {
     }
 
     @Override
-    public Reserved findNearestReserved(String userId, LocalDateTime time) {
+    public Optional<Reserved> findNearestReserved(String userId, LocalDateTime time) {
         Criteria criteria = Criteria.where("userId").is(userId).and("status").is("VALID").and("endTime").gte(time);
 
         AggregationOperation match = Aggregation.match(criteria);
@@ -103,7 +103,7 @@ public class ReservedRepositoryImpl implements ReservedRepositoryTemplate {
                 limit
         );
 
-        Reserved reserved = mongoTemplate.aggregate(aggregation, Reserved.class, Reserved.class).getUniqueMappedResult();
+        Optional<Reserved> reserved = Optional.of(mongoTemplate.aggregate(aggregation, Reserved.class, Reserved.class).getUniqueMappedResult());
         return reserved;
     }
 
@@ -189,7 +189,7 @@ public class ReservedRepositoryImpl implements ReservedRepositoryTemplate {
 
     @Override
     public List<String> findReserveInNextDay(LocalDateTime time) {
-        Criteria criteria = new Criteria("startTime").gte(time.with(LocalTime.MIN)).lte(time.with(LocalTime.MAX));
+        Criteria criteria = new Criteria("startTime").gte(time).lte(time.with(LocalTime.MAX));
         Aggregation aggregation = Aggregation.newAggregation(
                 Aggregation.match(criteria),
                 Aggregation.group("userId").addToSet("userId").as("userIdList")

@@ -32,14 +32,11 @@ import java.util.stream.Collectors;
 public class SearchService {
 
 
-    @Autowired
-    private ReservedRepository reservedRepository;
+    private final ReservedRepository reservedRepository;
 
-    @Autowired
-    private TableRepository tableRepository;
+    private final TableRepository tableRepository;
 
-    @Autowired
-    private CafeRepository cafeRepository;
+    private final CafeRepository cafeRepository;
 
     public List<String> dividedWord(String word){
 
@@ -69,10 +66,6 @@ public class SearchService {
         if ((reserveStartTime == null || reserveEndTime == null) && !tables.isEmpty()) {
             return true;
         }
-//        System.out.println(cafeId);
-//        tables.forEach(table -> {
-//            System.out.println(reservedRepository.isReservedByTableIdBetweenTime(table.getId(), reserveStartTime, reserveEndTime));
-//        });
 
         boolean isAbleReserve = tables
                 .stream()

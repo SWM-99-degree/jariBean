@@ -48,13 +48,9 @@ public class UserService {
 
     @Transactional
     public void updateUserInfo(String userId, ProfileReqDto.ProfileUpdateReqDto profileUpdateReqDto){
-        try {
-            User user = userRepository.findById(userId).orElseThrow();
-            user.updateInfo(profileUpdateReqDto.getNickname(), profileUpdateReqDto.getImageUrl(), profileUpdateReqDto.getDescription());
-            userRepository.save(user);
-        } catch (Exception e) {
-            throw new CustomDBException("유저가 존재하지 않습니다.");
-        }
+        User user = userRepository.findById(userId).orElseThrow(() -> new CustomDBException("유저 DB에 오류가 존재합니다."));
+        user.updateInfo(profileUpdateReqDto.getNickname(), profileUpdateReqDto.getImageUrl(), profileUpdateReqDto.getDescription());
+        userRepository.save(user);
     }
 
     public UserInfoRespDto updateUserInfo(String id, String username, String description, String image){

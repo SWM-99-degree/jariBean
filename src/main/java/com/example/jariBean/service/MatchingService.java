@@ -21,8 +21,7 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class MatchingService {
 
-    @Autowired
-    private MatchingRepository matchingRepository;
+    private final MatchingRepository matchingRepository;
 
     public Page<MatchingSummaryResDto> findMatchingByUserId(String userId, Pageable pageable) {
 

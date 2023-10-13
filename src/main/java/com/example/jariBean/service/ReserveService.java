@@ -26,30 +26,21 @@ import static com.example.jariBean.dto.reserved.ReserveReqDto.ReserveSaveReqDto;
 @Service
 @RequiredArgsConstructor
 public class ReserveService {
-    @Autowired private ReservedRepository reservedRepository;
-    @Autowired private CafeRepository cafeRepository;
-    @Autowired private TableRepository tableRepository;
-    @Autowired private UserRepository userRepository;
+    private final ReservedRepository reservedRepository;
+    private final CafeRepository cafeRepository;
+    private final TableRepository tableRepository;
+    private final UserRepository userRepository;
 
     public Page<ReserveSummaryResDto> getMyReserved(String userId, Pageable pageable) {
 
         Page<Reserved> reservedList = reservedRepository.findByUserIdOrderByStartTimeAsc(userId, pageable);
         Page<ReserveSummaryResDto> reserveSummaryResDtoList = reservedList.map(reserved -> new ReserveSummaryResDto(reserved));
-
-        for (ReserveSummaryResDto reserveSummaryResDto : reserveSummaryResDtoList) {
-            System.out.println(reserveSummaryResDto.getReserveStartTime());
-        }
-
         return reserveSummaryResDtoList;
     }
 
     // 예약 삭제하기
     public void deleteMyReserved(String reservedId) {
-        try {
-            reservedRepository.deleteById(reservedId);
-        } catch (Exception e) {
-            throw new CustomDBException("해당 데이터는 존재하지 않습니다");
-        }
+        reservedRepository.deleteById(reservedId);
     }
 
 
@@ -57,7 +48,7 @@ public class ReserveService {
     public ReserveSummaryResDto getNearestReserved(String userId) {
         LocalDateTime userNow = LocalDateTime.now();
 
-        Reserved reserved = reservedRepository.findNearestReserved(userId, userNow);
+        Reserved reserved = reservedRepository.findNearestReserved(userId, userNow).orElseThrow(()-> new CustomDBException("데이터에 접근할 수 없습니다."));
 
         // 정보가 없다면 null 값으로 반환하며, 예외처리로 204를 보냄
         if (reserved == null) {
