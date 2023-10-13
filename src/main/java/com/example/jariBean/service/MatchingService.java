@@ -12,7 +12,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,7 +25,7 @@ public class MatchingService {
 
     public Page<MatchingSummaryResDto> findMatchingByUserId(String userId, Pageable pageable) {
 
-        Page<Matching> page = matchingRepository.findByUserIdOrderByMatchingTime(userId, pageable);
+        Page<Matching> page = matchingRepository.findByUserIdOrderByMatchingTimeDesc(userId, pageable);
         Page<MatchingSummaryResDto> matchingResDtos = page.map(matching -> new MatchingSummaryResDto(matching));
 
         return matchingResDtos;
