@@ -15,10 +15,10 @@ public class CafeReqDto {
     @Getter
     @Setter
     public static class Location {
-        @NotNull(message = "위도는 필수입니다")
+
         private double latitude; // 위도
 
-        @NotNull(message = "경도는 필수입니다")
+
         private double longitude; // 경도
 
         // Getter, Setter, 생성자 등 필요한 메서드 추가
@@ -29,7 +29,6 @@ public class CafeReqDto {
     public static class CafeSearchReqDto {
         private String searchingWord;
 
-        @NotNull(message = "위치는 필수입니다.")
         private Location location;
 
         @NotNull(message = "예약 시작 시간은 필수입니다.")
