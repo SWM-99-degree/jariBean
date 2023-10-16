@@ -61,10 +61,12 @@ public class OAuthController {
             description = "계정 탈퇴 성공",
             content = @Content(schema = @Schema(implementation = Void.class))
     )
-    @DeleteMapping("/accounts")
-    public ResponseEntity withdraw(@AuthenticationPrincipal LoginUser loginUser) {
-        oAuthService = authServiceFactory.get("default");
-        oAuthService.deleteUser(loginUser.getUser().getId());
+    @DeleteMapping("/accounts/{registration}")
+    public ResponseEntity withdraw(@AuthenticationPrincipal LoginUser loginUser,
+                                   @RequestBody LoginCode loginCode,
+                                   @PathVariable String registration) {
+        oAuthService = authServiceFactory.get(registration);
+        oAuthService.deleteUser(loginUser.getUser().getId(), loginCode.getCode());
         return new ResponseEntity<>(new ResponseDto<>(1, "계정 탈퇴 성공", null), OK);
     }
 

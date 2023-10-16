@@ -69,4 +69,9 @@ public class OAuthGoogleService extends OAuthService{
                 userInfo.getPicture()
         );
     }
+
+    @Override
+    public void deleteUser(String id, String code) {
+        userRepository.deleteById(id);
+    }
 }

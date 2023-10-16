@@ -79,8 +79,25 @@ public class OAuthAppleService extends OAuthService{
                 REGISTRATION,
                 sub,
                 "Guest",
-                null
+                "https://img.jari-bean.com/a0155280-ad92-4a29-9965-8f41b2aad98dVector.png"
         );
+    }
+
+    @Override
+    public void deleteUser(String id, String code) {
+        MultiValueMap<String, String> bodyValue = new LinkedMultiValueMap<>();
+        bodyValue.add("client_id", CLIENT_ID);
+        bodyValue.add("client_secret", createClientSecret());
+        bodyValue.add("token", getAccessToken(code));
+
+        WebClient client = WebClient.create();
+        client.post()
+                .uri("https://appleid.apple.com/auth/revoke")
+                .contentType(APPLICATION_FORM_URLENCODED)
+                .bodyValue(bodyValue)
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
     }
 
     public String createClientSecret() {

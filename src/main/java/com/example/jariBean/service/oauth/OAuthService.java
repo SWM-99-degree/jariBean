@@ -20,8 +20,8 @@ import static com.example.jariBean.entity.Role.UNREGISTERED;
 @RequiredArgsConstructor
 public abstract class OAuthService {
 
-    private final UserRepository userRepository;
-    private final TokenRepository tokenRepository;
+    protected final UserRepository userRepository;
+    protected final TokenRepository tokenRepository;
     private final JwtProcess jwtProcess;
 
     @Autowired
@@ -70,8 +70,6 @@ public abstract class OAuthService {
         return userRepository.save(user);
     }
 
-    public void deleteUser(String id) {
-        userRepository.deleteById(id);
-    }
+    public abstract void deleteUser(String id, String code);
 
 }
