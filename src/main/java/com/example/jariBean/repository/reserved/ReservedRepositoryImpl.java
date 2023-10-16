@@ -155,6 +155,8 @@ public class ReservedRepositoryImpl implements ReservedRepositoryTemplate {
         Criteria mainCriteria = new Criteria("cafe._id").is(new ObjectId(cafeId));
 
         mainCriteria.and("startTime").gte(startTime.with(LocalTime.MIN)).lte(startTime.with(LocalTime.MAX));
+        System.out.println(startTime.with(LocalTime.MIN));
+        System.out.println(startTime.with(LocalTime.MAX));
 
         if (!tableOptionList.isEmpty()) {
             mainCriteria.and("table.tableOptionList").all(tableOptionList);
