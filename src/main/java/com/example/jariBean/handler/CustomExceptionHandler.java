@@ -8,6 +8,9 @@ import org.apache.tomcat.util.http.fileupload.impl.SizeLimitExceededException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
@@ -15,9 +18,11 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import org.springframework.web.server.MethodNotAllowedException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
-import javax.validation.constraints.Null;
 import java.io.UnsupportedEncodingException;
 import java.net.ConnectException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestControllerAdvice
 @Slf4j
@@ -124,6 +129,23 @@ public class CustomExceptionHandler {
     public ResponseEntity nullException(NullPointerException e) {
         log.error(e.getMessage());
         return new ResponseEntity<>(new ResponseDto<>(-1, e.getMessage(), "해당 되는 데이터가 없습니다. 다른 요청을 진행해주세요."), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity methodArgumentNotValidException(MethodArgumentNotValidException e) {
+        log.error(e.getMessage());
+
+        BindingResult bindingResult = e.getBindingResult();
+        Map<String, String> errorMap = new HashMap<>();
+
+        if (bindingResult.hasErrors()) {
+            List<FieldError> fieldErrors = bindingResult.getFieldErrors();
+            for (FieldError error : fieldErrors) {
+                errorMap.put(error.getField(), error.getDefaultMessage());
+            }
+        }
+
+        return new ResponseEntity<>(new ResponseDto<>(-1, "데이터 유효성 검증에 실패하였습니다.", errorMap), HttpStatus.BAD_REQUEST);
     }
 
 }

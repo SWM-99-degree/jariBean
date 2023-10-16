@@ -115,8 +115,10 @@ public class CafeService {
             TableDetailDto tableDetailDto = new TableDetailDto(table);
             tableReserveResDto.setTableDetailDto(tableDetailDto);
             List<availableTime> times = new ArrayList<>();
-            LocalDateTime startTime = cafe.getStartTime().withDayOfMonth(localDateTime.getDayOfMonth()).withMonth(localDateTime.getMonthValue()).withYear(localDateTime.getYear());
-            LocalDateTime endTime = cafe.getEndTime().withDayOfMonth(localDateTime.getDayOfMonth()).withMonth(localDateTime.getMonthValue()).withYear(localDateTime.getYear());
+            System.out.println(cafe.getStartTime());
+            System.out.println(cafe.getEndTime());
+            LocalDateTime startTime = cafe.getStartTime().withMonth(localDateTime.getMonthValue()).withDayOfMonth(localDateTime.getDayOfMonth()).withYear(localDateTime.getYear());
+            LocalDateTime endTime = cafe.getEndTime().withMonth(localDateTime.getMonthValue()).withDayOfMonth(localDateTime.getDayOfMonth()).withYear(localDateTime.getYear());
 
             // if not reserved
             if (reservedListByTable.get(table.getId()) == null ) {

@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 
@@ -37,7 +38,7 @@ public class ManagerController {
             content = @Content(schema = @Schema(implementation = ManagerLoginResDto.class))
     )
     @PostMapping("/join")
-    public ResponseEntity join(@RequestBody ManagerJoinReqDto managerJoinReqDto) {
+    public ResponseEntity join(@Valid @RequestBody ManagerJoinReqDto managerJoinReqDto) {
         ManagerLoginResDto managerLoginResDto = managerService.join(managerJoinReqDto);
         return new ResponseEntity<>(new ResponseDto<>(1, "회원가입 완료", managerLoginResDto), CREATED);
     }
@@ -101,7 +102,7 @@ public class ManagerController {
     )
     @PutMapping("/table/{tableId}")
     public ResponseEntity updateTable(@PathVariable("tableId") String tableId,
-                            @RequestBody ManagerTableReqDto managerTableReqDto) {
+                                      @Valid @RequestBody ManagerTableReqDto managerTableReqDto) {
         managerService.updateTable(tableId, managerTableReqDto);
         return new ResponseEntity<>(new ResponseDto<>(1, "테이블 정보 수정 완료", null), OK);
     }
@@ -113,7 +114,7 @@ public class ManagerController {
             content = @Content(schema = @Schema(implementation = Void.class))
     )
     @PostMapping("/table")
-    public ResponseEntity addTable(@RequestBody ManagerTableReqDto managerTableReqDto) {
+    public ResponseEntity addTable(@Valid @RequestBody ManagerTableReqDto managerTableReqDto) {
         managerService.addTable(managerTableReqDto);
         return new ResponseEntity<>(new ResponseDto<>(1, "테이블 추가 완료", null), CREATED);
     }
@@ -126,7 +127,7 @@ public class ManagerController {
     )
     @PutMapping("/tableclass/{tableClassId}")
     public ResponseEntity updateTableClass(@PathVariable("tableClassId") String tableClassId,
-                                 @RequestBody ManagerTableClassReqDto managerTableClassReqDto) {
+                                           @Valid @RequestBody ManagerTableClassReqDto managerTableClassReqDto) {
         managerService.updateTableClass(tableClassId, managerTableClassReqDto);
         return new ResponseEntity<>(new ResponseDto<>(1, "테이블 클래스 정보 수정 완료", null), OK);
     }
@@ -139,7 +140,7 @@ public class ManagerController {
     )
     @PostMapping("/tableclass/{cafeId}")
     public ResponseEntity addTableClass(@PathVariable("cafeId") String cafeId,
-                                        @RequestBody ManagerTableClassReqDto managerTableClassReqDto) {
+                                        @Valid @RequestBody ManagerTableClassReqDto managerTableClassReqDto) {
         managerService.addTableClass(cafeId, managerTableClassReqDto);
         return new ResponseEntity<>(new ResponseDto<>(1, "테이블 클래스 추가 완료", null), CREATED);
     }
