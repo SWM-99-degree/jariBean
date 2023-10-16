@@ -83,6 +83,23 @@ public class OAuthAppleService extends OAuthService{
         );
     }
 
+    @Override
+    public void deleteUser(String id, String code) {
+        MultiValueMap<String, String> bodyValue = new LinkedMultiValueMap<>();
+        bodyValue.add("client_id", CLIENT_ID);
+        bodyValue.add("client_secret", createClientSecret());
+        bodyValue.add("token", getAccessToken(code));
+
+        WebClient client = WebClient.create();
+        client.post()
+                .uri("https://appleid.apple.com/auth/revoke")
+                .contentType(APPLICATION_FORM_URLENCODED)
+                .bodyValue(bodyValue)
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+    }
+
     public String createClientSecret() {
         return Jwts.builder()
                 // header
