@@ -18,6 +18,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 import static org.springframework.http.HttpStatus.OK;
 
 @Slf4j
@@ -63,7 +65,7 @@ public class OAuthController {
     )
     @DeleteMapping("/accounts/{registration}")
     public ResponseEntity withdraw(@AuthenticationPrincipal LoginUser loginUser,
-                                   @RequestBody LoginCode loginCode,
+                                   @Valid @RequestBody LoginCode loginCode,
                                    @PathVariable String registration) {
         oAuthService = authServiceFactory.get(registration);
         oAuthService.deleteUser(loginUser.getUser().getId(), loginCode.getCode());

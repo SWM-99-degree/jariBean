@@ -19,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -86,7 +87,8 @@ public class CafeController {
             content = @Content(array = @ArraySchema(schema = @Schema(implementation = CafeSummaryDto.class)))
     )
     @PostMapping
-    public ResponseEntity cafes(@RequestBody CafeSearchReqDto cafeSearchReqDto, Pageable pageable) {
+    public ResponseEntity cafes(@RequestBody @Valid CafeSearchReqDto cafeSearchReqDto, Pageable pageable) {
+
         Page<Cafe> cafes = searchService.findByText(cafeSearchReqDto, pageable);
         Page<CafeSummaryDto> cafeSummaryDtos = cafes.map(cafe -> new CafeSummaryDto(cafe));
 

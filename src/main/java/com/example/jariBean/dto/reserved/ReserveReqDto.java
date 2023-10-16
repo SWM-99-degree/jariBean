@@ -4,11 +4,13 @@ import com.example.jariBean.entity.Cafe;
 import com.example.jariBean.entity.Reserved;
 import com.example.jariBean.entity.Table;
 import com.example.jariBean.entity.User;
+import com.example.jariBean.handler.ex.CustomApiException;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Slf4j
@@ -53,9 +55,17 @@ public class ReserveReqDto {
         @NotEmpty(message = "tableId는 필수입니다")
         private String tableId;
 
+        @NotNull(message = "reservedStartTime은 필수입니다")
         private LocalDateTime reservedStartTime;
 
+        @NotNull(message = "reservedStartTime은 필수입니다")
         private LocalDateTime reservedEndTime;
+
+        public void checkTimeStatus() {
+            if (!(reservedStartTime.getMinute() == 0 || reservedStartTime.getMinute() == 30) ||!(reservedEndTime.getMinute() == 0 || reservedEndTime.getMinute() == 30)) {
+                throw new CustomApiException("reservedStartTime 혹은 reservedEndTime의 형식이 올바르지 않습니다.");
+            }
+        }
 
         public Reserved toEntity(User user, Table table, Cafe cafe) {
             return Reserved.builder()

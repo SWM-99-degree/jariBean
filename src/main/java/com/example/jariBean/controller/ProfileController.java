@@ -5,7 +5,6 @@ import com.example.jariBean.config.auth.LoginUser;
 import com.example.jariBean.dto.ResponseDto;
 import com.example.jariBean.dto.profile.ProfileReqDto.ProfileUpdateReqDto;
 import com.example.jariBean.dto.profile.ProfileResDto.ProfileSummaryResDto;
-import com.example.jariBean.entity.User;
 import com.example.jariBean.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -14,14 +13,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.Map;
 
-import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 @RequiredArgsConstructor
@@ -61,14 +57,7 @@ public class ProfileController {
             content = @Content(schema = @Schema(implementation = Void.class))
     )
     @PutMapping
-    public ResponseEntity updateProfile(@AuthenticationPrincipal LoginUser loginUser, @Valid @RequestBody ProfileUpdateReqDto profileUpdateReqDto, BindingResult bindingResult) {
-        if(bindingResult.hasErrors()){
-            Map<String, String> errorMap = new HashMap<>();
-            bindingResult.getFieldErrors().forEach(error -> {
-                errorMap.put(error.getField(), error.getDefaultMessage());
-            });
-            return new ResponseEntity<>(new ResponseDto<>(-1, "유효성 검사 실패", errorMap), BAD_REQUEST);
-        }
+    public ResponseEntity updateProfile(@AuthenticationPrincipal LoginUser loginUser, @Valid @RequestBody ProfileUpdateReqDto profileUpdateReqDto) {
         userService.updateUserInfo(loginUser.getUser().getId(), profileUpdateReqDto);
         return new ResponseEntity<>(new ResponseDto<>(1, "회원 정보 변경 성공", null), OK);
     }
