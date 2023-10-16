@@ -15,15 +15,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.validation.Valid;
 
-import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 @RequiredArgsConstructor
@@ -51,14 +48,7 @@ public class ReserveController {
             content = @Content(schema = @Schema(implementation = Void.class))
     )
     @PostMapping
-    public ResponseEntity saveReserve(@AuthenticationPrincipal LoginUser loginUser,@Validated @RequestBody ReserveSaveReqDto reserveSaveReqDto, BindingResult bindingResult) {
-        if(bindingResult.hasErrors()){
-            Map<String, String> errorMap = new HashMap<>();
-            bindingResult.getFieldErrors().forEach(error -> {
-                errorMap.put(error.getField(), error.getDefaultMessage());
-            });
-            return new ResponseEntity<>(new ResponseDto<>(-1, "유효성 검사 실패", errorMap), BAD_REQUEST);
-        }
+    public ResponseEntity saveReserve(@AuthenticationPrincipal LoginUser loginUser, @Valid @RequestBody ReserveSaveReqDto reserveSaveReqDto) {
         reserveService.saveReserved(loginUser.getUser().getId(), reserveSaveReqDto);
         return new ResponseEntity<>(new ResponseDto<>(1, "정보가 성공적으로 등록되었습니다.", null), CREATED);
     }
