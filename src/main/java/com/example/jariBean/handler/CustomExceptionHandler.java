@@ -15,6 +15,7 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import org.springframework.web.server.MethodNotAllowedException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
+import javax.validation.constraints.Null;
 import java.io.UnsupportedEncodingException;
 import java.net.ConnectException;
 
@@ -117,6 +118,12 @@ public class CustomExceptionHandler {
     public ResponseEntity internalServerError(InternalServerError e) {
         log.error(e.getMessage());
         return new ResponseEntity<>(new ResponseDto<>(-1, e.getMessage(), "서버 처리 과정에서 문제가 발생하였습니다."), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(NullPointerException.class)
+    public ResponseEntity nullException(NullPointerException e) {
+        log.error(e.getMessage());
+        return new ResponseEntity<>(new ResponseDto<>(-1, e.getMessage(), "해당 되는 데이터가 없습니다. 다른 요청을 진행해주세요."), HttpStatus.BAD_REQUEST);
     }
 
 }

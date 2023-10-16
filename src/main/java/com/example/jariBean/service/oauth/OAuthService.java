@@ -67,8 +67,6 @@ public abstract class OAuthService {
                         .password(passwordEncoder.encode(socialUserInfo.getNickname()))
                         .role(UNREGISTERED)
                         .build());
-        // update user info
-        user.updateBySocialInfo(socialUserInfo.getNickname(), socialUserInfo.getImageUrl(), passwordEncoder.encode(socialUserInfo.getNickname()));
         return userRepository.save(user);
     }
 

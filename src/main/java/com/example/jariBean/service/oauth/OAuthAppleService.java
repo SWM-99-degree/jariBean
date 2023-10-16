@@ -14,7 +14,6 @@ import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -23,8 +22,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.security.PrivateKey;
 import java.util.Date;
 
@@ -41,6 +38,9 @@ public class OAuthAppleService extends OAuthService{
 
     @Value("${APPLE_ISS}")
     private String APPLE_ISS;
+
+    @Value("${APPLE_AUTH_KEY}")
+    private String APPLE_AUTH_KEY;
 
     public OAuthAppleService(UserRepository userRepository, TokenRepository tokenRepository, JwtProcess jwtProcess) {
         super(userRepository, tokenRepository, jwtProcess);
@@ -100,14 +100,10 @@ public class OAuthAppleService extends OAuthService{
     }
 
     private PrivateKey getPrivateKey() {
-        ClassPathResource resource = new ClassPathResource("AuthKey.p8");
-        String privateKey = null;
-        try {
-            privateKey = new String(Files.readAllBytes(Paths.get(resource.getURI())));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        Reader pemReader = new StringReader(privateKey);
+
+        APPLE_AUTH_KEY = APPLE_AUTH_KEY.replace("\\n", "\n");
+        Reader pemReader = new StringReader(APPLE_AUTH_KEY);
+
         PEMParser pemParser = new PEMParser(pemReader);
         JcaPEMKeyConverter converter = new JcaPEMKeyConverter();
         PrivateKeyInfo object = null;
