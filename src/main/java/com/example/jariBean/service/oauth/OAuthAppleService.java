@@ -79,7 +79,7 @@ public class OAuthAppleService extends OAuthService{
                 REGISTRATION,
                 sub,
                 "Guest",
-                null
+                "https://img.jari-bean.com/a0155280-ad92-4a29-9965-8f41b2aad98dVector.png"
         );
     }
 
