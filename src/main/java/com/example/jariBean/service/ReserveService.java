@@ -87,6 +87,10 @@ public class ReserveService {
         Table table = tableRepository.findById(saveReservedReqDto.getTableId())
                 .orElseThrow(() -> new CustomApiException("id에 해당하는 Table이 존재하지 않습니다."));
 
+        if (!table.getCafeId().equals(cafe.getId())) {
+            throw new CustomApiException("해당 테이블은 카페에 속하지 않습니다.");
+        }
+
         User findUser = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomApiException("id에 해당하는 User가 존재하지 않습니다."));
 
