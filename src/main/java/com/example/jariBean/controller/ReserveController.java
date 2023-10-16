@@ -49,6 +49,7 @@ public class ReserveController {
     )
     @PostMapping
     public ResponseEntity saveReserve(@AuthenticationPrincipal LoginUser loginUser, @Valid @RequestBody ReserveSaveReqDto reserveSaveReqDto) {
+        reserveSaveReqDto.checkTimeStatus();
         reserveService.saveReserved(loginUser.getUser().getId(), reserveSaveReqDto);
         return new ResponseEntity<>(new ResponseDto<>(1, "정보가 성공적으로 등록되었습니다.", null), CREATED);
     }
