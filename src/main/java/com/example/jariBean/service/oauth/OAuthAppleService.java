@@ -42,6 +42,7 @@ public class OAuthAppleService extends OAuthService{
     @Value("${APPLE_ISS}")
     private String APPLE_ISS;
 
+
     public OAuthAppleService(UserRepository userRepository, TokenRepository tokenRepository, JwtProcess jwtProcess) {
         super(userRepository, tokenRepository, jwtProcess);
     }
