@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
 
 @Service
-public class OAuthKakaoService extends OAuthService{
+public class OAuthKakaoService extends OAuthService {
 
     @Value("${KAKAO_CLIENT_ID}")
     private String KAKAO_CLIENT_ID;
@@ -79,6 +79,11 @@ public class OAuthKakaoService extends OAuthService{
                 userInfo.getProperties().getNickname() != null ? userInfo.getProperties().getNickname() : "Guest",
                 userInfo.getProperties().getProfile_image()
         );
+    }
+
+    @Override
+    public void deleteUser(String id, String code) {
+        userRepository.deleteById(id);
     }
 
     @Getter
