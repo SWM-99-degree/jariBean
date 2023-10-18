@@ -80,7 +80,7 @@ public class CafeController {
         LocalDateTime parsedStartTime = LocalDateTime.parse(startTime, formatter);
         LocalDateTime parsedEndTime = LocalDateTime.parse(endTime, formatter);
         CafeDetailReserveDto cafeDetailReserveDto = cafeService.getCafeWithSearchingReserved(cafeId, parsedStartTime, parsedEndTime, peopleNumber, tableOptions, pageable);
-        return new ResponseEntity<>(new ResponseDto<>(1, "정보를 성공적으로 가져왔습니다", cafeDetailReserveDto), OK);
+        return new ResponseEntity<>(new ResponseDto<>(1, "정보를 성공적으로 가져왔습니다", cafeDetailReserveDto.getTableReserveResDtoList()), OK);
 
     }
 
