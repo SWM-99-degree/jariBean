@@ -29,7 +29,7 @@ import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/matching")
+@RequestMapping("/api/match")
 public class MatchingController {
 
 
