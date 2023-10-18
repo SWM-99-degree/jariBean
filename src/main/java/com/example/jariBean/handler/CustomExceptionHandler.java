@@ -131,6 +131,12 @@ public class CustomExceptionHandler {
         return new ResponseEntity<>(new ResponseDto<>(-1, e.getMessage(), "해당 되는 데이터가 없습니다. 다른 요청을 진행해주세요."), HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity exception(Exception e) {
+        log.error(e.getMessage());
+        return new ResponseEntity(new ResponseDto<>(-1, e.getMessage(), "서버에서 오류가 발생했습니다. Issue를 남겨주세요!"), HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity methodArgumentNotValidException(MethodArgumentNotValidException e) {
         log.error(e.getMessage());
