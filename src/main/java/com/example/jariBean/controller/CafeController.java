@@ -2,6 +2,7 @@ package com.example.jariBean.controller;
 
 import com.example.jariBean.dto.ResponseDto;
 import com.example.jariBean.dto.cafe.CafeReqDto.CafeSearchReqDto;
+import com.example.jariBean.dto.cafe.CafeResDto;
 import com.example.jariBean.dto.cafe.CafeResDto.CafeDetailReserveDto;
 import com.example.jariBean.dto.cafe.CafeResDto.CafeSummaryDto;
 import com.example.jariBean.entity.Cafe;
@@ -50,7 +51,7 @@ public class CafeController {
         return new ResponseEntity<>(new ResponseDto<>(1, "정보를 성공적으로 가져왔습니다.", cafeSummaryDtos), OK);
     }
 
-    // 핫플레이스 경로 카페 상세 확인
+    // 카페 정보 확인
     @Operation(summary = "find cafe more information", description = "api for find cafe more information")
     @ApiResponse(
             responseCode = "200",
@@ -58,26 +59,29 @@ public class CafeController {
             content = @Content(schema = @Schema(implementation = CafeDetailReserveDto.class))
     )
     @GetMapping("/{cafeId}")
-    public ResponseEntity moreInfo(@PathVariable("cafeId") String cafeId, Pageable pageable) {
-        CafeDetailReserveDto cafeDetailReserveDto = cafeService.getCafeWithTodayReserved(cafeId, pageable);
-
-        return new ResponseEntity<>(new ResponseDto<>(1, "정보를 성공적으로 가져왔습니다", cafeDetailReserveDto), OK);
+    public ResponseEntity moreInfo(@PathVariable("cafeId") String cafeId) {
+        CafeResDto.CafeDetailDto cafeDetailDto = cafeService.getCafeDetail(cafeId);
+        return new ResponseEntity<>(new ResponseDto<>(1, "정보를 성공적으로 가져왔습니다", cafeDetailDto), OK);
     }
 
-    // 검색 이후 카페 상세 확인
+
+
+
+    // 카페 테이블 정보 확인
     @Operation(summary = "find cafe more information", description = "api for find cafe more information")
     @ApiResponse(
             responseCode = "200",
             description = "카페 상세 정보 조회 성공",
             content = @Content(schema = @Schema(implementation = CafeDetailReserveDto.class))
     )
-    @GetMapping("/{cafeid}/aftersearch")
-    public ResponseEntity moreInfoWithSearch(@PathVariable("cafeid") String cafeId, @RequestParam("starttime") String startTime, @RequestParam("endtime") String endTime, @RequestParam("tableoptions") List<TableClass.TableOption> tableOptions, @RequestParam int peopleNumber, Pageable pageable){
+    @GetMapping("/{cafeid}/table")
+    public ResponseEntity moreInfoWithSearch(@PathVariable("cafeid") String cafeId, @RequestParam("startTime") String startTime, @RequestParam("endTime") String endTime, @RequestParam("tableOptions") List<TableClass.TableOption> tableOptions, @RequestParam Integer peopleNumber, Pageable pageable){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
         LocalDateTime parsedStartTime = LocalDateTime.parse(startTime, formatter);
         LocalDateTime parsedEndTime = LocalDateTime.parse(endTime, formatter);
         CafeDetailReserveDto cafeDetailReserveDto = cafeService.getCafeWithSearchingReserved(cafeId, parsedStartTime, parsedEndTime, peopleNumber, tableOptions, pageable);
         return new ResponseEntity<>(new ResponseDto<>(1, "정보를 성공적으로 가져왔습니다", cafeDetailReserveDto), OK);
+
     }
 
     @Operation(summary = "search cafe list", description = "api for search cafe list")
