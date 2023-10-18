@@ -61,7 +61,6 @@ public class CafeService {
         // select cafe
         CafeDetailReserveDto cafeDetailReserveDto = new CafeDetailReserveDto();
         Cafe cafe = cafeRepository.findById(cafeId).orElseThrow(() -> new CustomDBException("id에 해당하는 Cafe가 존재하지 않습니다."));
-        cafeDetailReserveDto.setCafeDetailDto(new CafeDetailDto(cafe));
 
         // select tables
         List<Table> tables = tableRepository.findByConditions(cafeId, seating, tableOptions);
@@ -77,28 +76,34 @@ public class CafeService {
         return fillReservedOnDto(cafe, cafeDetailReserveDto, reservedListByTable, tables, reserveStartTime, pageable);
     }
 
-
-    public CafeDetailReserveDto getCafeWithTodayReserved(String cafeId, Pageable pageable){
-        // select cafe
-        CafeDetailReserveDto cafeDetailReserveDto = new CafeDetailReserveDto();
-        LocalDateTime now = LocalDateTime.now();
+    public CafeDetailDto getCafeDetail(String cafeId) {
         Cafe cafe = cafeRepository.findById(cafeId).orElseThrow(() -> new CustomDBException("id에 해당하는 Cafe가 존재하지 않습니다."));
-        cafeDetailReserveDto.setCafeDetailDto(new CafeDetailDto(cafe));
-        cafeDetailReserveDto.setTableReserveResDtoList(new ArrayList<>());
-
-        // select table with condition
-        List<Table> tables = tableRepository.findByCafeId(cafeId);
-
-        // sort by reserved with tableId
-        Map<String, List<Reserved>> reservedListByTable = new LinkedHashMap<>();
-        reservedRepository.findTodayReservedById(cafeId, LocalDateTime.now()).forEach(reserved -> {
-            if (!reservedListByTable.containsKey(reserved.getTable().getId())){
-                reservedListByTable.put(reserved.getTable().getId(), new ArrayList<>());
-            }
-            reservedListByTable.get(reserved.getTable().getId()).add(reserved);
-        });
-        return fillReservedOnDto(cafe, cafeDetailReserveDto, reservedListByTable, tables, now, pageable);
+        CafeDetailDto cafeDetailDto = new CafeDetailDto(cafe);
+        return cafeDetailDto;
     }
+
+// Legacy Code
+//    public CafeDetailReserveDto getCafeWithTodayReserved(String cafeId, Pageable pageable){
+//        // select cafe
+//        CafeDetailReserveDto cafeDetailReserveDto = new CafeDetailReserveDto();
+//        LocalDateTime now = LocalDateTime.now();
+//        Cafe cafe = cafeRepository.findById(cafeId).orElseThrow(() -> new CustomDBException("id에 해당하는 Cafe가 존재하지 않습니다."));
+//        cafeDetailReserveDto.setCafeDetailDto(new CafeDetailDto(cafe));
+//        cafeDetailReserveDto.setTableReserveResDtoList(new ArrayList<>());
+//
+//        // select table with condition
+//        List<Table> tables = tableRepository.findByCafeId(cafeId);
+//
+//        // sort by reserved with tableId
+//        Map<String, List<Reserved>> reservedListByTable = new LinkedHashMap<>();
+//        reservedRepository.findTodayReservedById(cafeId, LocalDateTime.now()).forEach(reserved -> {
+//            if (!reservedListByTable.containsKey(reserved.getTable().getId())){
+//                reservedListByTable.put(reserved.getTable().getId(), new ArrayList<>());
+//            }
+//            reservedListByTable.get(reserved.getTable().getId()).add(reserved);
+//        });
+//        return fillReservedOnDto(cafe, cafeDetailReserveDto, reservedListByTable, tables, now, pageable);
+//    }
 
     public CafeDetailReserveDto fillReservedOnDto(Cafe cafe, CafeDetailReserveDto cafeDetailReserveDto, Map<String, List<Reserved>> reservedListByTable, List<Table> tables, LocalDateTime localDateTime, Pageable pageable){
 
