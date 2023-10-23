@@ -56,13 +56,13 @@ public class ReserveReqDto {
         private String tableId;
 
         @NotNull(message = "reservedStartTime은 필수입니다")
-        private LocalDateTime reservedStartTime;
+        private LocalDateTime startTime;
 
         @NotNull(message = "reservedStartTime은 필수입니다")
-        private LocalDateTime reservedEndTime;
+        private LocalDateTime endTime;
 
         public void checkTimeStatus() {
-            if (!(reservedStartTime.getMinute() == 0 || reservedStartTime.getMinute() == 30) ||!(reservedEndTime.getMinute() == 0 || reservedEndTime.getMinute() == 30)) {
+            if (!(startTime.getMinute() == 0 || startTime.getMinute() == 30) ||!(endTime.getMinute() == 0 || endTime.getMinute() == 30)) {
                 throw new CustomApiException("reservedStartTime 혹은 reservedEndTime의 형식이 올바르지 않습니다.");
             }
         }
@@ -72,8 +72,8 @@ public class ReserveReqDto {
                     .user(user)
                     .cafe(cafe)
                     .table(table)
-                    .startTime(reservedStartTime)
-                    .endTime(reservedEndTime)
+                    .startTime(startTime)
+                    .endTime(endTime)
                     .build();
         }
     }
