@@ -75,7 +75,7 @@ public class ReserveService {
     public void saveReserved(String userId, ReserveSaveReqDto saveReservedReqDto) {
         // 검증해야 할 테이블의 예약되어 있는 것들 중, 당일에 있는 것을 가져옴
         // 만약에 있으면 삭제
-        boolean isExist = reservedRepository.isReservedByTableIdBetweenTime(saveReservedReqDto.getTableId(), saveReservedReqDto.getReservedStartTime(), saveReservedReqDto.getReservedEndTime());
+        boolean isExist = reservedRepository.isReservedByTableIdBetweenTime(saveReservedReqDto.getTableId(), saveReservedReqDto.getStartTime(), saveReservedReqDto.getEndTime());
         if (isExist){
             throw new CustomDBException("데이터가 중복됩니다.");
         }
