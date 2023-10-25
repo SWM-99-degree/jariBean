@@ -100,8 +100,8 @@ public class ReservedServiceTest {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateFormat);
         LocalDateTime newStartTime = LocalDateTime.parse(startTime, formatter);
         LocalDateTime newEndTime = LocalDateTime.parse(endTime, formatter);
-        saveReservedReqDto.setReservedStartTime(newStartTime);
-        saveReservedReqDto.setReservedEndTime(newEndTime);
+        saveReservedReqDto.setStartTime(newStartTime);
+        saveReservedReqDto.setEndTime(newEndTime);
 
         // when, then 겹친다면 CustomDBException을 내보낼 것이고, 아니라면 저장될 것이다.
         if (reservedRepository.isReservedByTableIdBetweenTime(saveReservedReqDto.getTableId(), newStartTime, newEndTime) ) {
