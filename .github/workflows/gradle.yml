@@ -9,22 +9,33 @@ name: Java CI with Gradle
 
 on:
   push:
-    branches: [ "main" , "CICD"]
-  pull_request:
-    branches: [ "main" , "CICD"]
+    branches: [ "main" , "CICD", "test_server"]
 
 env:
   DOCKER_IMAGE: chlrltjd5263/jaribean
   VERSION: ${{ github.sha }}
   NAME: jaribean
+  TEST_NAME: jaribeantest
 
 permissions:
   contents: read
 
-jobs:
-  build:
 
+
+
+jobs:
+
+  build:
     runs-on: ubuntu-latest
+
+    services:
+      # Label used to access the service container
+      redis:
+        # Docker Hub image
+        image: redis
+        ports:
+          # Opens tcp port 6379 on the host and service container
+          - 6379:6379
 
     steps:
     - uses: actions/checkout@v3
@@ -42,11 +53,11 @@ jobs:
         key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
         restore-keys: |
           ${{ runner.os }}-gradle-
-      
+
     - name: Setup docker buildx
       id: buildx
       uses: docker/setup-buildx-action@v1
-        
+
     - name: Cache docker layers
       uses: actions/cache@v2
       with:
@@ -54,23 +65,27 @@ jobs:
         key: ${{ runner.os }}-buildx-${{ env.VERSION }}
         restore-keys: |
           ${{ runner.os }}-buildx-
-        
-    
+
+    - name: Create .env file
+      run: |
+        echo "$SECRETS_CONTEXT" >> .env
+      env:
+        SECRETS_CONTEXT: ${{secrets.SECRETS_CONTEXT}}
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Build with Gradle
       run: |
-        ./gradlew build 
+        ./gradlew build
     - uses: actions/upload-artifact@v3
       with:
         name: Package
         path: build/libs
-        
+
     - name: Build with Gradle
       run: |
         cp ./build/libs/jariBean-0.0.1-SNAPSHOT.jar app.jar
         ls -R
-    
+
     - name: Build Docker image
       if: contains(github.ref, 'CICD')
       run: |
@@ -79,8 +94,10 @@ jobs:
         docker build -t ${{ env.DOCKER_IMAGE }}:latest .
         docker push ${{ env.DOCKER_IMAGE }}:latest
 
-        
+
+
   deploy:
+    if: ${{ github.ref == 'refs/heads/CICD' }}
     needs: build
     name: Deploy
     runs-on: [ self-hosted, label-jaribean ]
@@ -96,8 +113,32 @@ jobs:
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASS }}
           docker stop ${{ env.NAME }} && docker rm ${{ env.NAME }} && docker rmi ${{ env.DOCKER_IMAGE }}:latest
-          aws s3 cp s3://jaribean-env/spring/.env ~/spring_env/
+          aws s3 cp s3://jaribean-env/spring/.envProd ~/spring_env/.env
           docker pull ${{ env.DOCKER_IMAGE }}:latest
           docker create -p 8080:8080 --name ${{ env.NAME }} ${{ env.DOCKER_IMAGE }}:latest
+          docker cp ~/spring_env/.env ${{ env.NAME }}:/
+          docker cp ~/spring_env/AuthKey.p8 ${{ env.NAME }}:/
+          docker start ${{ env.NAME }}
+
+  deploy_test:
+    if: ${{ github.ref == 'refs/heads/test_server' }}
+    needs: build
+    name: Deploy_test
+    runs-on: [ self-hosted, label-jaribean ]
+    # label-jaribean 라는 이름으로 AWS EC2 가 Runner 를 작동시킬 때 사용했던 그 label
+    steps:
+      - name: Login to ghcr
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GH_TOKEN }}
+      - name: Docker run
+        run: |
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASS }}
+          docker stop ${{ env.TEST_NAME }} && docker rm ${{ env.TEST_NAME }} && docker rmi ${{ env.DOCKER_IMAGE }}:latest
+          aws s3 cp s3://jaribean-env/spring/.env ~/spring_env/
+          docker pull ${{ env.DOCKER_IMAGE }}:latest
+          docker create -p 8081:8080 --name ${{ env.NAME }} ${{ env.DOCKER_IMAGE }}:latest
           docker cp ~/spring_env/.env ${{ env.NAME }}:/
           docker start ${{ env.NAME }}
