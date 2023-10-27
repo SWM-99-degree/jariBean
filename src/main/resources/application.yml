@@ -34,3 +34,4 @@ logging:
           mongodb:
             core:
               MongoTemplate: DEBUG
+
