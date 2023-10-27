@@ -77,7 +77,7 @@ public class OAuthKakaoService extends OAuthService {
                 REGISTRATION,
                 userInfo.getId(),
                 userInfo.getProperties().getNickname() != null ? userInfo.getProperties().getNickname() : "Guest",
-                userInfo.getProperties().getProfile_image()
+                userInfo.getProperties().getProfile_image() != null ? userInfo.getProperties().getProfile_image() : "https://img.jari-bean.com/a0155280-ad92-4a29-9965-8f41b2aad98dVector.png"
         );
     }
 
