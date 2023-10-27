@@ -15,7 +15,7 @@ env:
   DOCKER_IMAGE: chlrltjd5263/jaribean
   VERSION: ${{ github.sha }}
   NAME: jaribean
-  TEST_DOCKER_IMAGE: lineno2/jaribeantest
+  TEST_DOCKER_IMAGE: chlrltjd5263/jaribeantest
   TEST_NAME: jaribeantest
 
 permissions:
