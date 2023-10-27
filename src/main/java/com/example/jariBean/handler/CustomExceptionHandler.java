@@ -31,7 +31,7 @@ public class CustomExceptionHandler {
     @ExceptionHandler(CustomNoContentException.class)
     public ResponseEntity<?> apiException(CustomNoContentException e) {
         log.error(e.getMessage());
-        return new ResponseEntity<>(new ResponseDto<>(-1, e.getMessage(), null), HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(new ResponseDto<>(-1, e.getMessage(), null), HttpStatus.OK);
     }
 
     @ExceptionHandler(CustomDBException.class)

@@ -27,9 +27,8 @@ public class MatchingRepositoryImpl implements MatchingRepositoryTemplate {
 
     @Override
     public List<String> findCafeIdSortedByCount(Pageable pageable) {
-        GroupOperation groupOperation = Aggregation.group("cafeId").count().as("count");
+        GroupOperation groupOperation = Aggregation.group("cafe._id").count().as("count");
         SortOperation sortByCountDesc = Aggregation.sort(Sort.Direction.DESC, "count");
-        Aggregation aggregation = Aggregation.newAggregation(groupOperation, sortByCountDesc);
 
         Aggregation pageAggregation = Aggregation.newAggregation(
                 groupOperation,
@@ -38,18 +37,16 @@ public class MatchingRepositoryImpl implements MatchingRepositoryTemplate {
                 Aggregation.limit(pageable.getPageSize())
         );
 
-        AggregationResults<CafeCount> results = mongoTemplate.aggregate(aggregation, "matching", CafeCount.class);
-
+        AggregationResults<CafeCount> results = mongoTemplate.aggregate(pageAggregation, "matching", CafeCount.class);
         List<String> cafeList = new ArrayList<>();
 
-        results.getMappedResults().forEach(result -> cafeList.add(result.getCafeId()));
-
+        results.getMappedResults().forEach(result -> cafeList.add(result.get_id()));
         return cafeList;
     }
 
     @Getter
     class CafeCount {
-        private String cafeId;
+        private String _id;
         private int count;
         // Constructors, getters, and setters
     }
