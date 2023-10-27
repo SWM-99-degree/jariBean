@@ -15,6 +15,8 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
+import static com.example.jariBean.entity.Reserved.ReservedStatus.VALID;
+
 @Slf4j
 public class ReserveReqDto {
 
@@ -64,6 +66,7 @@ public class ReserveReqDto {
                     .table(table)
                     .startTime(super.startTime)
                     .endTime(super.endTime)
+                    .status(VALID)
                     .build();
         }
     }
