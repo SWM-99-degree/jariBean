@@ -24,7 +24,7 @@ public class CustomValidator implements ConstraintValidator<CustomConstraint, Ti
             return false;
         }
 
-        if(startTime.isAfter(endTime)) {
+        if(!startTime.isBefore(endTime)) {
             return false;
         }
 
