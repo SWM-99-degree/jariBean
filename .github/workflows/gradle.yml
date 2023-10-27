@@ -96,7 +96,7 @@ jobs:
         run: |
           ls
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASS }}
-          docker build -f TestDockerfile -t ${{ env.TEST_DOCKER_IMAGE }}:latest .
+          docker build -t ${{ env.TEST_DOCKER_IMAGE }}:latest .
           docker push ${{ env.TEST_DOCKER_IMAGE }}:latest
 
   deploy:
@@ -141,6 +141,6 @@ jobs:
           docker stop ${{ env.TEST_NAME }} && docker rm ${{ env.TEST_NAME }} && docker rmi ${{ env.TEST_DOCKER_IMAGE }}:latest
           aws s3 cp s3://jaribean-env/spring/.env ~/spring_env/
           docker pull ${{ env.TEST_DOCKER_IMAGE }}:latest
-          docker create -p 8080:8081 --name ${{ env.TEST_NAME }} ${{ env.TEST_DOCKER_IMAGE }}:latest
+          docker create -p 8081:8080 --name ${{ env.TEST_NAME }} ${{ env.TEST_DOCKER_IMAGE }}:latest
           docker cp ~/spring_env/.env ${{ env.TEST_NAME }}:/
           docker start ${{ env.TEST_NAME }}
