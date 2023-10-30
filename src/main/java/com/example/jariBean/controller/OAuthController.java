@@ -4,6 +4,7 @@ import com.example.jariBean.config.auth.LoginUser;
 import com.example.jariBean.dto.ResponseDto;
 import com.example.jariBean.dto.oauth.LoginCode;
 import com.example.jariBean.dto.oauth.LoginResDto.LoginSuccessResDto;
+import com.example.jariBean.service.UserService;
 import com.example.jariBean.service.oauth.OAuthKakaoService.SocialUserInfo;
 import com.example.jariBean.service.oauth.OAuthService;
 import com.example.jariBean.service.oauth.OAuthServiceFactory;
@@ -28,6 +29,7 @@ import static org.springframework.http.HttpStatus.OK;
 public class OAuthController {
 
     private OAuthService oAuthService;
+    private final UserService userService;
     private final OAuthServiceFactory authServiceFactory;
 
     @Operation(summary = "return social code", description = "api for return social code")
@@ -63,12 +65,18 @@ public class OAuthController {
             description = "계정 탈퇴 성공",
             content = @Content(schema = @Schema(implementation = Void.class))
     )
-    @DeleteMapping("/accounts/{registration}")
+    @DeleteMapping("/accounts")
     public ResponseEntity withdraw(@AuthenticationPrincipal LoginUser loginUser,
-                                   @Valid @RequestBody LoginCode loginCode,
-                                   @PathVariable String registration) {
+                                   @Valid @RequestBody(required = false) LoginCode loginCode) {
+        // find user information and extract registration
+        String registration = userService.findUserInfo(loginUser.getUser().getId()).getSocialId();
+
+        // allocate implemented oauth service
         oAuthService = authServiceFactory.get(registration);
-        oAuthService.deleteUser(loginUser.getUser().getId(), loginCode.getCode());
+
+        // delete user information
+        oAuthService.deleteUser(loginUser.getUser().getId(), (loginCode != null) ? loginCode.getCode() : null);
+
         return new ResponseEntity<>(new ResponseDto<>(1, "계정 탈퇴 성공", null), OK);
     }
 
