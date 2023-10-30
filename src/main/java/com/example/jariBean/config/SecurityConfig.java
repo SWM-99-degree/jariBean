@@ -78,7 +78,7 @@ public class SecurityConfig{
                 // swagger 모두 허용
                 .antMatchers("/swagger-ui/**", "/swagger-resources/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
                 // oauth2 모두 허용
-                .antMatchers("/login/**").permitAll()
+                .antMatchers("/login/oauth2/code/**", "/api/users/login/**").permitAll()
                 // cafe manager join and login
                 .antMatchers("/api/manager/join", "/api/manager/login").permitAll()
                 .antMatchers("/api/admin/**").hasRole(ADMIN.toString())
