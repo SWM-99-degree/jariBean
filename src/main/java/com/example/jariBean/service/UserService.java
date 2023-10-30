@@ -118,6 +118,7 @@ public class UserService {
                 .nickname(user.getNickname())
                 .imageUrl(user.getImage())
                 .description(user.getDescription())
+                .socialId(extractProvider(user.getSocialId()))
                 .role(user.getRole())
                 .build();
     }
