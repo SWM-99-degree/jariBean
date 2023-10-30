@@ -64,6 +64,7 @@ public abstract class OAuthService {
                 .orElse(User.builder()
                         .socialId(socialUserInfo.getSocialId())
                         .nickname(socialUserInfo.getNickname())
+                        .image(socialUserInfo.getImageUrl())
                         .password(passwordEncoder.encode(socialUserInfo.getNickname()))
                         .role(UNREGISTERED)
                         .build());
