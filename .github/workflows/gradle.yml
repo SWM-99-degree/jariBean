@@ -9,6 +9,7 @@ name: Java CI with Gradle
 
 on:
   push:
+
     branches: ["main", "CICD", "test_server"]
 
 env:
@@ -20,6 +21,9 @@ env:
 
 permissions:
   contents: read
+
+
+
 
 jobs:
   build:
@@ -98,6 +102,7 @@ jobs:
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASS }}
           docker build -t ${{ env.TEST_DOCKER_IMAGE }}:latest .
           docker push ${{ env.TEST_DOCKER_IMAGE }}:latest
+
 
   deploy:
     if: ${{ github.ref == 'refs/heads/CICD' }}
