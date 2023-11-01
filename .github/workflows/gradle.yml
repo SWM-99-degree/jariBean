@@ -5,16 +5,19 @@
 # This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
 
-name: Java CI with Gradle 
+name: Java CI with Gradle
 
 on:
   push:
-    branches: [ "main" , "CICD", "test_server"]
+
+    branches: ["main", "CICD", "test_server"]
 
 env:
   DOCKER_IMAGE: chlrltjd5263/jaribean
   VERSION: ${{ github.sha }}
   NAME: jaribean
+  TEST_DOCKER_IMAGE: chlrltjd5263/jaribeantest
+  TEST_NAME: jaribeantest
 
 permissions:
   contents: read
@@ -23,7 +26,6 @@ permissions:
 
 
 jobs:
-
   build:
     runs-on: ubuntu-latest
 
@@ -37,69 +39,76 @@ jobs:
           - 6379:6379
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up JDK 17
-      uses: actions/setup-java@v3
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-    - name: Gradle Caching
-      uses: actions/cache@v3
-      with:
-        path: |
-          ~/.gradle/caches
-          ~/.gradle/wrapper
-        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-        restore-keys: |
-          ${{ runner.os }}-gradle-
-      
-    - name: Setup docker buildx
-      id: buildx
-      uses: docker/setup-buildx-action@v1
-        
-    - name: Cache docker layers
-      uses: actions/cache@v2
-      with:
-        path: /tmp/.buildx-cache
-        key: ${{ runner.os }}-buildx-${{ env.VERSION }}
-        restore-keys: |
-          ${{ runner.os }}-buildx-
-        
-    - name: Create .env file
-      run: |
-        echo "$SECRETS_CONTEXT" >> .env
-      env:
-        SECRETS_CONTEXT: ${{secrets.SECRETS_CONTEXT}}
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
-    - name: Build with Gradle
-      run: |
-        ./gradlew build
-    - uses: actions/upload-artifact@v3
-      with:
-        name: Package
-        path: build/libs
-        
-    - name: Build with Gradle
-      run: |
-        cp ./build/libs/jariBean-0.0.1-SNAPSHOT.jar app.jar
-        ls -R
-    
-    - name: Build Docker image
-      if: contains(github.ref, 'CICD')
-      run: |
-        ls
-        docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASS }}
-        docker build -t ${{ env.DOCKER_IMAGE }}:latest .
-        docker push ${{ env.DOCKER_IMAGE }}:latest
+      - uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: "17"
+          distribution: "temurin"
+      - name: Gradle Caching
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Setup docker buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Cache docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ env.VERSION }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
+      - name: Create .env file
+        run: |
+          echo "$SECRETS_CONTEXT" >> .env
+        env:
+          SECRETS_CONTEXT: ${{secrets.SECRETS_CONTEXT}}
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      - name: Build with Gradle
+        run: |
+          ./gradlew build
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Package
+          path: build/libs
+
+      - name: Build with Gradle
+        run: |
+          cp ./build/libs/jariBean-0.0.1-SNAPSHOT.jar app.jar
+          ls -R
+
+      - name: Build Docker image
+        if: contains(github.ref, 'CICD')
+        run: |
+          ls
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASS }}
+          docker build -t ${{ env.DOCKER_IMAGE }}:latest .
+          docker push ${{ env.DOCKER_IMAGE }}:latest
+
+      - name: Build Test Server Docker image
+        if: contains(github.ref, 'test_server')
+        run: |
+          ls
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASS }}
+          docker build -t ${{ env.TEST_DOCKER_IMAGE }}:latest .
+          docker push ${{ env.TEST_DOCKER_IMAGE }}:latest
 
 
-        
   deploy:
     if: ${{ github.ref == 'refs/heads/CICD' }}
     needs: build
     name: Deploy
-    runs-on: [ self-hosted, label-jaribean ]
+    runs-on: [self-hosted, label-jaribean]
     # label-jaribean 라는 이름으로 AWS EC2 가 Runner 를 작동시킬 때 사용했던 그 label
     steps:
       - name: Login to ghcr
@@ -118,13 +127,12 @@ jobs:
           docker cp ~/spring_env/.env ${{ env.NAME }}:/
           docker cp ~/spring_env/AuthKey.p8 ${{ env.NAME }}:/
           docker start ${{ env.NAME }}
-          
+
   deploy_test:
     if: ${{ github.ref == 'refs/heads/test_server' }}
     needs: build
-    name: Deploy_test
-    runs-on: [ self-hosted, label-jaribean ]
-    # label-jaribean 라는 이름으로 AWS EC2 가 Runner 를 작동시킬 때 사용했던 그 label
+    name: Test Server Deploy
+    runs-on: [self-hosted, label-jaribean]
     steps:
       - name: Login to ghcr
         uses: docker/login-action@v1
@@ -135,12 +143,9 @@ jobs:
       - name: Docker run
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASS }}
-          docker stop ${{ env.NAME }} && docker rm ${{ env.NAME }} && docker rmi ${{ env.DOCKER_IMAGE }}:latest
+          docker stop ${{ env.TEST_NAME }} && docker rm ${{ env.TEST_NAME }} && docker rmi ${{ env.TEST_DOCKER_IMAGE }}:latest
           aws s3 cp s3://jaribean-env/spring/.env ~/spring_env/
-          docker pull ${{ env.DOCKER_IMAGE }}:latest
-          docker create -p 8081:8080 --name ${{ env.NAME }} ${{ env.DOCKER_IMAGE }}:latest
-          docker cp ~/spring_env/.env ${{ env.NAME }}:/
-          docker start ${{ env.NAME }}
-    
-    
-  
+          docker pull ${{ env.TEST_DOCKER_IMAGE }}:latest
+          docker create -p 8081:8080 --name ${{ env.TEST_NAME }} ${{ env.TEST_DOCKER_IMAGE }}:latest
+          docker cp ~/spring_env/.env ${{ env.TEST_NAME }}:/
+          docker start ${{ env.TEST_NAME }}

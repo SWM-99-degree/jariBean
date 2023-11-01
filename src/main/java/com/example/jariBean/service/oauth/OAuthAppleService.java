@@ -99,6 +99,8 @@ public class OAuthAppleService extends OAuthService{
                 .retrieve()
                 .bodyToMono(String.class)
                 .block();
+
+        userRepository.deleteById(id);
     }
 
     public String createClientSecret() {

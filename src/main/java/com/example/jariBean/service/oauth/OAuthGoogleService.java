@@ -66,7 +66,7 @@ public class OAuthGoogleService extends OAuthService{
                 REGISTRATION,
                 userInfo.getId(),
                 userInfo.getName() != null ? userInfo.getName() : "Guest",
-                userInfo.getPicture()
+                userInfo.getPicture() != null ? userInfo.getPicture() : "https://img.jari-bean.com/a0155280-ad92-4a29-9965-8f41b2aad98dVector.png"
         );
     }
 
