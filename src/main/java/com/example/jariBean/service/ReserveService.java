@@ -32,15 +32,9 @@ public class ReserveService {
     @Autowired private UserRepository userRepository;
 
     public Page<ReserveSummaryResDto> getMyReserved(String userId, Pageable pageable) {
-
-        Page<Reserved> reservedList = reservedRepository.findByUserIdOrderByStartTimeAsc(userId, pageable);
-        Page<ReserveSummaryResDto> reserveSummaryResDtoList = reservedList.map(reserved -> new ReserveSummaryResDto(reserved));
-
-        for (ReserveSummaryResDto reserveSummaryResDto : reserveSummaryResDtoList) {
-            System.out.println(reserveSummaryResDto.getReserveStartTime());
-        }
-
-        return reserveSummaryResDtoList;
+        return reservedRepository
+                .findByUserIdOrderByStartTimeDesc(userId, pageable)
+                .map(ReserveSummaryResDto::new);
     }
 
     // 예약 삭제하기
