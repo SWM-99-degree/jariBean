@@ -30,11 +30,14 @@ public class MatchingResDto {
     public static class MatchingSummaryResForCafeDto {
         private String id;
         private Integer seating;
+
+        private String userId;
         private String name;
         private LocalDateTime startTime;
 
         public MatchingSummaryResForCafeDto(Matching matching){
             this.id = matching.getId();
+            this.userId = matching.getUserId();
             this.seating = matching.getSeating();
             this.name = matching.getUsername();
             this.startTime = matching.getMatchingTime();
