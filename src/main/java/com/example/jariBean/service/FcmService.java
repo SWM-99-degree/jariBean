@@ -16,6 +16,7 @@ public class FcmService {
 
     public void updateFirebaseToken(String userId, FCMTokenReqDto fcmTokenReqDto) {
         // find token by userId
+        userId = "Token:" + userId;
         Token token = tokenRepository.findById(userId)
                 .orElseThrow(() -> new CustomApiException("userId에 해당하는 토큰을 찾을 수 없습니다."));
 
