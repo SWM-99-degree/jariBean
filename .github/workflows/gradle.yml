@@ -10,7 +10,7 @@ name: Java CI with Gradle
 on:
   push:
 
-    branches: ["main", "CICD", "test_server"]
+    branches: ["main", "CICD", "test_server", "feat"]
 
 env:
   DOCKER_IMAGE: chlrltjd5263/jaribean
@@ -18,6 +18,8 @@ env:
   NAME: jaribean
   TEST_DOCKER_IMAGE: chlrltjd5263/jaribeantest
   TEST_NAME: jaribeantest
+  ORACLE_IMAGE_NAME: chlrltjd5263/jaribeanoracle
+  ORACLE_NAME: jaribeanoracle
 
 permissions:
   contents: read
@@ -103,6 +105,14 @@ jobs:
           docker build -t ${{ env.TEST_DOCKER_IMAGE }}:latest .
           docker push ${{ env.TEST_DOCKER_IMAGE }}:latest
 
+      - name: Build Test Server Docker image
+        if: contains(github.ref, 'feat/migrate')
+        run: |
+          ls
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASS }}
+          docker build -t ${{ env.ORACLE_IMAGE_NAME }}:latest .
+          docker push ${{ env.ORACLE_IMAGE_NAME }}:latest
+
 
   deploy:
     if: ${{ github.ref == 'refs/heads/CICD' }}
@@ -149,3 +159,26 @@ jobs:
           docker create -p 8081:8080 --name ${{ env.TEST_NAME }} ${{ env.TEST_DOCKER_IMAGE }}:latest
           docker cp ~/spring_env/.env ${{ env.TEST_NAME }}:/
           docker start ${{ env.TEST_NAME }}
+
+  deploy_oracle:
+    if: ${{ github.ref == 'refs/heads/feat/migrate' }}
+    needs: build
+    name: Oracle Deploy
+    runs-on: [self-hosted, label-jaribean]
+    steps:
+      - name: Login to ghcr
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GH_TOKEN }}
+      - name: Docker run
+        run: |
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASS }}
+          docker stop ${{ env.ORACLE_NAME }} && docker rm ${{ env.ORACLE_NAME }} && docker rmi ${{ env.ORACLE_IMAGE_NAME }}:latest
+          # aws s3 cp s3://jaribean-env/spring/.env ~/spring_env/
+          docker pull ${{ env.ORACLE_IMAGE_NAME }}:latest
+          docker create -p 8080:8080 --name ${{ env.ORACLE_NAME }} ${{ env.ORACLE_IMAGE_NAME }}:latest
+          docker cp ~/spring_env/.env ${{ env.ORACLE_NAME }}:/
+          docker start ${{ env.ORACLE_NAME }}
+      
