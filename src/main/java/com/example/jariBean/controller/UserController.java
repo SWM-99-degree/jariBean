@@ -5,7 +5,6 @@ import com.example.jariBean.dto.ResponseDto;
 import com.example.jariBean.dto.oauth.LoginCode;
 import com.example.jariBean.dto.oauth.LoginResDto;
 import com.example.jariBean.dto.user.UserResDto.UserInfoRespDto;
-import com.example.jariBean.service.S3Service;
 import com.example.jariBean.service.UserService;
 import com.example.jariBean.service.oauth.OAuthKakaoService;
 import com.example.jariBean.service.oauth.OAuthService;
@@ -32,7 +31,6 @@ public class UserController {
 
     private final OAuthServiceFactory authServiceFactory;
     private final UserService userService;
-    private final S3Service s3Service;
     private OAuthService oAuthService;
 
     @Operation(summary = "find user me", description = "api for find user me")
@@ -71,11 +69,8 @@ public class UserController {
                                  @RequestPart(name = "username", required = false) String username,
                                  @RequestPart(name = "description", required = false) String description) throws IOException {
 
-        // image s3 bucket에 저장 후 image url 반환
-        String imageUrl = s3Service.upload(image).getImageUrl();
-
         // id로 User를 조회한 후 username, description, image url 정보를 갱신
-        UserInfoRespDto userInfoRespDto = userService.updateUserInfo(loginUser.getUser().getId(), username, description, imageUrl);
+        UserInfoRespDto userInfoRespDto = userService.updateUserInfo(loginUser.getUser().getId(), username, description, "");
 
         return new ResponseEntity<>(new ResponseDto<>(1, "회원정보 수정 성공", userInfoRespDto), OK);
     }
