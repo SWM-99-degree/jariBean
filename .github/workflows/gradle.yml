@@ -10,7 +10,7 @@ name: Java CI with Gradle
 on:
   push:
 
-    branches: ["main", "CICD", "test_server", "feat"]
+    branches: ["main", "CICD", "test_server", "feat/migrate"]
 
 env:
   DOCKER_IMAGE: chlrltjd5263/jaribean
