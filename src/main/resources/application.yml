@@ -12,6 +12,10 @@ spring:
     pathmatch:
       matching-strategy: ant_path_matcher
 
+  redis:
+    port: ${REDIS_PORT}
+    host: ${REDIS_HOST}
+
 logging:
   level:
     org:
