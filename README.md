@@ -99,7 +99,10 @@
 - 🌀 [**`SQS`** 를 통한 전송보장, 어떻게 할까요?](https://psy-choi.tistory.com/44)
 - 🎫 [**`Issue`** 관리와 **`Commit Message`** 를 어떻게 쓸까?](https://psy-choi.tistory.com/45)
 - ✍️ [**`CICD`** 구축을 위한 우당탕탕 **`Github actions`** 일기](https://psy-choi.tistory.com/28)
-
+- 🎆 [**이미지 업로드 과정 개선**](https://velog.io/@isayaksh/Spring-Pre-signed-URL)
+- ⚜️ [확장성을 고려한 **디자인 패턴** 적용](https://velog.io/@isayaksh/Design-Pattern-OAuth-%EA%B8%B0%EB%8A%A5%EC%97%90-%EB%94%94%EC%9E%90%EC%9D%B8-%ED%8C%A8%ED%84%B4-%EC%A0%81%EC%9A%A9)
+- 🤔 [API 호출 방법에 대한 고민](https://velog.io/@isayaksh/Architecture-API-%ED%98%B8%EC%B6%9C%EC%9D%98-%EB%B0%A9%EB%B2%95)
+- 📒 [HTTP Status Code 204에 대한 개념과 사용 방법](https://velog.io/@isayaksh/CS-Http-Status-code-204%EC%97%90-%EB%8C%80%ED%95%9C-%EA%B0%9C%EB%85%90%EA%B3%BC-%EC%82%AC%EC%9A%A9%EB%B0%A9%EB%B2%95)
 <br>
 
 ## ERD
